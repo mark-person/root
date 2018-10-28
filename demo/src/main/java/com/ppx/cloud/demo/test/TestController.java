@@ -5,8 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class TestController {
@@ -14,15 +13,14 @@ public class TestController {
 	@Autowired
 	private TestServiceImpl impl;
 	
-	
-	
-
-	@RequestMapping(path = "/test")
-	@ResponseBody
-	public Map<String, Object> test() {
-		var map = new HashMap<String, Object>();
+	public ModelAndView list() {
+		ModelAndView mv = new ModelAndView();
 		
-		// favicon.ico
+		return mv;
+	}
+
+	public Map<?, ?> test() {
+		var map = new HashMap<String, Object>();
 		impl.test();
 		
 		
