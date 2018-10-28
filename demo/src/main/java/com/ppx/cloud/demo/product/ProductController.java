@@ -8,7 +8,8 @@ public class ProductController {
 	
 	
 	public ModelAndView add() {
-		return new ModelAndView();
+		ModelAndView mv = new ModelAndView();
+		return mv;
 	}
 	
 	
