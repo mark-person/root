@@ -5,7 +5,7 @@ create table login_user
   primary key (user_id)
 ) comment='用户';
 
-create table category 
+create table category
 (
   cat_id			int not null auto_increment,
   cat_name	 		varchar(32) not null,
@@ -20,9 +20,23 @@ create table product
   prod_title	varchar(32) not null,
   cat_id		int not null,
   recommend 	tinyint not null comment '推荐星级',
-  main_img		varchar(255) not null,
-  primary key (cat_id)
+  main_img_id	int not null comment '主图ID',
+  primary key (prod_id)
 ) comment='商品';
+
+create table product_img
+(
+  prod_img_id	int not null auto_increment,
+  prod_id 		int not null,
+  pord_img_src	varchar(255) not null,
+  pord_img_prio	smallint not null comment '显示优先级',
+  primary key (prod_img_id)
+) comment='商品图片';
+
+
+
+
+  
 
 
 
