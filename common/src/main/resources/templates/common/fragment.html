@@ -1,0 +1,17 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<script th:fragment="base" type="text/javascript" th:inline="javascript">var contextPath = [[@{/}]];</script>
+
+<link   th:fragment="base" rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
+
+
+<script th:fragment="base" type="text/javascript" th:src="'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'"></script>
+<script th:fragment="base" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script th:fragment="base" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+
+
+<link   th:fragment="common" th:replace="::base"></link>
+
+<link   th:fragment="common" rel="stylesheet" th:href="@{/static/common/common-0.1.0.css?v1}"/>
+<script th:fragment="common" type="text/javascript" th:src="@{/static/common/common-0.1.0.js?v1}"></script>
