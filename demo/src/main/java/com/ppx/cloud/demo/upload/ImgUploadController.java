@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.stereotype.Controller;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.exception.custom.PermissionParamsException;
 
 @Controller
 public class ImgUploadController {
@@ -30,7 +29,7 @@ public class ImgUploadController {
     public Map<?, ?> upload(@RequestParam("file") MultipartFile[] files, @RequestParam String module) throws Exception {
     	
     	if (!MODULE_SET.contains(module)) {
-    		return ControllerReturn.error("模块名称:'" + module + "'错误！");
+    		throw new PermissionParamsException("模块名称:'" + module + "'错误！");
     	}
     	
     	var returnList = new ArrayList<String>();
