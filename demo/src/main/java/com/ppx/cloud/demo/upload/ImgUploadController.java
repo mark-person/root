@@ -24,7 +24,7 @@ public class ImgUploadController {
     private DateFormat df = new SimpleDateFormat("yyyyMMdd");
     
     
-    private final static Set<String> MODULE_SET = Stream.of("idea").collect(Collectors.toSet());
+    private final static Set<String> MODULE_SET = Set.of("idea");
 
 
     public Map<?, ?> upload(@RequestParam("file") MultipartFile[] files, @RequestParam String module) throws Exception {

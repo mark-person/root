@@ -90,13 +90,15 @@ public class ControllerReturn {
 	
 	
 	/**
-     * 返回错误(HMTL格式)
+         * 返回错误(HMTL格式)
      * 
      * @param response
      * @param errorCode
      * @param errorInfo
      */
     public static void returnErrorHtml(HttpServletResponse response, Integer errorCode, String errorInfo) {
+    	response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
         try (PrintWriter printWriter = response.getWriter()) {
             printWriter.write("[" + errorCode + "]" + "System Message[" + errorInfo + "]");
         } catch (Exception e) {
