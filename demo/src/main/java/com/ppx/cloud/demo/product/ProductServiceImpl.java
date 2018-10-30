@@ -10,6 +10,6 @@ public class ProductServiceImpl extends MyDaoSupport {
 	
 	public void test() {
 		int c = getJdbcTemplate().queryForObject("select count(*) from test", Integer.class);
-		System.out.println("ccc:" + MyContext.getUser().getUserId());
+		System.out.println("ccc:" + MyContext.getUser().getUserId() + "||" + c);
 	}
 }
