@@ -25,7 +25,7 @@ public class ControllerReturn {
 	
 	public static Map<Object, Object> error(Object... object) {
 		if (object == null || object.length == 0) {
-			return SUCCESS;
+			return ERROR;
 		}
 		if (object.length == 1) {
 			if ("1".equals(object[0].toString())) {

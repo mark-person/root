@@ -40,6 +40,8 @@ mysql -uroot -p
 
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'dengppx123456';
+
+
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'dengppx123456';
 ~~~
 

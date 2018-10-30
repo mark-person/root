@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ppx.cloud.common.context.MyContext;
 import com.ppx.cloud.common.context.User;
 import com.ppx.cloud.common.exception.custom.PermissionParamsException;
 
@@ -30,6 +31,7 @@ public class ProductController {
 			var user = new User();
 			user.setUserId(u);
 			user.setUserName("name" + u);
+			MyContext.setUser(user);
 		}
 		
 		impl.test();

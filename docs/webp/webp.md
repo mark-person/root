@@ -1,5 +1,7 @@
 
 
+yum install ImageMagick ImageMagick-devel
+
 # centos
 yum -y install libwebp-devel libwebp-tools
 
