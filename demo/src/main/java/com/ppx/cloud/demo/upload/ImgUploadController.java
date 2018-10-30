@@ -24,7 +24,14 @@ import com.ppx.cloud.common.exception.custom.PermissionParamsException;
 public class ImgUploadController {
 
 	private final static Set<String> MODULE_SET = Set.of("idea");
-
+	
+	private final static String UPLOAD = "upload/";
+	
+	private final static String MAIN = "main/";
+	
+	private final static String ADDITIONAL = "additional/";
+	
+	
 	public Map<?, ?> upload(@RequestParam("file") MultipartFile[] files, @RequestParam String module) throws Exception {
 
 		if (!MODULE_SET.contains(module)) {
@@ -32,71 +39,63 @@ public class ImgUploadController {
 		}
 
 		var returnList = new ArrayList<String>();
-
-		String errorMsg = "";
-		for (MultipartFile file : files) {
-
-			// 10天一个文件夹
-			Date d = new Date();
-			// String.format("%tj", d)一年的第几天
-			String dateFolder = String.format("%ty", d)
-					+ String.format("%02d", Integer.parseInt(String.format("%tj", d)) / 10);
-
+		
+		// 不存就创建文件夹 >>>>>>>>>>>>>>>>>>>>>
+		ApplicationHome home = new ApplicationHome(getClass());
+		String modulePath = home.getSource().getParentFile().getParent() + "/" + UPLOAD + module + "/";
+		// 10天一个文件夹
+		Date today = new Date();
+		// String.format("%tj", d)一年的第几天
+		String dateFolder = String.format("%ty", today)
+				+ String.format("%02d", Integer.parseInt(String.format("%tj", today)) / 10);
+					
+		String mainPath = modulePath + dateFolder + MAIN;
+		String additionalPath = modulePath + dateFolder + ADDITIONAL;
+		File mainPathFile = new File(mainPath);
+		if (!mainPathFile.exists()) {
+			mainPathFile.mkdirs();
+		}
+		File additionalPathFile = new File(additionalPath);
+		if (!additionalPathFile.exists()) {
+			additionalPathFile.mkdirs();
+		}
+		
+		for (int i = 0; i < files.length; i++) {
+			MultipartFile file = files[i];
+			
 			String fileName = file.getOriginalFilename();
 			String ext = fileName.substring(fileName.lastIndexOf("."));
 			String imgFileName = UUID.randomUUID().toString().replaceAll("-", "") + ext;
-
-			ApplicationHome home = new ApplicationHome(getClass());
-			String uploadPath = home.getSource().getParentFile().getParent() + "/upload/";
-
-			String uploadFolder = uploadPath + module + "/" + dateFolder;
-			File uploadFolderFile = new File(uploadFolder);
-			if (!uploadFolderFile.exists()) {
-				uploadFolderFile.mkdirs();
-			}
-
-			String r = module + "/" + dateFolder + "/" + imgFileName;
-			String uploadFile = uploadPath + r;
-			file.transferTo(new File(uploadFile));
-
-			String miniPath = uploadPath + module + "/" + dateFolder + "/mini";
-			File miniPathFile = new File(miniPath);
-			if (!miniPathFile.exists()) {
-				miniPathFile.mkdirs();
-			}
-
-			try {
-				String command = "convertx -resize 100x100 " + uploadFile + " " + miniPath + "/" + imgFileName + "_200"
-						+ ext;
-				System.out.println("0000000:" + command);
-				Process process = Runtime.getRuntime().exec(command);
-				InputStream inputStream = process.getErrorStream();
-				String cmdResult = new BufferedReader(new InputStreamReader(inputStream, "GBK")).lines()
-						.collect(Collectors.joining(System.lineSeparator()));
-				System.out.println(".....result:" + cmdResult);
-				inputStream.close();
-
-				if (!StringUtils.isEmpty(cmdResult)) {
-					errorMsg = cmdResult;
-					break;
+			if (i == 0) {
+				// >>>>>>>>>>>>>>>>>主
+				file.transferTo(new File(mainPath + imgFileName));
+				
+				// 缩放
+				try {
+					// convert -resize 200x100 src.jpg dest.jpg 200×100(等比缩放)
+					String miniPath = mainPath + imgFileName + "_100.png";
+					String command = "convertx -resize 100x100 " + mainPath + imgFileName + " " + miniPath;
+					Process process = Runtime.getRuntime().exec(command);
+					InputStream inputStream = process.getErrorStream();
+					String cmdResult = new BufferedReader(new InputStreamReader(inputStream, "GBK")).lines()
+							.collect(Collectors.joining(System.lineSeparator()));
+					inputStream.close();
+					if (!StringUtils.isEmpty(cmdResult)) {
+						return ControllerReturn.error(cmdResult);
+					}
+				} catch (Exception e) {
+					return ControllerReturn.error(e.getMessage());
 				}
-			} catch (Exception e) {
-				errorMsg = e.getMessage();
-				break;
+				returnList.add(modulePath + dateFolder + MAIN + imgFileName);
 			}
-
-			// convert -resize 200x100 src.jpg dest.jpg
-			// 虽然明确指定了图片大小为200×100，但dest.jpg的不一定就是200×100，因为是等比缩放的
-
-			returnList.add(r);
+			else {
+				// >>>>>>>>>>>>>>>>>附加
+				file.transferTo(new File(additionalPath + imgFileName));
+				returnList.add(modulePath + dateFolder + ADDITIONAL + imgFileName);
+			}
 		}
-
-		if (!StringUtils.isEmpty(errorMsg)) {
-			return ControllerReturn.error(errorMsg);
-		} else {
-			return ControllerReturn.success(returnList);
-		}
-
+		
+		return ControllerReturn.success(returnList);
 	}
 
 }
