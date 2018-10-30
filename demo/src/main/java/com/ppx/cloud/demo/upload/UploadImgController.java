@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -18,31 +17,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
-import com.ppx.cloud.common.exception.custom.PermissionParamsException;
 
 @Controller
-public class ImgUploadController {
-
-	private final static Set<String> MODULE_SET = Set.of("idea");
+public class UploadImgController {
 	
 	private final static String UPLOAD = "upload/";
+	
+	private final static String IDEA_MODULE = "idea/";
 	
 	private final static String MAIN = "main/";
 	
 	private final static String ADDITIONAL = "additional/";
 	
 	
-	public Map<?, ?> upload(@RequestParam("file") MultipartFile[] files, @RequestParam String module) throws Exception {
-
-		if (!MODULE_SET.contains(module)) {
-			throw new PermissionParamsException("模块名称:'" + module + "'错误！");
-		}
-
+	public Map<?, ?> uploadIdea(@RequestParam("file") MultipartFile[] files) throws Exception {
 		var returnList = new ArrayList<String>();
 		
 		// 不存就创建文件夹 >>>>>>>>>>>>>>>>>>>>>
 		ApplicationHome home = new ApplicationHome(getClass());
-		String modulePath = home.getSource().getParentFile().getParent() + "/" + UPLOAD + module + "/";
+		String modulePath = home.getSource().getParentFile().getParent() + "/" + UPLOAD + IDEA_MODULE;
 		// 10天一个文件夹
 		Date today = new Date();
 		// String.format("%tj", d)一年的第几天
@@ -86,12 +79,12 @@ public class ImgUploadController {
 				} catch (Exception e) {
 					return ControllerReturn.error(e.getMessage());
 				}
-				returnList.add(modulePath + dateFolder + MAIN + imgFileName);
+				returnList.add(IDEA_MODULE + dateFolder + MAIN + imgFileName);
 			}
 			else {
 				// >>>>>>>>>>>>>>>>>附加
 				file.transferTo(new File(additionalPath + imgFileName));
-				returnList.add(modulePath + dateFolder + ADDITIONAL + imgFileName);
+				returnList.add(IDEA_MODULE + dateFolder + ADDITIONAL + imgFileName);
 			}
 		}
 		

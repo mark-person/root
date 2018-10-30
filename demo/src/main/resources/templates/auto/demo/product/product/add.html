@@ -135,7 +135,7 @@ function upload(files) {
 		formData.append("file", $(this).data("file"));
 	});
 	
-	$.ajax({url:[[@{/auto/imgUpload/upload}]], type:"POST", contentType:false, data:formData ,processData:false,
+	$.ajax({url:[[@{/auto/uploadImg/uploadIdea}]], type:"POST", contentType:false, data:formData ,processData:false,
 		success:function(r) {
 			if (r.result == 1) {
 				alertSuccess();
