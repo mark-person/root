@@ -6,6 +6,8 @@ mysql-8.0.13-winx64.zip
 
 ~~~
 mysqld --initialize --console
+
+
 ~~~
 
 
@@ -25,6 +27,7 @@ mysqld --initialize --console
 ~~~
 mysqld --install mysql8
 ~~~
+
 
 4. 
 
