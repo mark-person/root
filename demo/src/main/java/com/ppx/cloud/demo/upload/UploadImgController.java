@@ -40,7 +40,7 @@ public class UploadImgController {
 		Date today = new Date();
 		// String.format("%tj", d)一年的第几天
 		String dateFolder = String.format("%ty", today)
-				+ String.format("%02d", Integer.parseInt(String.format("%tj", today)) / 10);
+				+ String.format("%02d", Integer.parseInt(String.format("%tj", today)) / 10) + "/";
 					
 		String mainPath = modulePath + dateFolder + MAIN;
 		String additionalPath = modulePath + dateFolder + ADDITIONAL;
@@ -67,7 +67,7 @@ public class UploadImgController {
 				try {
 					// convert -resize 200x100 src.jpg dest.jpg 200×100(等比缩放)
 					String miniPath = mainPath + imgFileName + "_100.png";
-					String command = "convertx -resize 100x100 " + mainPath + imgFileName + " " + miniPath;
+					String command = "convert -resize 100x100 " + mainPath + imgFileName + " " + miniPath;
 					Process process = Runtime.getRuntime().exec(command);
 					InputStream inputStream = process.getErrorStream();
 					String cmdResult = new BufferedReader(new InputStreamReader(inputStream, "GBK")).lines()

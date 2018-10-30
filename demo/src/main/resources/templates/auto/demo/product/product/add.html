@@ -139,6 +139,7 @@ function upload(files) {
 		success:function(r) {
 			if (r.result == 1) {
 				alertSuccess();
+				alert(r.arrayList);
 			}
 			else if (r.result == -1) {
 				alertDanger(r.value);
