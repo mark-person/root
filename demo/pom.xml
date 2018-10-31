@@ -50,7 +50,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>com.ppx.cloud</groupId>
-									<artifactId>common</artifactId>
+									<artifactId>root-common</artifactId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>${project.build.directory}/classes</outputDirectory>
