@@ -1,12 +1,13 @@
 package com.ppx.cloud.demo.test;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.expression.Maps;
+
+import com.ppx.cloud.common.contoller.ControllerReturn;
 
 @Controller
 public class TestController {
@@ -21,21 +22,10 @@ public class TestController {
 	}
 
 	public Map<?, ?> test() {
-		var map = new HashMap<String, Object>();
-		impl.test();
-
-		map.put("result", 4);
-		return map;
+		int r = impl.test();
+		return ControllerReturn.success(Map.of("value", r));
 	}
 
-	public static void main(String[] args) {
-		System.out.println(".....................1");
-		
-		
-		String a = MD5Encoder.encode("xxxxxxxxxxxxxxxxxxxxxxxxxxxx".getBytes());
-		System.out.println("a:" + a);
-		
-
-	}
+	
 
 }
