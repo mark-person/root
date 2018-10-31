@@ -4,6 +4,9 @@
 
 # eclipse 设置
 ```
+# 打包
+在父类中打包
+
 # 基本设置(UTF-8, Unix)
 Preferences -> General -> Workspace:Text file encodeing:UTF-8, New text file line delimiter:Unix
 
@@ -33,6 +36,7 @@ Preferences -> General -> Content Types:Java Properties File:Default encoding:UT
 
 # 去掉 WARNING: An illegal reflective access operation has occurred
 ${jrebel_args} --add-opens java.base/java.lang=ALL-UNNAMED
+
 
 ```
 
