@@ -22,7 +22,7 @@ public class TestController {
 
 	public Map<?, ?> test() {
 		int r = impl.test();
-		return ControllerReturn.success(Map.of("value", r));
+		return ControllerReturn.success(Map.of("valuexx001", r));
 	}
 
 	
