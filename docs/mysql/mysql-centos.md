@@ -9,7 +9,7 @@ tar -xvf mysql-8.0.13-linux-glibc2.12-x86_64.tar.xz
 
 
 
-/usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/
+/usr/local/mysql/bin/mysqld --initialize --user=root --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/
 
 error:./mysqld: error while loading shared libraries: libnuma.so.1: cannot open shared object file: No such file or directory
 yum -y install numactl

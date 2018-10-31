@@ -35,14 +35,15 @@ MySQL8.0.4以前MySQL的密码认证插件是“mysql_native_password”，而�
 如果想默认使用“mysql_native_password”插件认证，可以在配置文件中配置default_authentication_plugin项。
 [mysqld]
 default_authentication_plugin=mysql_native_password
+
 ~~~
 mysql -uroot -p
 
 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'dengppx123456';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY '@Dengppx123456';
 
 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'dengppx123456';
+# ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '@Dengppx123456';
 ~~~
 
 
