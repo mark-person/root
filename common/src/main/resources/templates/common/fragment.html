@@ -15,3 +15,75 @@
 
 <link   th:fragment="common" rel="stylesheet" th:href="@{/static/common/common-0.1.0.css?v1}"/>
 <script th:fragment="common" type="text/javascript" th:src="@{/static/common/common-0.1.0.js?v1}"></script>
+
+
+
+
+
+
+
+
+
+<!-- 分页列表 -->
+<div th:fragment="pageList(title)" class="page-list-body">
+	<div class="page-list-query">
+    	<div class="page-list-title"><span class="glyphicon glyphicon-th-list"></span><span th:text="${title}"></span></div>
+		<form id="queryForm" class="form-inline">
+		<input type="hidden" id="pageSize" name="pageSize" value="15">
+		<input type="hidden" id="pageNumber" name="pageNumber">
+		<input type="hidden" id="orderName" name="orderName">
+		<input type="hidden" id="orderType" name="orderType">
+		<div th:include="::query"></div>
+		</form>
+	</div>
+	
+	<table id="pageTable" class="page-list-table table table-bordered table-condensed" th:include="::list"></table>
+	<nav class="page-list-footer">
+		<ul id="pageNumUL" class="pagination pull-left pagination-sm"></ul>
+	    <div class="page-list-footer-msg" >
+		<div class="col-xs-1 input-group-sm">
+		<select onchange="$('#pageSize').val(this.value);queryPage(1)" class="form-control">		        
+			<option value="15">15条</option><option value="25">25条</option><option value="50">50条</option>
+		</select>
+		</div>
+		<div>共<b id="totalRows">-</b>条记录</div>
+		</div>
+	</nav>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
