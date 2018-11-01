@@ -41,6 +41,15 @@ ${jrebel_args} --add-opens java.base/java.lang=ALL-UNNAMED
 ```
 
 
+# 技巧
+
+Run--External Tools--External Tools Configurations...
+Name：C:/WINDOWS/explorer.exe
+Arguments：${container_loc}
+
+Ctrl+Shitf+L 二次 run 找到 Run last External 按F10
+
+
 
 
 
