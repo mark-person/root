@@ -26,7 +26,7 @@ public class ObjectMappingCustomer extends ObjectMapper {
 		module.addSerializer(Float.class, new JsonSerializer<Float>() {
 			@Override
 			public void serialize(Float value, JsonGenerator jsonGenerator, SerializerProvider provider)
-					throws IOException, JsonProcessingException {
+					throws IOException {
 				DecimalFormat df = new DecimalFormat(DecimalUtils.MONEY_PATTERN);
 				jsonGenerator.writeString(df.format(value));
 			}
