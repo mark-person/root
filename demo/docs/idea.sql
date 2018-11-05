@@ -1,3 +1,16 @@
+
+
+
+CREATE TABLE `test` (
+  `test_id` int(11) NOT NULL,
+  `test_name` varchar(45) DEFAULT NULL,
+  `test_date` date DEFAULT NULL,
+  `test_time` timestamp NULL DEFAULT NULL,
+  `test_value` decimal(7,2) DEFAULT NULL,
+  PRIMARY KEY (`test_id`)
+) 
+
+
 create table login_user
 (
   user_id		int not null auto_increment,
