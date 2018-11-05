@@ -13,6 +13,8 @@
 
 <link   th:fragment="common" th:replace="::base"></link>
 
+<link   th:fragment="common" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<script th:fragment="common" type="text/javascript" src="http://cdn.staticfile.org/artTemplate.js/3.0.1/template.js"></script>
 <link   th:fragment="common" rel="stylesheet" th:href="@{/static/common/common-0.1.0.css?v1}"/>
 <script th:fragment="common" type="text/javascript" th:src="@{/static/common/common-0.1.0.js?v1}"></script>
 
@@ -38,9 +40,28 @@
 	</div>
 	
 	<table id="pageTable" class="page-list-table table table-bordered table-condensed" th:include="::list"></table>
-	<nav class="page-list-footer">
+	
+	<ul class="pagination">
+	    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+	    <li class="page-item"><a class="page-link" href="#">1</a></li>
+	    <li class="page-item active"><a class="page-link" href="#">2</a></li>
+	    <li class="page-item"><a class="page-link" href="#">3</a></li>
+	    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+	    
+	    <li class="page-item">
+	    	<select class="form-control" style="height:34px;" onchange="$('#pageSize').val(this.value);queryPage(1)">		        
+				<option value="15">15条</option><option value="25">25条</option><option value="50">50条</option>
+			</select>
+		</li>
+		
+		<li class="page-item"><span style="padding:.5rem .75rem;display: block;">共<b id="totalRows">-</b>条记录</a> </span>
+  	</ul>
+  	
+  	
+	
+	<nav class="page-list-footer" style="display: none;">
 		<ul id="pageNumUL" class="pagination pull-left pagination-sm"></ul>
-	    <div class="page-list-footer-msg" >
+	    <div class="page-list-footer-msg">
 		<div class="col-xs-1 input-group-sm">
 		<select onchange="$('#pageSize').val(this.value);queryPage(1)" class="form-control">		        
 			<option value="15">15条</option><option value="25">25条</option><option value="50">50条</option>

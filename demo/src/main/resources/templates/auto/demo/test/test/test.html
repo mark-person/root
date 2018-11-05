@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+
+<link th:replace="common/fragment::common"/>
+
+<script type="text/javascript" th:inline="javascript">
+
+$(function() {
+	refreshPage([[${list}]]);
+});
+
+
+var CONTROLLER = "auto/test";
+function queryPage(pageNumber) {
+	showLoading();
+	$("#pageNumber").val(pageNumber ? pageNumber : 1);
+	$.post(contextPath + CONTROLLER + "/list", $("#queryForm").serialize(), function(r) {
+		refreshPage(r);
+		hideLoading();
+	});
+}
+
+
+$(function() {
+	
+	
+	// 增加排序图标
+	$("th[data-order-name]").each(function(){
+		if (!$(this).hasClass("sorting-asc") && !$(this).hasClass("sorting-desc")) {
+			$(this).addClass('sorting');
+		}
+		
+		// fa-sort-amount-asc fa-sort-amount-desc
+		$(this).append('<i class="fa"></i>');		
+	});
+	
+
+});
+
+//分页begin >>>>>>>>>>
+function refreshPage(data) {
+	if (!data) return;
+ 	$("#pageTable>tbody").find(">tr:gt(1)").remove();
+	
+	
+	
+	$("#pageTemplate").text("{{each arrayList as v i}}<tr>" + $(".pageData").html() + "</tr>{{/each}}");
+	
+
+	//$("#pageTable>tbody").append(template("pageTemplate", data));
+	var html = template("pageTemplate", data);
+	
+	$(".pageData").after(template("pageTemplate", data));
+	
+	
+	refreshFooter(data.page);
+	
+	//$("#pageTable").css("display", "");
+	$(".page-list-footer").show();
+}
+
+function refreshFooter(p) {
+	// p.pageSize每页几条记录 ，p.totalRows总记录数 ， p.pageNumber当前页 
+	$("#pageNumUL").empty();
+	$("#totalRows").text(p.totalRows);
+	if (p.totalRows == 0) return;
+	
+	var totalNum = Math.ceil(p.totalRows/p.pageSize);
+	p.pageNumber == 1 ? $("#pageNumUL").append('<li class="disabled"><a>«</a></li>')
+		: $("#pageNumUL").append('<li><a href="#this" onclick="queryPage(1)">«</a></li>');
+	
+	var begin = p.pageNumber <= 3 ? 1 : p.pageNumber - 2;
+	for (var i = begin; i < begin + 5 && i <= totalNum; i++) {
+		var activeClass = (i == p.pageNumber) ? 'class="active"' : '';
+		$("#pageNumUL").append('<li ' + activeClass + '><a href="#this" onclick="queryPage(' + i + ')">' + i + '</a></li>');
+	}
+	(p.totalRows == 0 || p.pageNumber == totalNum) ? $("#pageNumUL").append('<li class="disabled"><a href="#this">»</a></li>')
+		: $("#pageNumUL").append('<li><a href="#this" onclick="queryPage(' + totalNum + ')">»</a></li>');
+	
+	// activeSorting
+	$(".sorting, .sorting-asc, .sorting-desc").unbind("click");
+	$(".sorting, .sorting-asc, .sorting-desc").click(function(){
+		var orderName = $(this).attr("data-order-name");		
+		if ($(this).hasClass("sorting-desc")) {
+			$("#orderName").val(orderName);
+			$("#orderType").val("asc");
+			$(".sorting-asc, .sorting-desc").addClass("sorting");
+			$(".sorting-asc").removeClass("sorting-asc");
+			$(".sorting-desc").removeClass("sorting-desc");
+			$(this).addClass("sorting-asc");
+		} else {
+			$("#orderName").val(orderName);
+			$("#orderType").val("desc");
+			$(".sorting-asc, .sorting-desc").addClass("sorting");
+			$(".sorting-asc").removeClass("sorting-asc");
+			$(".sorting-desc").removeClass("sorting-desc");
+			$(this).addClass("sorting-desc");
+		}
+		queryPage();
+	});
+}
+//分页end <<<<<<<<<
+</script>
+
+</head>
+<body>
+
+
+
+
+<div th:replace="common/fragment::pageList('基本信息')">
+	<div th:fragment="query">
+		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
+		<input type="text" class="form-control input-sm" name="testName" placeholder="请输入test_name" style="width:200px;">
+		<button type="button" class="btn btn-default btn-sm" onclick="queryPage();"><span class="glyphicon glyphicon-search"></span>搜索</button>
+	</div>
+	<table th:fragment="list">
+	<tr>
+		<th class="w-id">序号</th>
+		<th class="w-id sorting-desc" data-order-name="test_id">testId</th>
+		<th class="w-id">SQL_ID</th>
+		<th class="w-id" data-order-name="test_price">出参</th>
+		<th class="w-date">入参</th>
+		<th class="w-time">创建时间</th>
+		<th class="w-time">function</th>
+		<th class="w-action">操作</th>
+	</tr>
+	<tr id="myPageData" class="pageData" style="display:none">
+		<td>{{i+1}}</td>
+		<td>{{v.testId}}</td>
+		<td>{{v.testName}}</td>
+		<td>{{v.testName}}</td>
+		<td>{{v.testDate}}</td>
+		<td>{{v.testTime}}</td>
+		<td>{{v.testValue}}</td>
+		<td>
+		<div>
+			<a href="#" onclick="remove('{{v.testId}}')">[删除]</a>
+			<a href="#" onclick="edit('{{v.testId}}', editCallback)">[修改]</a>
+		</div>
+		</td>
+	</tr>
+	</table>
+</div>
+
+<script id="pageTemplate" type="text/html">
+
+</script>
+
+
+
+
+
+</body>
+</html>
+

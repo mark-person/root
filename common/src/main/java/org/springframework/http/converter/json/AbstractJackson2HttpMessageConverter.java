@@ -284,7 +284,7 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 			}
 			objectWriter.writeValue(generator, value);
 			
-			// dengxz
+			/** @author mark */
 			
 
 			writeSuffix(generator, object);
