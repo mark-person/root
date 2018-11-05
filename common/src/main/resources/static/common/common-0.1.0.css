@@ -1,4 +1,6 @@
-
+html{
+    font-size:30px;
+}
 
 
 .sorting, .sorting-asc, .sorting-desc {cursor:pointer}
