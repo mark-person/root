@@ -15,7 +15,7 @@ public class Page {
 	// 防止传入数量过大
 	private final static int MAX_PAGE_SIZE = 50;
 
-	private int pageSize = 15;
+	private int pageSize = 2;
 
 	private int pageNumber = 1;
 

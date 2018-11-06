@@ -25,7 +25,7 @@ public class TestServiceImpl extends MyDaoSupport {
 		
 		
 		
-		
+		page.addDefaultOrderName("test_id").addPermitOrderName("test_name").addUnique("test_id");
 		
 		
 		var cSql = new StringBuilder("select count(*) from test");

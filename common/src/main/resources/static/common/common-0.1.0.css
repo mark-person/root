@@ -1,63 +1,16 @@
 html{
-    font-size:30px;
+    font-size: 16px;
 }
-
 
 .sorting, .sorting-asc, .sorting-desc {cursor:pointer}
 .sorting > .fa:after {content:"\f07d";}
 .sorting-asc > .fa:after {content:"\f160";}
 .sorting-desc > .fa:after {content:"\f161";}
 
-
-.page-list-footer {height:40px;border:1px solid #ddd;padding:5px;width:100%;margin-top:-15px}
-.page-list-footer nav {margin-left:5px;margin-right:10px;margin-top:-1px}
-.page-list-footer .pagination{padding:0;margin-top:0}
-.page-list-footer-msg {line-height:30px;padding-left:0px;}
-.page-list-footer .col-xs-1 {padding:0px;width:80px;}
-
-
-
-
-
-
-.required {color:red}
-.hint {font-size:12px;color:gray}
-.ellipsis {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
-#myAlert {position:fixed;left:0px;top:0px;width:100%;text-align:center;display:none;z-index:9999}
-
-.w-id {width:80px}
-.w-title {width:150px}
-.w-number {width:80px;text-align:right !important;padding-right:6px}
-.w-date {width:80px}
-.w-time {width:140px}
-.w-msec {width:160px}
-.w-action {width:100px}
-.w-title-200 {width:200px}
-.w-title-250 {width:250px}
-.w-title-300 {width:300px}
-.w-number-120 {width:120px;text-align:right !important;padding-right:6px}
-.w-action-120 {width:120px}
-.w-action>div,.w-action-120>div{display:flex;justify-content:space-around;padding:0px 8px;} 
-
-.form-control {width:auto; display: inline-block}
-/** page begin>>>>>>> 1400 */
-.page-list-body {background-color:#ffffff;padding:3px;font-size:13px;color:#464e63; min-width:1200px;}
-.page-list-query {height:40px;padding:5px;padding-top:5px;}
-.page-list-title {height:40px;font-size:15px;float:left;line-height:30px;font-weight:normal;padding-left:10px;padding-right:10px;}
-
-.page-list-table th {text-align:center;font-weight:normal;background-color:#f8f8f8;height:40px;line-height:25px;}
-.page-list-table >tbody>tr>th {padding-top:12px;font-weight: bold;}
-.page-list-table td {text-align:center;height:29px;line-height:18px;}
-.page-list-table tr:hover {background-color: #f9f9f9;}
-
-
-
-
-/** page end<<<<<<< */
-
-/** form */
-.form-body {padding:3px;min-width:1200px;overflow-x:hidden}
-.form-title {height:20px;font-size:15px;line-height:30px;padding-left:20px;}
-
+.w-id {min-width:4.375rem}
+.w-date {min-width:6.875rem}
+.w-time {min-width:10.625rem}
+.w-action {min-width:17.5rem}
+.w-title {min-width:9.375rem}
+.w-number {min-width:4.375rem}
 

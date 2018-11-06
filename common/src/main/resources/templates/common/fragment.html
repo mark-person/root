@@ -21,60 +21,29 @@
 
 
 
-
-
-
-
-
-<!-- 分页列表 -->
-<div th:fragment="pageList(title)" class="page-list-body">
-	<div class="page-list-query">
-    	<div class="page-list-title"><span class="glyphicon glyphicon-th-list"></span><span th:text="${title}"></span></div>
-		<form id="queryForm" class="form-inline">
-		<input type="hidden" id="pageSize" name="pageSize" value="15">
-		<input type="hidden" id="pageNumber" name="pageNumber">
-		<input type="hidden" id="orderName" name="orderName">
-		<input type="hidden" id="orderType" name="orderType">
-		<div th:include="::query"></div>
-		</form>
+<!-- 分页 -->
+<div th:fragment="page(title)">
+	<form>
+	<input type="hidden" name="pageNumber">
+	<input type="hidden" name="orderName">
+	<input type="hidden" name="orderType">
+	<div class="p-2 form-inline">
+		<h6 class="form-check-label"><i class="fa fa-list"></i><span th:text="${title}"></span></h6>
+		<div th:include="::query" class="input-group-sm"></div>
 	</div>
-	
-	<table id="pageTable" class="page-list-table table table-bordered table-condensed" th:include="::list"></table>
-	
-	<ul class="pagination">
-	    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-	    <li class="page-item"><a class="page-link" href="#">1</a></li>
-	    <li class="page-item active"><a class="page-link" href="#">2</a></li>
-	    <li class="page-item"><a class="page-link" href="#">3</a></li>
-	    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-	    
-	    <li class="page-item">
-	    	<select class="form-control" style="height:34px;" onchange="$('#pageSize').val(this.value);queryPage(1)">		        
-				<option value="15">15条</option><option value="25">25条</option><option value="50">50条</option>
+	<table id="pageTable" class="table table-bordered table-hover table-sm" th:include="::list"></table>
+	<ul class="pagination float-left pagination-sm" style="display: none;"></ul>
+  	<ul class="pagination pagination-sm" style="display: none;">
+  		<li class="page-item input-group-sm">
+	    	<select class="form-control" name="pageSize">        
+				<option value="2">2条</option><option value="3">3条</option><option value="50">50条</option>
 			</select>
 		</li>
-		
-		<li class="page-item"><span style="padding:.5rem .75rem;display: block;">共<b id="totalRows">-</b>条记录</a> </span>
+		<li class="page-item" style="padding: .25rem .5rem"><label>共<b id="totalRows">-</b>条记录</label></li>
   	</ul>
-  	
-  	
-	
-	<nav class="page-list-footer" style="display: none;">
-		<ul id="pageNumUL" class="pagination pull-left pagination-sm"></ul>
-	    <div class="page-list-footer-msg">
-		<div class="col-xs-1 input-group-sm">
-		<select onchange="$('#pageSize').val(this.value);queryPage(1)" class="form-control">		        
-			<option value="15">15条</option><option value="25">25条</option><option value="50">50条</option>
-		</select>
-		</div>
-		<div>共<b id="totalRows">-</b>条记录</div>
-		</div>
-	</nav>
+  	</form>
+  	<script id="pageTemplate" type="text/html"></script>
 </div>
-
-
-
-
 
 
 
