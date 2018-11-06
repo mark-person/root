@@ -15,23 +15,16 @@ public class TestServiceImpl extends MyDaoSupport {
 		// 默认排序，后面加上需要从页面传过来的排序的，防止SQL注入
 		// page.addDefaultOrderName("test_id").addPermitOrderName("test_price").addUnique("test_id");
 
-		// 分页排序查询，是不是允许左边加"%"?
-		// MyCriteria c = createCriteria("where").addAnd("test_name like ?", "%", pojo.getTestName(), "%");
-
 		// 分开两条sql，mysql在count还会执行子查询, 总数返回0将不执行下一句
+		var c = createCriteria("where").addAnd("t.test_name like ?", "%", pojo.getTestName(), "%");
+		 
+		page.addDefaultOrderName("t.test_id").addPermitOrderName("t.test_name").addUnique("t.test_id");
 		
 		
+		var cSql = new StringBuilder("select count(*) from test t").append(c);
+		var qSql = new StringBuilder("select * from test t").append(c);
 		
-		
-		
-		
-		page.addDefaultOrderName("test_id").addPermitOrderName("test_name").addUnique("test_id");
-		
-		
-		var cSql = new StringBuilder("select count(*) from test");
-		var qSql = new StringBuilder("select * from test");
-		
-		List<TestPojo> list = queryPage(TestPojo.class, page, cSql, qSql);
+		List<TestPojo> list = queryPage(TestPojo.class, page, cSql, qSql, c.getParaList());
 		return list;
 
 	}

@@ -21,16 +21,14 @@ $(function() {
 	<div th:fragment="query">
 		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
 		<input type="text" class="form-control" name="testName" placeholder="请输入test_name">
-		<input type="text" class="form-control" name="testName" placeholder="请输入test_name">
-		<input type="text" class="form-control" name="testName" placeholder="请输入test_name">
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
 	<table th:fragment="list">
 		<tr class="thead-light">
 			<th class="w-id">序号</th>
-			<th class="w-id sorting-desc" data-order-name="test_id">ID</th>
+			<th class="w-id sorting-desc" data-order-name="t.test_id">ID</th>
 			<th class="w-title">SQL_ID</th>
-			<th class="w-id" data-order-name="test_name">出参</th>
+			<th class="w-id" data-order-name="t.test_name">出参</th>
 			<th class="w-date">入参</th>
 			<th class="w-time">创建时间</th>
 			<th class="w-time">function</th>
