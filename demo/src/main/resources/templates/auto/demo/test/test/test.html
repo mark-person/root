@@ -7,8 +7,52 @@
 var CONTROLLER = "auto/test";
 
 $(function() {
+	jQuery.extend(jQuery.validator.messages, {
+		  required: "必选字段",
+		  remote: "请修正该字段",
+		  email: "请输入正确格式的电子邮件",
+		  url: "请输入合法的网址",
+		  date: "请输入合法的日期",
+		  dateISO: "请输入合法的日期 (ISO).",
+		  number: "请输入合法的数字",
+		  digits: "只能输入整数",
+		  creditcard: "请输入合法的信用卡号",
+		  equalTo: "请再次输入相同的值",
+		  accept: "请输入拥有合法后缀名的字符串",
+		  maxlength: jQuery.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+		  minlength: jQuery.validator.format("请输入一个 长度最少是 {0} 的字符串"),
+		  rangelength: jQuery.validator.format("请输入 一个长度介于 {0} 和 {1} 之间的字符串"),
+		  range: jQuery.validator.format("请输入一个介于 {0} 和 {1} 之间的值"),
+		  max: jQuery.validator.format("请输入一个最大为{0} 的值"),
+		  min: jQuery.validator.format("请输入一个最小为{0} 的值")
+		});
+	
 	$("#pageDiv").page({url:"auto/test/list", data:[[${list}]]});
 });
+
+
+function add() {
+	$('#addForm')[0].reset();
+	$('#add').modal('show');
+	action = function() {
+		var r = $("#addForm").valid();
+		
+		
+		/*
+		showLoading();
+		$.post(CONTROLLER + "insert", $("#addForm").serialize(), function(r) {
+			if (r.result === RESULT_SUCCESS) {
+				$('#add').modal('hide');
+				queryPage();
+			}
+			else if (r.result === RESULT_EXIST) {
+				alertWarning(EXIST_MSG);
+				hideLoading();
+			}
+		});
+		*/
+	}
+}
 
 </script>
 
@@ -20,7 +64,8 @@ $(function() {
 <div id="pageDiv" th:include="common/fragment::page('基本信息')">
 	<div th:fragment="query">
 		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
-		<input type="text" class="form-control" name="testName" placeholder="请输入test_name">
+		<label>名称：</label>
+		<input type="text" class="form-control" name="testName" placeholder="">
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
 	<table th:fragment="list">
@@ -50,9 +95,25 @@ $(function() {
 	</table>
 </div>
 
+
+
+<div th:fragment="add" th:replace="common/fragment::modal('add', '新增', '25rem')">
+	<div class="form-group form-inline">
+		<label class="col-4"><i class="required">*</i>testName：</label>
+		<div class="col-7"><input type="text" name="testName" class="form-control" maxlength="16" required></div>
+	</div>
+	<div class="form-group form-inline">
+		<label class="col-4"><i class="required">*</i>testPrice：</label>
+		<div class="col-7"><input type="text" name="testPrice" class="form-control" maxlength="7"></div>
+	</div>	
+	<div class="form-group form-inline">
+		<label class="col-4"><i class="required">*</i>testDate：</label>
+		<div class="col-7"><input type="text" name="testDate" class="form-control"  onclick="WdatePicker()"></div>
+	</div>
 </div>
 
 
+</div>
 </body>
 </html>
 

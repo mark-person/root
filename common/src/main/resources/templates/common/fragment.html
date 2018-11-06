@@ -14,9 +14,13 @@
 <link   th:fragment="common" th:replace="::base"></link>
 
 <link   th:fragment="common" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<script th:fragment="common" type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0/dist/jquery.validate.min.js"></script>
+
 <script th:fragment="common" type="text/javascript" src="http://cdn.staticfile.org/artTemplate.js/3.0.1/template.js"></script>
 <link   th:fragment="common" rel="stylesheet" th:href="@{/static/common/common-0.1.0.css?v1}"/>
 <script th:fragment="common" type="text/javascript" th:src="@{/static/common/common-0.1.0.js?v1}"></script>
+
+
 
 
 
@@ -29,7 +33,7 @@
 	<input type="hidden" name="orderType">
 	<div class="p-2 form-inline">
 		<h6 class="form-check-label"><i class="fa fa-list"></i><span th:text="${title}"></span></h6>
-		<div th:include="::query" class="input-group-sm"></div>
+		<div th:include="::query" class="input-group-sm form-inline"></div>
 	</div>
 	<table id="pageTable" class="table table-bordered table-hover table-sm" th:include="::list"></table>
 	<ul class="pagination float-left pagination-sm" style="display: none;"></ul>
@@ -47,6 +51,21 @@
 
 
 
+<!-- 模态对话框 -->
+<div th:fragment="modal(fragment, title, width)" th:id="${fragment}" class="modal fade" data-backdrop="static" data-keyboard="false">
+<div class="modal-dialog">
+	<div class="modal-content" th:style="'width:'+${width}">
+      <div class="modal-header"><h4 class="modal-title" th:text="${title}"></h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+	<div class="modal-body" style="height:auto;">
+	<form th:id="${fragment}+'Form'"   th:include="::${fragment}"></form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary btn-sm" onclick="action.call()" type="button">确定</button>
+		<button class="btn btn-default btn-sm" data-dismiss="modal" type="button">关闭</button>
+	</div>
+	</div>
+</div>
+</div>
 
 
 

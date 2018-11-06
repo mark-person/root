@@ -2,6 +2,8 @@ html{
     font-size: 16px;
 }
 
+.required {color:red}
+
 .sorting, .sorting-asc, .sorting-desc {cursor:pointer}
 .sorting > .fa:after {content:"\f07d";}
 .sorting-asc > .fa:after {content:"\f160";}
