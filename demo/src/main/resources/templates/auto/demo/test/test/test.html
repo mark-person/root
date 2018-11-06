@@ -7,7 +7,7 @@
 var CONTROLLER = "auto/test";
 
 $(function() {
-	new Page({url:"auto/test/list", data:[[${list}]]});
+	$("#pageDiv").page({url:"auto/test/list", data:[[${list}]]});
 });
 
 </script>
@@ -20,7 +20,6 @@ $(function() {
 <div id="pageDiv" th:include="common/fragment::page('基本信息')">
 	<div th:fragment="query">
 		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
-		<input type="text" class="form-control" name="testName" placeholder="请输入test_name">
 		<input type="text" class="form-control" name="testName" placeholder="请输入test_name">
 		<input type="text" class="form-control" name="testName" placeholder="请输入test_name">
 		<input type="text" class="form-control" name="testName" placeholder="请输入test_name">

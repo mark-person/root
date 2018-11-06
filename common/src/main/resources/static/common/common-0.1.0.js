@@ -34,10 +34,16 @@ function hideLoading() {
 
 
 // 分页begin >>>>>>>>>>
+
+
+
+
+
+
 var Page = function(obj) {
 	this.url = contextPath + obj.url;
 	this.data = obj.data;
-	this.pageDiv = obj && obj.pageDiv ? obj.pageDiv : $("#pageDiv");
+	this.pageDiv = obj.pageDiv; // obj && obj.pageDiv ? obj.pageDiv : $("#pageDiv");
 	
 	// 排序图标
 	this.pageDiv.find("th[data-order-name]").each(function(){
@@ -135,7 +141,12 @@ var Page = function(obj) {
 	// search button
 	this.pageDiv.find(".fa-search").parent("button").bind("click", function() {page.queryPage()});
 	this.refreshPage(this.data);
-}
+};
+
+(function(){
+	$.fn.extend({page:function(obj) {obj.pageDiv = $(this);return new Page(obj);}});
+})($);
+
 // 分页end <<<<<<<<<
 
 
