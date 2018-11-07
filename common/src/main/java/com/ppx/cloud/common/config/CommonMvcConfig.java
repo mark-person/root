@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import com.ppx.cloud.common.contoller.MonitorInterceptor;  
+import com.ppx.cloud.monitor.contoller.MonitorInterceptor;  
 
 
 /**
