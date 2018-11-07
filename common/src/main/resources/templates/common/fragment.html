@@ -41,7 +41,7 @@
 	<input type="hidden" name="orderName">
 	<input type="hidden" name="orderType">
 	<div class="p-2 form-inline">
-		<h6 class="form-check-label"><i class="fa fa-list"></i><span th:text="${title}"></span></h6>
+		<h5 class="form-check-label"><i class="fa fa-list"></i><span th:text="${title}" style="padding:.250rem"></span></h5>
 		<div th:include="::query" class="input-group-sm form-inline"></div>
 	</div>
 	<table id="pageTable" class="table table-bordered table-hover table-sm" th:include="::list"></table>
@@ -61,10 +61,11 @@
 
 
 <!-- modal -->
-<div th:fragment="modal(fragment, title, width)" th:id="${fragment}" class="modal fade" data-backdrop="static" data-keyboard="false">
-<div class="modal-dialog">
-	<div class="modal-content" th:style="'width:'+${width}">
-      <div class="modal-header"><h4 class="modal-title" th:text="${title}"></h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+<div th:fragment="modal(fragment, title, size)" th:id="${fragment}" class="modal fade" data-backdrop="static" data-keyboard="false">
+<!-- size:modal-sm 无 modal-lg -->
+<div th:class="'modal-dialog '+${size}">
+	<div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" th:text="${title}"></h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>
 	<div class="modal-body" style="height:auto;">
 	<form th:id="${fragment}+'Form'" th:include="::${fragment}"></form>
 	</div>
@@ -76,6 +77,24 @@
 </div>
 </div>
 
+
+<div th:fragment="modalTemplate(fragment, title, size)" th:id="${fragment}" class="modal fade" data-backdrop="static" data-keyboard="false">
+<!--size:modal-sm 无 modal-lg -->
+<div class="modal-dialog">
+	<div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" th:text="${title}"></h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+	<div class="modal-body" style="height:auto;">
+		<script th:id="${fragment}+'Template'" type="text/html">
+		<form th:id="${fragment}+'Form'" th:include="::${fragment}"></form>
+		</script>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary btn-sm" onclick="action.call()" type="button">确定</button>
+		<button class="btn btn-default btn-sm" data-dismiss="modal" type="button">关闭</button>
+	</div>
+	</div>
+</div>
+</div>
 
 
 

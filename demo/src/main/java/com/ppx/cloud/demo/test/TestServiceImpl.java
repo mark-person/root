@@ -31,7 +31,7 @@ public class TestServiceImpl extends MyDaoSupport {
 	
 	public int insert(Test pojo) {
         // 后面带不允许重名的字段（该字段需要建索引）
-        return insertEntity(pojo);
+        return insertEntity(pojo, "test_name");
     }
 	
 	public Test get(Integer id) {

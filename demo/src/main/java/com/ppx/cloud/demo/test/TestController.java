@@ -10,14 +10,13 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.page.Page;
 
-@Controller("")
+@Controller
 public class TestController {
 
 	@Autowired
 	private TestServiceImpl impl;
 
 	public ModelAndView test() {
-		
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", list(new Page(), new Test()));
 		return mv;

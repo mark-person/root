@@ -8,8 +8,20 @@ var LOADING = '\
 	</div>\
 </div>';
 
+var CONFIRM = '\
+<div class="modal fade" id="myConfig"><div class="modal-dialog">\
+<div class="modal-content">\
+	<div class="modal-header"><h5 class="modal-title">确认</h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>\
+	<div class="modal-body">\
+		<div class="form-group" style="text-align: center;margin-bottom:-5px"><span id="myConfigMsg"></span></div>\
+	</div>\
+	<div class="modal-footer"><button class="btn btn-primary btn-sm" onclick="myConfigOk()" type="button">确定</button>\
+	<button class="btn btn-default btn-sm" data-dismiss="modal" type="button">关闭</button></div>\
+</div>\
+</div></div>';
+
 $(function() {
-	$('body').append(LOADING + '<div id="myAlert"><strong id="myAlertMsg"></strong><span></span></div>');
+	$('body').append(LOADING + CONFIRM + '<div id="myAlert"><strong id="myAlertMsg"></strong><span></span></div>');
 })
 
 function alertShow(msg, cls, time) {
@@ -23,12 +35,16 @@ function alertShow(msg, cls, time) {
 		setTimeout('$("#myAlert").hide();', time);
 	}
 }
-
 function alertSuccess(msg) {msg=msg==undefined?"操作成功！":msg;alertShow(msg, "alert-success", 1500)}
 function alertInfo(msg) {alertShow(msg, "alert-info", 2000)}
 function alertWarning(msg) {alertShow(msg, "alert-warning", 2000)}
 function alertDanger(msg) {alertShow(msg, "alert-danger", 0)}
 
+function confirm(msg, func) {
+	$("#myConfig").data("func", func);
+	$("#myConfigMsg").text(isNaN(msg) ? msg : "确定要删除'" + msg + "'？");
+	$("#myConfig").modal('show');
+}
 
 function showLoading() {
 	$('#loading').modal('show');
@@ -52,14 +68,8 @@ function hideLoading() {
 
 
 // 分页begin >>>>>>>>>>
-
-
-
-
-
-
 var Page = function(obj) {
-	this.url = contextPath + obj.url;
+	this.url = obj.url;
 	this.data = obj.data;
 	this.pageDiv = obj.pageDiv;
 	
@@ -168,7 +178,74 @@ var Page = function(obj) {
 	$.fn.extend({page:function(obj) {obj.pageDiv = $(this);return new Page(obj);}});
 	$.fn.extend({query:function() {$(this).data("page").queryPage();}});
 })($);
-
 // 分页end <<<<<<<<<
+
+
+
+
+// 增删改begin >>>>>>
+var SUCCESS = 1;
+var EXIST = 0;
+function add(callback) {
+	$('#addForm')[0].reset();
+	$('#add').modal('show');
+	action = function() {
+		if (!$("#addForm").valid()) return;
+		showLoading();
+		$.post(controllerPath + "insert", $("#addForm").serialize(), function(r) {
+			if (r.result === SUCCESS) {
+				$("#pageDiv").query();
+				$('#add').modal('hide');
+				alertSuccess();
+			}
+			else if (r.result === EXIST) {
+				alertWarning(EXIST_MSG);
+				hideLoading();
+			}
+			callback ? callback(r) : null;
+		});
+	}
+}
+function edit(id, getCallback, updateCallback) {
+	showLoading();
+	$.post(controllerPath + "get", {id:id}, function(r) {
+		hideLoading();
+		$('#edit').modal('show');
+		$("#editTemplate").nextAll().remove();
+		$("#editTemplate").parent().append(template("editTemplate", r));
+		getCallback ? getCallback(r) : null;
+	});
+	action = function() {
+		if (!$("#editForm").valid()) return;
+		showLoading();
+		$.post(controllerPath + "update", $("#editForm").serialize(), function(r) {
+			if (r.result === SUCCESS) {
+				$('#edit').modal('hide');
+				$("#pageDiv").query();
+				alertSuccess();
+			}
+			else if (r.result === EXIST) {
+				alertWarning(EXIST_MSG);
+				hideLoading();
+			}
+			updateCallback ? updateCallback(r) : null;
+		});
+	}
+}
+function remove(id) {
+	confirm(id, function() {
+		showLoading();
+		$.post(controllerPath + "delete", {id:id}, function(r) {
+			r.result == SUCCESS ? $("#pageDiv").query() : alertDanger("error return " + r.result);
+		});
+	});
+}
+//增删改end >>>>>>
+
+
+
+
+
+
 
 
