@@ -1,4 +1,16 @@
 
+$.ajaxSetup({
+	error: function(r, textStatus, errorThrown) {
+		var msg = "";
+		if (r.responseJSON) {
+			msg = "[" + r.responseJSON.errorCode + "]" + r.responseJSON.errorInfo;
+		}
+		$('#loading').modal('hide');
+		alertDanger("error:" + r.status + "|" + this.url + "|" + msg);
+	}
+});
+
+
 var LOADING = '\
 <div class="modal" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" style="z-index:10000">\
 	<div class="modal-dialog" role="document" style="width:120px">\

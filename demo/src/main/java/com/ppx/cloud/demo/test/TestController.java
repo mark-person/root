@@ -23,6 +23,7 @@ public class TestController {
 	}
 	
 	public Map<?, ?> list(Page page, Test pojo) {
+		int i = 1 / 0;
 		return ControllerReturn.success(page, impl.list(page, pojo));
 	}
 	 
