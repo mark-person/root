@@ -26,10 +26,13 @@ public class MonitorInterceptor implements HandlerInterceptor {
         // 判断是否为404或模板错误
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
         
+        System.out.println("sssss:" + request.getRequestURI().indexOf("."));
+        
+        statusCode = statusCode == null ? 0 : statusCode;
         // 不支持uri带.的请求，权限不好控制且不好统计
         statusCode = request.getRequestURI().indexOf(".") > 0 ? 404 : statusCode;
         
-        if (statusCode != null && statusCode != 200) {
+        if (statusCode != 200) {
             // 当出现404的，把输入的json写入到日志(判断是json请求才写入)
             if (request.getContentType() != null && request.getContentType().indexOf("application/json") >= 0) {
                 try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
