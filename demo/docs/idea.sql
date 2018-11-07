@@ -2,7 +2,7 @@
 
 
 CREATE TABLE `test` (
-  `test_id` int(11) NOT NULL,
+  `test_id` int(11) NOT NULL auto_increment,
   `test_name` varchar(45) DEFAULT NULL,
   `test_date` date DEFAULT NULL,
   `test_time` timestamp NULL DEFAULT NULL,

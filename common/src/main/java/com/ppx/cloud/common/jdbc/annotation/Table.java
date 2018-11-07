@@ -33,7 +33,7 @@ public @interface Table {
      * (Optional) The name of the table.
      * <p> Defaults to the entity name.
      */
-    String name() default "";
+    String value() default "";
 
   
 }

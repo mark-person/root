@@ -343,7 +343,7 @@ public class MyDaoSupport extends JdbcDaoSupport {
 	 */
 	private String getTableName(Object bean) {
 		Table table = bean.getClass().getAnnotation(Table.class);
-		return (table == null) ? underscoreName(bean.getClass().getSimpleName()) : table.name();
+		return (table == null) ? underscoreName(bean.getClass().getSimpleName()) : table.value();
 	}
 
 	/**

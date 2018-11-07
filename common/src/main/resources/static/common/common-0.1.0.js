@@ -9,8 +9,26 @@ var LOADING = '\
 </div>';
 
 $(function() {
-	$('body').append(LOADING);
+	$('body').append(LOADING + '<div id="myAlert"><strong id="myAlertMsg"></strong><span></span></div>');
 })
+
+function alertShow(msg, cls, time) {
+	$("#myAlertMsg").text(msg);
+	$("#myAlert").attr("class", "alert " + cls);
+	$("#myAlert").show();
+	if (time == 0) {
+		$("#myAlert span").html('<a href="javascript:$(\'#myAlert\').hide();">关闭</a>')
+	}
+	else {
+		setTimeout('$("#myAlert").hide();', time);
+	}
+}
+
+function alertSuccess(msg) {msg=msg==undefined?"操作成功！":msg;alertShow(msg, "alert-success", 1500)}
+function alertInfo(msg) {alertShow(msg, "alert-info", 2000)}
+function alertWarning(msg) {alertShow(msg, "alert-warning", 2000)}
+function alertDanger(msg) {alertShow(msg, "alert-danger", 0)}
+
 
 function showLoading() {
 	$('#loading').modal('show');
@@ -43,7 +61,10 @@ function hideLoading() {
 var Page = function(obj) {
 	this.url = contextPath + obj.url;
 	this.data = obj.data;
-	this.pageDiv = obj.pageDiv; // obj && obj.pageDiv ? obj.pageDiv : $("#pageDiv");
+	this.pageDiv = obj.pageDiv;
+	
+	// 存储起来，以便$("#pageDiv").query()使用
+	$(this.pageDiv).data("page", this);
 	
 	// 排序图标
 	this.pageDiv.find("th[data-order-name]").each(function(){
@@ -145,6 +166,7 @@ var Page = function(obj) {
 
 (function(){
 	$.fn.extend({page:function(obj) {obj.pageDiv = $(this);return new Page(obj);}});
+	$.fn.extend({query:function() {$(this).data("page").queryPage();}});
 })($);
 
 // 分页end <<<<<<<<<

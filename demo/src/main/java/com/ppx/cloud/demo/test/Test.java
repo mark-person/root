@@ -5,7 +5,11 @@ package com.ppx.cloud.demo.test;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ppx.cloud.common.jdbc.annotation.Id;
+import com.ppx.cloud.common.jdbc.annotation.Table;
 import com.ppx.cloud.common.util.DateUtils;
 
 /**
@@ -13,19 +17,16 @@ import com.ppx.cloud.common.util.DateUtils;
  *
  * @date 2018年11月5日
  */
-public class TestPojo {
+@Table("test")
+public class Test {
 	
+	@Id
 	private Integer testId;
 	
 	private String testName;
 	
-	/**
-	 * @JsonFormat(pattern=DateUtils.DATE_PATTERN)
-	 * @DateTimeFormat(pattern=DateUtils.DATE_PATTERN)
-	 */
-	
-	
 	@JsonFormat(pattern=DateUtils.DATE_PATTERN)
+	@DateTimeFormat(pattern=DateUtils.DATE_PATTERN)
 	private Date testDate;
 	
 	private Date testTime;
