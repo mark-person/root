@@ -1,10 +1,11 @@
 package com.ppx.cloud.common.exception.custom;
 
 
+
 /**
  * 404异常
- * @author dengxz
- * @date 2017年3月29日
+ * @author mark
+ * @date 2018年11月8日
  */
 @SuppressWarnings("serial")
 public class NotFoundException extends RuntimeException {
