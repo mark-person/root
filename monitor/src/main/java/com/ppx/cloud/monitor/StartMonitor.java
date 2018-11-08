@@ -1,13 +1,8 @@
 package com.ppx.cloud.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
-
-import com.ppx.cloud.monitor.queue.AccessQueueConsumer;
 
 
 /**
@@ -18,8 +13,8 @@ import com.ppx.cloud.monitor.queue.AccessQueueConsumer;
 @Service
 public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> {
     
-    @Autowired
-    private AccessQueueConsumer accessQueueConsumer;
+    //@Autowired
+    //private AccessQueueConsumer accessQueueConsumer;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
