@@ -50,6 +50,7 @@
 
 	<modules>
 		<module>common</module>
+		<module>monitor</module>
 		<module>demo</module> 
 	</modules>
 
