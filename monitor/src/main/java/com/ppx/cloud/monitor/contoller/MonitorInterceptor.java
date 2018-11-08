@@ -27,8 +27,6 @@ public class MonitorInterceptor implements HandlerInterceptor {
         // 判断是否为404或模板错误
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
         
-        System.out.println("sssss:" + request.getRequestURI().indexOf("."));
-        
         statusCode = statusCode == null ? 0 : statusCode;
         // 不支持uri带.的请求，权限不好控制且不好统计
         statusCode = request.getRequestURI().indexOf(".") > 0 ? 404 : statusCode;
@@ -69,6 +67,15 @@ public class MonitorInterceptor implements HandlerInterceptor {
         return true;
     }
     
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+            ModelAndView modelAndView) throws Exception {
+    }
+
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+    }
+    
+    
     private void returnWebResponse(HttpServletRequest request, HttpServletResponse response, 
             Integer statusCode, String msg) {
         String accept = request.getHeader("accept");
@@ -77,13 +84,5 @@ public class MonitorInterceptor implements HandlerInterceptor {
         } else {
             ControllerReturn.returnErrorJson(response, statusCode, msg);
         }
-    }
-
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-            ModelAndView modelAndView) throws Exception {
-    }
-
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-            throws Exception {
     }
 }

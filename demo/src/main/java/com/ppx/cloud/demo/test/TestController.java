@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.page.Page;
+import com.ppx.cloud.common.util.ApplicationUtils;
 
 @Controller
 public class TestController {
@@ -40,6 +41,14 @@ public class TestController {
     
     public Map<?, ?> delete(@RequestParam Integer id) {
         return ControllerReturn.success(impl.delete(id));
+    }
+    
+    public Map<?, ?> action() {
+    	
+    	// String[] n = ApplicationUtils.context.getBeanDefinitionNames();
+    	String jarParentHome = ApplicationUtils.getServiceId();
+    	
+    	return ControllerReturn.success(jarParentHome);
     }
 	    
 }
