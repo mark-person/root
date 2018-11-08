@@ -8,7 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ppx.cloud.common.exception.custom.IllegalUrlException;
+import com.ppx.cloud.common.exception.security.PermissionUrlException;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
@@ -104,7 +104,7 @@ public class AccessLog {
 
     public void setUri(String uri) {
         if (uri.length() > 64) {
-            throw new IllegalUrlException();
+            throw new PermissionUrlException();
         }
     }
 

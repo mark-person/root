@@ -1,5 +1,6 @@
 package com.ppx.cloud.common.exception;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.util.NestedServletException;
 
-import com.ppx.cloud.common.exception.custom.IllegalUrlException;
 import com.ppx.cloud.common.exception.custom.LoginException;
 import com.ppx.cloud.common.exception.custom.NotFoundException;
 import com.ppx.cloud.common.exception.custom.PermissionParamsException;
@@ -73,7 +73,7 @@ public class ErrorCode {
         // 需要接收json参数 如：@RequestBody Test test
         errorMap.put(HttpMessageNotReadableException.class, IGNORE_ERROR);
         // URI不合法，太长等等
-        errorMap.put(IllegalUrlException.class, IGNORE_ERROR);
+        errorMap.put(PermissionUrlException.class, IGNORE_ERROR);
         
         
         // 数据库连接不上(如没有启动，或死掉)
