@@ -19,16 +19,24 @@ package org.apache.tomcat.util.threads;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
-import com.ppx.cloud.monitor.bean.AccessLog;
+import com.ppx.cloud.monitor.pojo.AccessLog;
 
 /**
  * A Thread implementation that records the time at which it was created.
  *
  */
 public class TaskThread extends Thread {
-    
-    // dengxz
+	
+	/** @author mark */
     private AccessLog accessLog;
+    
+    public AccessLog getAccessLog() {
+        return accessLog;
+    }
+
+    public void setAccessLog(AccessLog accessLog) {
+        this.accessLog = accessLog;
+    }
 
     private static final Log log = LogFactory.getLog(TaskThread.class);
     private final long creationTime;
@@ -72,15 +80,5 @@ public class TaskThread extends Thread {
         }
 
     }
-
-    public AccessLog getAccessLog() {
-        return accessLog;
-    }
-
-    public void setAccessLog(AccessLog accessLog) {
-        this.accessLog = accessLog;
-    }
-    
-    
 
 }

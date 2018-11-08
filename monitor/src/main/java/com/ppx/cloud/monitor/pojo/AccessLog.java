@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ppx.cloud.common.exception.custom.IllegalUrlException;
-import com.ppx.cloud.monitor.util.AccessUtils;
+import com.ppx.cloud.monitor.util.MonitorUtils;
 
 
 /**
@@ -310,11 +310,11 @@ public class AccessLog {
         AccessLog accessLog = new AccessLog();
         accessLog.setBeginTime(System.currentTimeMillis());
         accessLog.setBeginNanoTime(System.nanoTime());
-        accessLog.setIp(AccessUtils.getIpAddress(request));
+        accessLog.setIp(MonitorUtils.getIpAddress(request));
         accessLog.setMethod(request.getMethod());
         accessLog.setUri(request.getRequestURI());
         accessLog.setQueryString(request.getQueryString());
-        accessLog.setReferer(AccessUtils.getReferer(request));
+        accessLog.setReferer(MonitorUtils.getReferer(request));
         return accessLog;
     }
 }

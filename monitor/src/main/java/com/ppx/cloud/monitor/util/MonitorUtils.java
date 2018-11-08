@@ -28,6 +28,7 @@ import org.springframework.util.StringUtils;
 import com.ppx.cloud.common.config.ObjectMappingCustomer;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.pojo.AccessLog;
 
 
 
@@ -36,7 +37,7 @@ import com.ppx.cloud.monitor.config.MonitorConfig;
  * @author mark
  * @date 2018年11月7日
  */
-public class AccessUtils {
+public class MonitorUtils {
 
     private static OperatingSystemMXBean operatingSystemMXBean;
 
@@ -45,7 +46,7 @@ public class AccessUtils {
     }
 
     public static void setOperatingSystemMXBean(OperatingSystemMXBean operatingSystemMXBean) {
-        AccessUtils.operatingSystemMXBean = operatingSystemMXBean;
+        MonitorUtils.operatingSystemMXBean = operatingSystemMXBean;
     }
     
     /**
@@ -53,6 +54,8 @@ public class AccessUtils {
      * @return
      */
     public static Map<String, Object> getRequestInfo(boolean isOverMem) {
+    	
+    	
         Map<String, Object> info = new HashMap<String, Object>();
         info.put("isOverTime", false);
         
@@ -91,15 +94,15 @@ public class AccessUtils {
         }
         // 超过指定时间或内存超出，则输出线程信息
         if ((maxProcessingTime > MonitorConfig.DUMP_THREAD_MAX_TIME || isOverMem) && !"".equals(maxWorkerThreadName)) {
-            Thread t = AccessUtils.getThread(maxWorkerThreadName);
+            Thread t = MonitorUtils.getThread(maxWorkerThreadName);
             if (t instanceof TaskThread) {
                 // 找出accessLog
                 TaskThread taskThread = (TaskThread)t;
                 // TODO
-//                AccessLog accessLog = taskThread.getAccessLog();
-//                if (accessLog != null) {
-//                    info.put("accessLog", accessLog);
-//                }
+                AccessLog accessLog = taskThread.getAccessLog();
+                if (accessLog != null) {
+                    info.put("accessLog", accessLog);
+                }
             }
             
             StackTraceElement[] stackTraceElements = t.getStackTrace();                 
@@ -405,14 +408,13 @@ public class AccessUtils {
     }
     
     private static String getTheadMsg(String theadName) {
-        Thread thread = AccessUtils.getThread(theadName);
+        Thread thread = MonitorUtils.getThread(theadName);
         String threadMsg = "";
         if (thread != null && thread instanceof TaskThread) {
-        	// TODO
-//            TaskThread tt = (TaskThread)thread;
-//            AccessLog accessLog = tt.getAccessLog();
-//            List<String> infoList = ConsoleServiceImpl.getInfoList(accessLog);
-//            threadMsg = StringUtils.collectionToDelimitedString(infoList, "\n");
+            TaskThread tt = (TaskThread)thread;
+            AccessLog accessLog = tt.getAccessLog();
+            List<String> infoList = AccessLogUtils.getInfoList(accessLog);
+            threadMsg = StringUtils.collectionToDelimitedString(infoList, "\n");
         }
         else if (thread != null) {
             threadMsg = thread.getClass().getName();
