@@ -7,51 +7,21 @@
 <link th:replace="common/fragment::common"/>
 
 
-<style type="text/css">
 
-#myAlert {position:fixed;left:0px;top:0px;width:100%;text-align:center;display:none;z-index:9999}
-</style>
+
 
 <script type="text/javascript" th:inline="javascript">
+var controllerPath = contextPath + "auto/product/";
 
 $(function() {
-	
-	$.ajaxSetup({
-		error: function(r, textStatus, errorThrown) {
-			var msg = "";
-			if (r.responseJSON) {
-				msg = "[" + r.responseJSON.timestamp + "]" + r.responseJSON.message;
-			}
-			$('#loading').modal('hide');
-			alertDanger("error:" + r.status + "|" + this.url + "|" + msg);
-		}
-	});
-	
-	$('body').append('<div id="myAlert"><strong id="myAlertMsg"></strong><span></span></div>');
-	
-	
 	
 	$(".fa-star").bind("click", function() {
 		alert($(this).prevAll().length + 1);
 	})
+	
 });
 
-function alertSuccess(msg) {msg=msg==undefined?"操作成功！":msg;alertShow(msg, "alert-success", 1200)}
-function alertInfo(msg) {alertShow(msg, "alert-info", 1200)}
-function alertWarning(msg) {alertShow(msg, "alert-warning", 3200)}
-function alertDanger(msg) {alertShow(msg, "alert-danger", 0)}
 
-function alertShow(msg, cls, time) {
-	$("#myAlertMsg").text(msg);
-	$("#myAlert").attr("class", "alert " + cls);
-	$("#myAlert").show();
-	if (time == 0) {
-		$("#myAlert span").html('<a href="javascript:$(\'#myAlert\').hide();">关闭</a>')
-	}
-	else {
-		setTimeout('$("#myAlert").hide();', time);
-	}
-}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>img
@@ -144,8 +114,7 @@ function upload(files) {
 	$.ajax({url:[[@{/auto/uploadImg/uploadIdea}]], type:"POST", contentType:false, data:formData ,processData:false,
 		success:function(r) {
 			if (r.result == 1) {
-				alertSuccess();
-				alert(r.arrayList);
+				saveProd(r.arrayList);
 			}
 			else if (r.result == -1) {
 				alertDanger(r.value);
@@ -154,11 +123,22 @@ function upload(files) {
 	})
 }
 
+function saveProd(srcList) {
+	if (!$("[name=prodTitle]").val()) {
+		 $("[name=prodTitle]").val($("[name=prodTitle]").prop("placeholder"));
+	}
+	
+	
+	$.post(controllerPath + "insert", $("#addForm").serialize(), function(r) {
+		r.result == SUCCESS ? $("#pageDiv").query() : alertDanger("error return " + r.result);
+	});
+}
+
 
 function ok() {
 	var imgLen = $(".upload-img").length;
 	if (imgLen == 0) {
-		alertWarning("不能为空！");
+		alertWarning("图片不能为空");
 		return;
 	}
 	upload();
@@ -187,10 +167,9 @@ function ok() {
 </script>
 
 <script>
+
 $(function() {
 	$("#recommend i").click(function() {
-		
-		//alert(1)
 		$("#recommend i").removeClass("fa-star-o");
 		$("#recommend i").addClass("fa-star");
 		
@@ -198,21 +177,23 @@ $(function() {
 		$(this).nextAll().addClass("fa-star-o");
 	});
 })
+
 </script>
 
 <div class="panel panel-default">
+<form id="addForm">
 <ul class="list-group" id="imgUL">
     <li class="list-group-item">
     	<div class="row">
-    		<label class="col-form-label col-3" style="">标题</label>
-    		<input class="form-control col-7" type="text" name="">
+    		<label class="col-form-label col-3">标题</label>
+    		<input class="form-control col-7" type="text" name="prodTitle" placeholder="无">
     	</div>
     </li>
     <li class="list-group-item">
    		<div class="row">
 	    	<label class="col-form-label col-3">类目	</label>
 	    	<select class="form-control col-7" name="catId">
-	    		<option value="-1">未知1</option>
+	    		<option value="-1">未知</option>
 	    		<option value="1">电器</option>
 	    		<option value="1">玩具</option>
 	    	</select>
@@ -233,7 +214,6 @@ $(function() {
 		    	<i class="fa fa-star fa-lg"></i>
 		    	<i class="fa fa-star fa-lg"></i>
 		    	<i class="fa fa-star fa-lg"></i>
-		    	
 	    	</div>
     	</div>
     </li>
@@ -245,6 +225,9 @@ $(function() {
 		<button type="button" class="btn btn-primary btn-sm" onclick="ok()">确认提交</button>
 	</li>
 </ul>
+</form>
+
+
 </div>
 
 </div>

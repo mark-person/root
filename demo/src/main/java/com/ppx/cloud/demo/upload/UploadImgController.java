@@ -67,12 +67,15 @@ public class UploadImgController {
 				try {
 					// convert -resize 200x100 src.jpg dest.jpg 200×100(等比缩放)
 					String miniPath = mainPath + imgFileName + "_100.png";
-					String command = "convert -resize 100x100 " + mainPath + imgFileName + " " + miniPath;
-					Process process = Runtime.getRuntime().exec(command);
+					String command = "convert " + mainPath + imgFileName + " " + miniPath;
+					
+					String[] commands = {"sh", "-c", "convert -resize 200x100 src.jpg dest.jpg"};
+					Process process = Runtime.getRuntime().exec(commands);
 					InputStream inputStream = process.getErrorStream();
 					String cmdResult = new BufferedReader(new InputStreamReader(inputStream, "GBK")).lines()
 							.collect(Collectors.joining(System.lineSeparator()));
 					inputStream.close();
+					System.out.println("command:" + command + "||" + cmdResult);
 					if (!StringUtils.isEmpty(cmdResult)) {
 						return ControllerReturn.error(cmdResult);
 					}

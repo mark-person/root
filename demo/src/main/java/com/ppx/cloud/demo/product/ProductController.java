@@ -35,11 +35,27 @@ public class ProductController {
 		return ControllerReturn.success(page, impl.list(page, pojo));
 	}
 	
+	private String getUserAgent(HttpServletRequest request) {
+		
+		String userAgent = (String)request.getHeader("user-agent");
+		if (userAgent.indexOf("Android") > -1) {
+			return "Android";
+		}
+		else if (userAgent.indexOf("iPhone") > -1) {
+			return "iPhone";
+		}
+		else if (userAgent.indexOf("Windows") > -1 && userAgent.indexOf("Chrome") > -1) {
+			return "Windows Chrome";
+		}
+		return "unknown";
+	}
+	
 	public ModelAndView addProduct(@RequestParam Integer u, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
 		
-		String userAgent = (String)request.getHeader("user-agent");
-		System.out.println("00000000userAgent:" + userAgent);
+		System.out.println("00000000userAgent:" + getUserAgent(request));
+		
+		
 		
 		// Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36
 		
@@ -54,6 +70,10 @@ public class ProductController {
 		}
 		
 		return mv;
+	}
+	
+	public Map<?, ?> insert(Product pojo) {
+		return ControllerReturn.success(impl.insert(pojo));
 	}
 	
 	
