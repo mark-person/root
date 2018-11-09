@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link th:replace="common/fragment::common"/>
+<script type="text/javascript" th:inline="javascript">
+
+var controllerPath = contextPath + "auto/product/";
+
+$(function() {
+	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
+	
+});
+</script>
+</head>
+
+<body>
+<div class="container">
+
+<div id="pageDiv" th:include="common/fragment::page('基本信息')">
+	<div th:fragment="query">
+		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
+		<label>名称：</label>
+		<input type="text" class="form-control" name="testName">
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
+	</div>
+	<table th:fragment="list">
+		<tr class="thead-light">
+			<th class="w-id sorting-desc" data-order-name="t.test_id">ID</th>
+			<th class="w-title">SQL_ID</th>
+			<th class="w-id" data-order-name="t.test_name">出参</th>
+			<th class="w-date">入参</th>
+			<th class="w-time">创建时间</th>
+			<th class="w-time">function</th>
+			<th class="w-action">操作</th>
+		</tr>
+		<tr style="display:none">
+			<td>{{i+1}}</td>
+			<td>{{v.prodId}}</td>
+			<td>{{v.prodTime}}</td>
+			<td>{{v.catId}}</td>
+			<td>{{v.creator}}</td>
+			<td>{{v.created}}</td>
+			<td>
+				<a href="#" onclick="remove('{{v.testId}}')">[删除]</a>
+				<a href="#" onclick="edit('{{v.testId}}')">[修改]</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
+
+</div>
+</body>
+</html>
+

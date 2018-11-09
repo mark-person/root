@@ -1,5 +1,6 @@
 package com.ppx.cloud.demo.product;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +12,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.context.MyContext;
 import com.ppx.cloud.common.context.User;
+import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.exception.custom.PermissionParamsException;
+import com.ppx.cloud.common.page.Page;
+import com.ppx.cloud.demo.test.Test;
 
 @Controller
 public class ProductController {
@@ -20,6 +24,17 @@ public class ProductController {
 	private ProductServiceImpl impl;
 	
 	private Set<Integer> USER_SET = Set.of(0, 1);
+
+	
+	public ModelAndView product() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("list", list(new Page(), new Product()));
+		return mv;
+	}
+	
+	public Map<?, ?> list(Page page, Product pojo) {
+		return ControllerReturn.success(page, impl.list(page, pojo));
+	}
 	
 	public ModelAndView add(@RequestParam Integer u, HttpServletResponse response) {
 		ModelAndView mv = new ModelAndView();
@@ -33,8 +48,6 @@ public class ProductController {
 			user.setUserName("name" + u);
 			MyContext.setUser(user);
 		}
-		
-		impl.test();
 		
 		return mv;
 	}
