@@ -28,6 +28,12 @@ $(function() {
 	});
 	
 	$('body').append('<div id="myAlert"><strong id="myAlertMsg"></strong><span></span></div>');
+	
+	
+	
+	$(".fa-star").bind("click", function() {
+		alert($(this).prevAll().length + 1);
+	})
 });
 
 function alertSuccess(msg) {msg=msg==undefined?"操作成功！":msg;alertShow(msg, "alert-success", 1200)}
@@ -161,6 +167,9 @@ function ok() {
 
 </script>
 
+<style type="text/css">
+.fa-star {color:orange;}
+</style>
 </head>
 
 <body>
@@ -195,14 +204,14 @@ $(function() {
 <ul class="list-group" id="imgUL">
     <li class="list-group-item">
     	<div class="row">
-    		<label class="col-form-label col-3" style="">标题(加上userAgent)</label>
-    		<input class="form-control col-7" type="text">
+    		<label class="col-form-label col-3" style="">标题</label>
+    		<input class="form-control col-7" type="text" name="">
     	</div>
     </li>
     <li class="list-group-item">
    		<div class="row">
 	    	<label class="col-form-label col-3">类目	</label>
-	    	<select class="form-control col-7">
+	    	<select class="form-control col-7" name="catId">
 	    		<option value="-1">未知1</option>
 	    		<option value="1">电器</option>
 	    		<option value="1">玩具</option>
@@ -212,7 +221,7 @@ $(function() {
     <li class="list-group-item">
     	<div class="row">
 	    	<label class="col-form-label col-3">价格	</label>
-	    	<input class="form-control col-7" type="number">
+	    	<input class="form-control col-7" type="number" name="prodPrice">
     	</div>
     </li>
     <li class="list-group-item">
@@ -224,6 +233,7 @@ $(function() {
 		    	<i class="fa fa-star fa-lg"></i>
 		    	<i class="fa fa-star fa-lg"></i>
 		    	<i class="fa fa-star fa-lg"></i>
+		    	
 	    	</div>
     	</div>
     </li>

@@ -31,9 +31,11 @@ create table product
 (
   prod_id		int not null auto_increment,
   prod_title	varchar(32) not null,
+  prod_price	decimal(7,2),
   cat_id		int not null,
   recommend 	tinyint not null comment '推荐星级',
   main_img_src	int not null comment '主图src',
+  user_agent  	varchar(32),
   primary key (prod_id)
 ) comment='商品';
 

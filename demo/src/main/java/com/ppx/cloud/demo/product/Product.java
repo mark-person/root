@@ -11,6 +11,7 @@ public class Product {
 
 	private Integer prodId;
 	private String prodTitle;
+	private Float prodPrice;
 	private Integer catId;
 	private Integer recommend;
 	private String mainImgSrc;
@@ -29,6 +30,14 @@ public class Product {
 
 	public void setProdTitle(String prodTitle) {
 		this.prodTitle = prodTitle;
+	}
+
+	public Float getProdPrice() {
+		return prodPrice;
+	}
+
+	public void setProdPrice(Float prodPrice) {
+		this.prodPrice = prodPrice;
 	}
 
 	public Integer getCatId() {
