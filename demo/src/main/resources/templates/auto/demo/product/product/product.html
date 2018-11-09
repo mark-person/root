@@ -11,6 +11,10 @@ $(function() {
 	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
 	
 });
+
+function add() {
+	open(controllerPath + "addProduct?u=0");
+}
 </script>
 </head>
 
@@ -26,18 +30,16 @@ $(function() {
 	</div>
 	<table th:fragment="list">
 		<tr class="thead-light">
-			<th class="w-id sorting-desc" data-order-name="t.test_id">ID</th>
-			<th class="w-title">SQL_ID</th>
-			<th class="w-id" data-order-name="t.test_name">出参</th>
-			<th class="w-date">入参</th>
-			<th class="w-time">创建时间</th>
-			<th class="w-time">function</th>
+			<th class="w-id sorting-desc" data-order-name="t.prod_id">ID</th>
+			<th class="w-title">title</th>
+			<th class="w-id">catId</th>
+			<th class="w-time">创建人</th>
+			<th class="w-id">创建时间</th>
 			<th class="w-action">操作</th>
 		</tr>
 		<tr style="display:none">
-			<td>{{i+1}}</td>
 			<td>{{v.prodId}}</td>
-			<td>{{v.prodTime}}</td>
+			<td>{{v.prodTitle}}</td>
 			<td>{{v.catId}}</td>
 			<td>{{v.creator}}</td>
 			<td>{{v.created}}</td>

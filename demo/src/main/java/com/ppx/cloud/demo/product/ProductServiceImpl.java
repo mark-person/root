@@ -30,4 +30,7 @@ public class ProductServiceImpl extends MyDaoSupport {
 		return list;
 	}
 	
+	public int insert(Product pojo) {
+        return insertEntity(pojo);
+    }
 }

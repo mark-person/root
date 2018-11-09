@@ -3,7 +3,7 @@ package com.ppx.cloud.demo.product;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,7 +15,6 @@ import com.ppx.cloud.common.context.User;
 import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.exception.custom.PermissionParamsException;
 import com.ppx.cloud.common.page.Page;
-import com.ppx.cloud.demo.test.Test;
 
 @Controller
 public class ProductController {
@@ -23,7 +22,7 @@ public class ProductController {
 	@Autowired
 	private ProductServiceImpl impl;
 	
-	private Set<Integer> USER_SET = Set.of(0, 1);
+	private Set<Integer> USER_SET = Set.of(0, 1, 2);
 
 	
 	public ModelAndView product() {
@@ -36,8 +35,13 @@ public class ProductController {
 		return ControllerReturn.success(page, impl.list(page, pojo));
 	}
 	
-	public ModelAndView add(@RequestParam Integer u, HttpServletResponse response) {
+	public ModelAndView addProduct(@RequestParam Integer u, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
+		
+		String userAgent = (String)request.getHeader("user-agent");
+		System.out.println("00000000userAgent:" + userAgent);
+		
+		// Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36
 		
 		if (!USER_SET.contains(u)) {
 			throw new PermissionParamsException("用户ID:" + u + "错误");
