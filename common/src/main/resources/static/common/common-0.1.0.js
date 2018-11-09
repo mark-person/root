@@ -127,8 +127,14 @@ var Page = function(obj) {
 		var pageNumUL = this.pageDiv.find(".pagination:eq(0)");
 		pageNumUL.empty();
 		
-		$("#totalRows").text(p.totalRows);
-		if (p.totalRows == 0) return;
+		
+		this.pageDiv.find(".totalRows").find("b").text(p.totalRows);
+		if (p.totalRows == 0) {
+			this.pageDiv.find(".totalRows").css("width", "100%");
+			return;
+		}
+		this.pageDiv.find(".totalRows").css("width", "auto");
+	
 		
 		var totalNum = Math.ceil(p.totalRows/p.pageSize);
 				

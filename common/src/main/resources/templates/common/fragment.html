@@ -44,15 +44,15 @@
 		<h5 class="form-check-label"><i class="fa fa-list"></i><span th:text="${title}" style="padding:.250rem"></span></h5>
 		<div th:include="::query" class="input-group-sm form-inline"></div>
 	</div>
-	<table id="pageTable" class="table table-bordered table-hover table-sm" th:include="::list"></table>
+	<table id="pageTable" class="table table-bordered table-hover table-sm" style="margin-bottom:0.5rem" th:include="::list"></table>
 	<ul class="pagination float-left pagination-sm" style="display: none;"></ul>
   	<ul class="pagination pagination-sm" style="display: none;">
   		<li class="page-item input-group-sm">
-	    	<select class="form-control" name="pageSize">        
+	    	<select class="form-control" name="pageSize" style="display: none;">        
 				<option value="2">2条</option><option value="3">3条</option><option value="50">50条</option>
 			</select>
 		</li>
-		<li class="page-item" style="padding: .25rem .5rem"><label>共<b id="totalRows">-</b>条记录</label></li>
+		<li class="page-item totalRows" style="padding: .25rem .5rem;text-align:center;"><label>共<b>-</b>条记录</label></li>
   	</ul>
   	</form>
   	<script id="pageTemplate" type="text/html"></script>
