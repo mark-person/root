@@ -8,7 +8,7 @@ CREATE TABLE `test` (
   `test_time` timestamp NULL DEFAULT NULL,
   `test_value` decimal(7,2) DEFAULT NULL,
   PRIMARY KEY (`test_id`)
-) 
+);
 
 
 create table login_user

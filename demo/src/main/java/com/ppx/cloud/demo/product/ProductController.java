@@ -24,7 +24,7 @@ public class ProductController {
 	@Autowired
 	private CategoryService catServ;
 
-	private Set<Integer> USER_SET = Set.of(0, 1, 2);
+	private Set<Integer> USER_SET = Set.of(0, 100, 200);
 
 	public ModelAndView product() {
 		ModelAndView mv = new ModelAndView();

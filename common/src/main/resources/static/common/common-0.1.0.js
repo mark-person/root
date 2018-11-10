@@ -116,7 +116,13 @@ var Page = function(obj) {
 		$("#pageTemplate").text("{{each arrayList as v i}}<tr>" + templateHtml + "</tr>{{/each}}");
 		pageTable.find(">tbody").append(template("pageTemplate", data));
 		
+		// TODO改成里面是一层模板
+		pageTable.find("img:gt(0)").each(function(i, o){
+			$(this).attr("src", $(this).attr("data-src"));
+		})
+		
 		this.refreshFooter(data.page);
+		this.pageDiv.find("[name=pageSize]").show();
 		this.pageDiv.find(".pagination").show();
 	}
 	

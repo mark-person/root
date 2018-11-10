@@ -34,14 +34,15 @@ public class CommonMvcConfig extends WebMvcConfigurationSupport {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		super.addInterceptors(registry);
-		// registry.addInterceptor(new MonitorInterceptor()).excludePathPatterns("/static/**/*", "/favicon.ico");
+		// registry.addInterceptor(new MonitorInterceptor()).excludePathPatterns("/static/**/*", "/favicon.ico", "/img/**/*");
 	}
 	
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		super.addResourceHandlers(registry);
 	    registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/favicon.ico").addResourceLocations("classpath:/static/favicon.ico");
-        super.addResourceHandlers(registry);
+        
     }
 	
 }  

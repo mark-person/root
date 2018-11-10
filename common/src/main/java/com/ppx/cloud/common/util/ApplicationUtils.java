@@ -19,7 +19,7 @@ public class ApplicationUtils {
     // spring的上下文，由启动类初始化
     public static ConfigurableApplicationContext context;
     
-    // jar包的上一层路径(为了方便在window下测试)，由启动类初始化
+    // jar包的上一层路径(为了方便在window下测试)，由DemoMvcConfig初始化
     public static String JAR_PARENT_HOME;
    
     

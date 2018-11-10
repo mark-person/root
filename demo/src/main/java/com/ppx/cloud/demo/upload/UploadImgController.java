@@ -10,18 +10,18 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.boot.system.ApplicationHome;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.util.ApplicationUtils;
 
 @Controller
 public class UploadImgController {
 	
-	private final static String UPLOAD = "upload/";
+	private final static String UPLOAD = "img/";
 	
 	private final static String IDEA_MODULE = "idea/";
 	
@@ -37,8 +37,7 @@ public class UploadImgController {
 		var returnList = new ArrayList<String>();
 		
 		// 不存就创建文件夹 >>>>>>>>>>>>>>>>>>>>>
-		ApplicationHome home = new ApplicationHome(getClass());
-		String modulePath = home.getSource().getParentFile().getParent() + "/" + UPLOAD + IDEA_MODULE;
+		String modulePath = ApplicationUtils.JAR_PARENT_HOME + UPLOAD + IDEA_MODULE;
 		// 10天一个文件夹
 		Date today = new Date();
 		// String.format("%tj", d)一年的第几天
