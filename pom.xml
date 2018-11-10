@@ -10,6 +10,8 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.0.6.RELEASE</version>
+		
+		<!--TODO 升级到2.1 -->
 	</parent>
 	
 	<properties>
