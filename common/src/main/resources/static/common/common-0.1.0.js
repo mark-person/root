@@ -47,9 +47,9 @@ function alertShow(msg, cls, time) {
 		setTimeout('$("#myAlert").hide();', time);
 	}
 }
-function alertSuccess(msg) {msg=msg==undefined?"操作成功！":msg;alertShow(msg, "alert-success", 1500)}
-function alertInfo(msg) {alertShow(msg, "alert-info", 2000)}
-function alertWarning(msg) {alertShow(msg, "alert-warning", 2000)}
+function alertSuccess(msg) {msg=msg==undefined?"操作成功！":msg;alertShow(msg, "alert-success", 2000)}
+function alertInfo(msg) {alertShow(msg, "alert-info", 2500)}
+function alertWarning(msg) {alertShow(msg, "alert-warning", 2500)}
 function alertDanger(msg) {alertShow(msg, "alert-danger", 0)}
 
 function confirm(msg, func) {

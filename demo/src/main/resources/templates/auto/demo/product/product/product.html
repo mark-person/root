@@ -13,8 +13,7 @@ $(function() {
 });
 
 function add() {
-	alertWarning("aa");
-	//open(controllerPath + "addProduct?u=0");
+	open(controllerPath + "addProduct?u=0");
 }
 </script>
 </head>
@@ -34,19 +33,19 @@ function add() {
 			<th class="w-id sorting-desc" data-order-name="t.prod_id">ID</th>
 			<th class="w-title">title</th>
 			<th class="w-id">catId</th>
-			<th class="w-time">创建人</th>
+			<th class="w-id">创建人</th>
 			<th class="w-id">创建时间</th>
 			<th class="w-action">操作</th>
 		</tr>
 		<tr style="display:none">
 			<td>{{v.prodId}}</td>
 			<td>{{v.prodTitle}}</td>
-			<td>{{v.catId}}</td>
+			<td>{{v.catName}}</td>
 			<td>{{v.creator}}</td>
 			<td>{{v.created}}</td>
 			<td>
-				<a href="#" onclick="remove('{{v.testId}}')">[删除]</a>
-				<a href="#" onclick="edit('{{v.testId}}')">[修改]</a>
+				<a href="#" onclick="">[删除]</a>
+				<a href="#" onclick="">[修改]</a>
 			</td>
 		</tr>
 	</table>

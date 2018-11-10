@@ -17,5 +17,9 @@ public class MyContext {
 	public static User getUser() {
 		return threadLocalUser.get();
 	}
+	
+	public static int getUserId() {
+		return threadLocalUser.get().getUserId();
+	}
 
 }

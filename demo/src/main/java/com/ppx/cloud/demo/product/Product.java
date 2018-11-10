@@ -3,6 +3,10 @@
  */
 package com.ppx.cloud.demo.product;
 
+import java.sql.Date;
+
+import com.ppx.cloud.common.jdbc.annotation.Column;
+
 /**
  * @author mark
  * @date 2018年11月9日
@@ -15,6 +19,13 @@ public class Product {
 	private Integer catId;
 	private Integer recommend;
 	private String mainImgSrc;
+	private String prodUsp;
+	private Integer creator;
+	private Date created;
+	@Column(readonly=true)
+	private String imgSrc;  
+	
+	private String catName;
 
 	public Integer getProdId() {
 		return prodId;
@@ -63,5 +74,49 @@ public class Product {
 	public void setMainImgSrc(String mainImgSrc) {
 		this.mainImgSrc = mainImgSrc;
 	}
+
+	public String getProdUsp() {
+		return prodUsp;
+	}
+
+	public void setProdUsp(String prodUsp) {
+		this.prodUsp = prodUsp;
+	}
+
+	public Integer getCreator() {
+		return creator;
+	}
+
+	public void setCreator(Integer creator) {
+		this.creator = creator;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public String getImgSrc() {
+		return imgSrc;
+	}
+
+	public void setImgSrc(String imgSrc) {
+		this.imgSrc = imgSrc;
+	}
+
+	public String getCatName() {
+		return catName;
+	}
+
+	public void setCatName(String catName) {
+		this.catName = catName;
+	}  
+
+	
+	
+	
 
 }

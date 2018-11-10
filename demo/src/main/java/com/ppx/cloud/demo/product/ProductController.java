@@ -10,11 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ppx.cloud.common.context.MyContext;
-import com.ppx.cloud.common.context.User;
 import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.exception.custom.PermissionParamsException;
 import com.ppx.cloud.common.page.Page;
+import com.ppx.cloud.demo.product.cat.CategoryService;
 
 @Controller
 public class ProductController {
@@ -22,12 +21,18 @@ public class ProductController {
 	@Autowired
 	private ProductServiceImpl impl;
 	
+	@Autowired
+	private CategoryService catServ;
+	
 	private Set<Integer> USER_SET = Set.of(0, 1, 2);
 
 	
 	public ModelAndView product() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", list(new Page(), new Product()));
+		
+		
+		
 		return mv;
 	}
 	
@@ -53,7 +58,7 @@ public class ProductController {
 	public ModelAndView addProduct(@RequestParam Integer u, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
 		
-		System.out.println("00000000userAgent:" + getUserAgent(request));
+		//System.out.println("00000000userAgent:" + getUserAgent(request));
 		
 		
 		
@@ -62,17 +67,18 @@ public class ProductController {
 		if (!USER_SET.contains(u)) {
 			throw new PermissionParamsException("用户ID:" + u + "错误");
     	}
-		else {
-			var user = new User();
-			user.setUserId(u);
-			user.setUserName("name" + u);
-			MyContext.setUser(user);
-		}
+		
+		mv.addObject("creator", u);
+		
+		
+		mv.addObject("catList", catServ.listCategoy());
 		
 		return mv;
 	}
 	
 	public Map<?, ?> insert(Product pojo) {
+		
+		
 		return ControllerReturn.success(impl.insert(pojo));
 	}
 	

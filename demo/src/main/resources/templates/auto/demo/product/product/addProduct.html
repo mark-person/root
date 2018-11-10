@@ -4,10 +4,9 @@
 <head>
 <title></title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta charset="UTF-8">
+
 <link th:replace="common/fragment::common"/>
-
-
-
 
 
 <script type="text/javascript" th:inline="javascript">
@@ -15,8 +14,8 @@ var controllerPath = contextPath + "auto/product/";
 
 $(function() {
 	
-	$(".fa-star").bind("click", function() {
-		alert($(this).prevAll().length + 1);
+	$(".fa-star").bind("click", function() {		
+		$("[name=recommend]").val($(this).prevAll().length + 1)
 	})
 	
 });
@@ -111,6 +110,7 @@ function upload(files) {
 		formData.append("file", $(this).data("file"));
 	});
 	
+	 showLoading();
 	$.ajax({url:[[@{/auto/uploadImg/uploadIdea}]], type:"POST", contentType:false, data:formData ,processData:false,
 		success:function(r) {
 			if (r.result == 1) {
@@ -128,9 +128,17 @@ function saveProd(srcList) {
 		 $("[name=prodTitle]").val($("[name=prodTitle]").prop("placeholder"));
 	}
 	
+	if (!$("[name=prodPrice]").val()) {
+		 $("[name=prodPrice]").val($("[name=prodPrice]").prop("placeholder"));
+	}
 	
-	$.post(controllerPath + "insert", $("#addForm").serialize(), function(r) {
-		r.result == SUCCESS ? $("#pageDiv").query() : alertDanger("error return " + r.result);
+	var imgSrc = "&imgSrc=" + srcList.join(",");
+	
+	$.post(controllerPath + "insert", $("#addForm").serialize() + imgSrc, function(r) {
+		if (r.result == SUCCESS) {
+			alertSuccess();
+			hideLoading();
+		}
 	});
 }
 
@@ -182,6 +190,8 @@ $(function() {
 
 <div class="panel panel-default">
 <form id="addForm">
+<input type="hidden" name="recommend" value="5">
+<input type="hidden" name="creator" th:value="${creator}">
 <ul class="list-group" id="imgUL">
     <li class="list-group-item">
     	<div class="row">
@@ -193,22 +203,26 @@ $(function() {
    		<div class="row">
 	    	<label class="col-form-label col-3">类目	</label>
 	    	<select class="form-control col-7" name="catId">
-	    		<option value="-1">未知</option>
-	    		<option value="1">电器</option>
-	    		<option value="1">玩具</option>
+	    		<option th:each="item:${catList}" th:text="${item.catName}" th:value="${item.catId}"></option>
 	    	</select>
     	</div>
     </li>
     <li class="list-group-item">
     	<div class="row">
 	    	<label class="col-form-label col-3">价格	</label>
-	    	<input class="form-control col-7" type="number" name="prodPrice">
+	    	<input class="form-control col-7" type="number" name="prodPrice" placeholder="0">
+    	</div>
+    </li>
+    <li class="list-group-item">
+    	<div class="row">
+    		<label class="col-form-label col-3">独特销售主张</label>
+    		<input class="form-control col-7" type="text" name="prodUsp" value="好奇，休闲">
     	</div>
     </li>
     <li class="list-group-item">
     	<div class="row">
 	    	<label class="col-form-label col-3">推荐</label>
-	    	<div id="recommend" class="col-form-label col-7">
+	    	<div id="recommend" class="col-form-label col-7" style="display:flex;justify-content:space-between">
 		    	<i class="fa fa-star fa-lg"></i>
 		    	<i class="fa fa-star fa-lg"></i>
 		    	<i class="fa fa-star fa-lg"></i>

@@ -31,6 +31,9 @@ public class UploadImgController {
 	
 	
 	public Map<?, ?> uploadIdea(@RequestParam("file") MultipartFile[] files) throws Exception {
+		
+	
+		
 		var returnList = new ArrayList<String>();
 		
 		// 不存就创建文件夹 >>>>>>>>>>>>>>>>>>>>>
@@ -70,7 +73,7 @@ public class UploadImgController {
 					String command = "convert " + mainPath + imgFileName + " " + miniPath;
 					
 					String[] commands = {"sh", "-c", "convert -resize 200x100 src.jpg dest.jpg"};
-					Process process = Runtime.getRuntime().exec(commands);
+					Process process = Runtime.getRuntime().exec(command);
 					InputStream inputStream = process.getErrorStream();
 					String cmdResult = new BufferedReader(new InputStreamReader(inputStream, "GBK")).lines()
 							.collect(Collectors.joining(System.lineSeparator()));
