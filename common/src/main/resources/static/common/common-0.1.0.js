@@ -13,7 +13,7 @@ $.ajaxSetup({
 
 var LOADING = '\
 <div class="modal" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" style="z-index:10000">\
-	<div class="modal-dialog" role="document" style="width:120px">\
+	<div class="modal-dialog modal-sm" role="document">\
 	<div class="modal-content" style="height:50px;margin-top:180px;text-align:center">\
 		<div style="padding-top:13px;"><span class="fa fa-refresh fa-spin"></span>请稍候...</div>\
 	</div>\
