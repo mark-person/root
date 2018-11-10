@@ -19,12 +19,13 @@ public class Product {
 	private Integer catId;
 	private Integer recommend;
 	private String mainImgSrc;
+	private String userAgent;
 	private String prodUsp;
 	private Integer creator;
 	private Date created;
-	@Column(readonly=true)
-	private String imgSrc;  
-	
+	@Column(readonly = true)
+	private String imgSrc;
+
 	private String catName;
 
 	public Integer getProdId() {
@@ -75,6 +76,14 @@ public class Product {
 		this.mainImgSrc = mainImgSrc;
 	}
 
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
 	public String getProdUsp() {
 		return prodUsp;
 	}
@@ -113,10 +122,6 @@ public class Product {
 
 	public void setCatName(String catName) {
 		this.catName = catName;
-	}  
-
-	
-	
-	
+	}
 
 }
