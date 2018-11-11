@@ -46,9 +46,9 @@
 	<input type="hidden" name="pageNumber">
 	<input type="hidden" name="orderName">
 	<input type="hidden" name="orderType">
-	<div class="p-2 form-inline">
+	<div class="p-2 form-inline" style="min-width: 992px;">
 		<h5 class="form-check-label"><i class="fa fa-list"></i><span th:text="${title}" style="padding:.250rem"></span></h5>
-		<div th:include="::query" class="input-group-sm form-inline"></div>
+		<div th:include="::query" class="input-group-sm form-inline" style="flex-wrap: nowrap"></div>
 	</div>
 	<table id="pageTable" class="table table-bordered table-hover table-sm" style="margin-bottom:0.5rem" th:include="::list"></table>
 	<ul class="pagination float-left pagination-sm" style="display: none;"></ul>

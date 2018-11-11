@@ -121,9 +121,10 @@ var Page = function(obj) {
 			$(this).attr("src", $(this).attr("data-src"));
 		})
 		
-		this.refreshFooter(data.page);
-		this.pageDiv.find("[name=pageSize]").show();
 		this.pageDiv.find(".pagination").show();
+		this.refreshFooter(data.page);
+		
+		
 	}
 	
 	this.refreshFooter = function(p) {
@@ -133,10 +134,11 @@ var Page = function(obj) {
 		var pageNumUL = this.pageDiv.find(".pagination:eq(0)");
 		pageNumUL.empty();
 		
-		
+		this.pageDiv.find("[name=pageSize]").show();
 		this.pageDiv.find(".totalRows").find("b").text(p.totalRows);
 		if (p.totalRows == 0) {
 			this.pageDiv.find(".totalRows").css("width", "100%");
+			this.pageDiv.find("[name=pageSize]").hide();
 			return;
 		}
 		this.pageDiv.find(".totalRows").css("width", "auto");
