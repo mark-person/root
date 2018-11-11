@@ -49,7 +49,8 @@ Arguments：${container_loc}
 
 Ctrl+Shitf+L 二次 run 找到 Run last External 按F10
 
-
+* 作者设置eclipse
+-Duser.name=mark
 
 
 
