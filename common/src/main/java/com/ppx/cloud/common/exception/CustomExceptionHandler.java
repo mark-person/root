@@ -35,7 +35,7 @@ public class CustomExceptionHandler implements HandlerExceptionResolver {
         
         // errorCode=ErrorCode.IGNORE_ERROR的异常，不需要修改后端代码，不打印
         if (error.getCode() != ErrorCode.IGNORE_ERROR) {
-            exception.printStackTrace();
+           exception.printStackTrace();
         }
         
         // 

@@ -9,6 +9,8 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import com.ppx.cloud.common.contoller.CommonInterceptor;
+
 
 
 /**
@@ -34,7 +36,7 @@ public class CommonMvcConfig extends WebMvcConfigurationSupport {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		super.addInterceptors(registry);
-		// registry.addInterceptor(new MonitorInterceptor()).excludePathPatterns("/static/**/*", "/favicon.ico", "/img/**/*");
+		registry.addInterceptor(new CommonInterceptor()).excludePathPatterns("/static/**/*", "/favicon.ico", "/img/**/*");
 	}
 	
 	@Override
