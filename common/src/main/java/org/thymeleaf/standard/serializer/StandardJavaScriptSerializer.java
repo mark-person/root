@@ -152,7 +152,8 @@ public final class StandardJavaScriptSerializer implements IStandardJavaScriptSe
         private final ObjectMapper mapper;
 
 
-        JacksonStandardJavaScriptSerializer(final String jacksonPrefix) {
+        @SuppressWarnings("deprecation")
+		JacksonStandardJavaScriptSerializer(final String jacksonPrefix) {
 
             super();
 
@@ -280,7 +281,8 @@ public final class StandardJavaScriptSerializer implements IStandardJavaScriptSe
      * is preceded by '<', so that only '</' is escaped. Therefore, all '/' need to be escaped. Which is a
      * difference with the default Unbescape-based mechanism.
      */
-    private static final class JacksonThymeleafCharacterEscapes extends CharacterEscapes {
+    @SuppressWarnings("serial")
+	private static final class JacksonThymeleafCharacterEscapes extends CharacterEscapes {
 
         private static final int[] CHARACTER_ESCAPES;
         private static final SerializableString SLASH_ESCAPE;

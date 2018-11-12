@@ -257,6 +257,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 * @param handler either a bean name or an actual handler instance
 	 * @see #getMappingForMethod
 	 */
+	@SuppressWarnings("unchecked")
 	protected void detectHandlerMethods(Object handler) {
 		Class<?> handlerType = (handler instanceof String ?
 				obtainApplicationContext().getType((String) handler) : handler.getClass());
