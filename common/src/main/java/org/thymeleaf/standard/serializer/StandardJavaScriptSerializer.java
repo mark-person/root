@@ -26,11 +26,24 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.SerializableString;
+import com.fasterxml.jackson.core.io.CharacterEscapes;
+import com.fasterxml.jackson.core.io.SerializedString;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.ppx.cloud.common.config.ObjectMappingCustomer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,15 +54,6 @@ import org.thymeleaf.util.DateUtils;
 import org.unbescape.json.JsonEscape;
 import org.unbescape.json.JsonEscapeLevel;
 import org.unbescape.json.JsonEscapeType;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.SerializableString;
-import com.fasterxml.jackson.core.io.CharacterEscapes;
-import com.fasterxml.jackson.core.io.SerializedString;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.ppx.cloud.common.config.ObjectMappingCustomer;
 
 
 /**
@@ -148,12 +152,11 @@ public final class StandardJavaScriptSerializer implements IStandardJavaScriptSe
         private final ObjectMapper mapper;
 
 
-        @SuppressWarnings("deprecation")
-		JacksonStandardJavaScriptSerializer(final String jacksonPrefix) {
+        JacksonStandardJavaScriptSerializer(final String jacksonPrefix) {
 
             super();
-            
-            /** @author mark 改成跟异步调用统一, 注释掉this.mapper = new ObjectMapper();和this.mapper.setDateFormat... */
+
+            /** @author mark json改成跟异步调用统一, 注释掉this.mapper = new ObjectMapper();和this.mapper.setDateFormat... */
             this.mapper = new ObjectMappingCustomer();
             // this.mapper = new ObjectMapper();
             
@@ -161,7 +164,7 @@ public final class StandardJavaScriptSerializer implements IStandardJavaScriptSe
             this.mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
             this.mapper.enable(JsonGenerator.Feature.ESCAPE_NON_ASCII);
             this.mapper.getFactory().setCharacterEscapes(new JacksonThymeleafCharacterEscapes());
-            // this.mapper.setDateFormat(new JacksonThymeleafISO8601DateFormat());
+            this.mapper.setDateFormat(new JacksonThymeleafISO8601DateFormat());
 
             /*
              * Now try to (conditionally) initialize support for Jackson serialization of JSR310 (java.time) objects,
@@ -200,6 +203,69 @@ public final class StandardJavaScriptSerializer implements IStandardJavaScriptSe
 
 
     /*
+     * This DateFormat implementation replaces the standard Jackson date serialization mechanism for ISO6801 dates,
+     * with the aim of making Jackson output dates in a way that is at the same time ECMAScript-valid and also
+     * as compatible with non-Jackson JavaScript serialization infrastructure in Thymeleaf as possible. For this:
+     *
+     *   * The default Jackson behaviour of outputting all dates as GMT is disabled.
+     *   * The default Jackson format adding timezone as '+0800' is modified, as ECMAScript requires '+08:00'
+     *
+     * On the latter point, see https://github.com/FasterXML/jackson-databind/issues/1020
+     */
+    private static final class JacksonThymeleafISO8601DateFormat extends DateFormat {
+
+        private static final long serialVersionUID = 1354081220093875129L;
+
+        /*
+         * This SimpleDateFormat defines an almost-ISO8601 formatter.
+         *
+         * The correct ISO8601 format would be "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", but the "X" pattern (which outputs the
+         * timezone as "+02:00" or "Z" instead of "+0200") was not added until Java SE 7. So the use of this
+         * SimpleDateFormat object requires additional post-processing.
+         *
+         * SimpleDateFormat objects are NOT thread-safe, but it is here being used from another DateFormat
+         * implementation, so we must suppose that it is the use of this DateFormat wrapper that will be
+         * adequately synchronized by Jackson.
+         */
+        private SimpleDateFormat dateFormat;
+
+
+        JacksonThymeleafISO8601DateFormat() {
+            super();
+            this.dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ");
+            setCalendar(this.dateFormat.getCalendar());
+            setNumberFormat(this.dateFormat.getNumberFormat());
+        }
+
+
+        @Override
+        public StringBuffer format(final Date date, final StringBuffer toAppendTo, final FieldPosition fieldPosition) {
+            final StringBuffer formatted = this.dateFormat.format(date, toAppendTo, fieldPosition);
+            formatted.insert(26, ':');
+            return formatted;
+        }
+
+
+        @Override
+        public Date parse(final String source, final ParsePosition pos) {
+            throw new UnsupportedOperationException(
+                    "JacksonThymeleafISO8601DateFormat should never be asked for a 'parse' operation");
+        }
+
+
+        @Override
+        public Object clone() {
+            JacksonThymeleafISO8601DateFormat other = (JacksonThymeleafISO8601DateFormat) super.clone();
+            other.dateFormat = (SimpleDateFormat) dateFormat.clone();
+            return other;
+        }
+
+
+    }
+
+
+
+    /*
      * This CharacterEscapes implementation makes sure that the slash ('/') and ampersand ('&') characters
      * are also escaped, which is not standard Jackson behaviour.
      *
@@ -214,8 +280,7 @@ public final class StandardJavaScriptSerializer implements IStandardJavaScriptSe
      * is preceded by '<', so that only '</' is escaped. Therefore, all '/' need to be escaped. Which is a
      * difference with the default Unbescape-based mechanism.
      */
-    @SuppressWarnings("serial")
-	private static final class JacksonThymeleafCharacterEscapes extends CharacterEscapes {
+    private static final class JacksonThymeleafCharacterEscapes extends CharacterEscapes {
 
         private static final int[] CHARACTER_ESCAPES;
         private static final SerializableString SLASH_ESCAPE;
