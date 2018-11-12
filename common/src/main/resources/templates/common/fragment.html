@@ -50,7 +50,8 @@
 		<h5 class="form-check-label"><i class="fa fa-list"></i><span th:text="${title}" style="padding:.250rem"></span></h5>
 		<div th:include="::query" class="input-group-sm form-inline" style="flex-wrap: nowrap"></div>
 	</div>
-	<table id="pageTable" class="table table-bordered table-hover table-sm" style="margin-bottom:0.5rem" th:include="::list"></table>
+	<table class="table table-bordered table-hover table-sm" style="margin-bottom:0.5rem" th:include="::list"></table>
+	<script id="pageTemplate" type="text/html"></script>
 	<ul class="pagination float-left pagination-sm" style="display: none;"></ul>
   	<ul class="pagination pagination-sm" style="display: none;">
   		<li class="page-item input-group-sm">
@@ -61,7 +62,6 @@
 		<li class="page-item totalRows" style="padding: .25rem .5rem;text-align:center;"><label>共<b>-</b>条记录</label></li>
   	</ul>
   	</form>
-  	<script id="pageTemplate" type="text/html"></script>
 </div>
 
 
@@ -83,7 +83,7 @@
 </div>
 </div>
 
-
+<!-- 带模板的modal，修改时用 -->
 <div th:fragment="modalTemplate(fragment, title, size)" th:id="${fragment}" class="modal fade" data-backdrop="static" data-keyboard="false">
 <!--size:modal-sm 无 modal-lg -->
 <div class="modal-dialog">
