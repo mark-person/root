@@ -12,12 +12,17 @@ import com.ppx.cloud.common.page.Page;
 public class TestServiceImpl extends MyDaoSupport {
 
 	public List<Test> list(Page page, Test pojo) {
+		
+		
 
 		// 默认排序，后面加上需要从页面传过来的排序的，防止SQL注入
 		// page.addDefaultOrderName("test_id").addPermitOrderName("test_price").addUnique("test_id");
 
 		// 分开两条sql，mysql在count还会执行子查询, 总数返回0将不执行下一句
 		var c = createCriteria("where").addAnd("t.test_name like ?", "%", pojo.getTestName(), "%");
+		
+		String[] id = {"1", "2"};// "1,2,3"
+		c.addAnd("t.test_id in ?", id);
 		 
 		page.addDefaultOrderName("t.test_id").addPermitOrderName("t.test_name").addUnique("t.test_id");
 		

@@ -5,11 +5,10 @@ import java.util.List;
 
 import org.springframework.util.StringUtils;
 
-
 /**
  * sql的where条件工具
- * @author dengxz
- * @date 2017年3月29日
+ * @author mark
+ * @date 2018年11月13日
  */
 public class MyCriteria {
 	
@@ -30,8 +29,32 @@ public class MyCriteria {
 
 	public MyCriteria addAnd(String sql, Object obj) {
 		if (StringUtils.isEmpty(obj)) return this;
-		paraStr.add(sql);
-		paraList.add(obj);
+		
+		if (sql.toLowerCase().contains(" in ")) {
+			List<String> question = new ArrayList<String>();
+			boolean isArray = obj.getClass().isArray();
+			if (isArray) {
+				Object[] o = (Object[])obj;
+				for (int i = 0; i < o.length; i++) {
+					question.add("?");
+					paraList.add(o[i]);
+				}
+			}
+			else {
+				String[] p = obj.toString().split(",");
+				for (int i = 0; i < p.length; i++) {
+					question.add("?");
+					paraList.add(p[i]);
+				}
+			}
+			
+			paraStr.add(sql.replace("?", "(" + StringUtils.collectionToCommaDelimitedString(question) + ")"));
+		}
+		else {
+			paraStr.add(sql);
+			paraList.add(obj);
+		}
+		
 		return this;
 	}
 
