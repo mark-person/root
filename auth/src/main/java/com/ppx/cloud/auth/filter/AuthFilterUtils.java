@@ -21,7 +21,7 @@ import com.ppx.cloud.auth.bean.MerchantAccount;
 import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthUtils;
 import com.ppx.cloud.auth.common.LoginAccount;
-import com.ppx.cloud.common.exception.custom.PermissionUrlException;
+import com.ppx.cloud.common.exception.security.PermissionUrlException;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.CookieUtils;
 

@@ -37,6 +37,8 @@ Preferences -> General -> Content Types:Java Properties File:Default encoding:UT
 # 去掉 WARNING: An illegal reflective access operation has occurred
 ${jrebel_args} --add-opens java.base/java.lang=ALL-UNNAMED
 
+# 去掉WARNING: Illegal reflective access by com.google.protobuf.UnsafeUtil
+-XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/java.nio=ALL-UNNAMED
 
 ```
 

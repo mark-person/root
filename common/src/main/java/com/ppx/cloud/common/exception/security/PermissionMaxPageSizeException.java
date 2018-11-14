@@ -1,4 +1,4 @@
-package com.ppx.cloud.common.exception.custom;
+package com.ppx.cloud.common.exception.security;
 
 
 /**

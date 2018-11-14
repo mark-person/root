@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
-import com.ppx.cloud.common.exception.custom.PermissionParamsException;
+import com.ppx.cloud.common.exception.security.PermissionParamsException;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.demo.product.cat.CategoryService;
 
@@ -64,5 +64,6 @@ public class ProductController {
 		}
 		return "unknown";
 	}
+	
 
 }

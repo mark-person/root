@@ -14,14 +14,16 @@ import com.mysql.cj.xdevapi.SessionFactory;
  * @author mark
  * @date 2018年11月13日
  */
-public class MySessionUtils {
+public class MySessionPool {
+	
+	private final static int MaxSize = 3;
 
-	private static Deque<Session> queue = new ArrayDeque<Session>(3);
+	private static Deque<Session> queue = new ArrayDeque<Session>(MaxSize);
 	
 	private static int useNum = 0;
 	
 	public synchronized static Session getSession() {
-		if (useNum >= 3) {
+		if (useNum >= MaxSize) {
 			// 加上延时判断
 			throw new RuntimeException("The no sql connection pool is full.");
 			
@@ -29,7 +31,7 @@ public class MySessionUtils {
 		useNum++;
 		
 		if (queue.isEmpty()) {
-			Session mySession = new SessionFactory().getSession("mysqlx://localhost:33060?user=root&password=@Dengppx123456");
+			Session mySession = new SessionFactory().getSession("mysqlx://localhost:33060/world_x?user=root&password=@Dengppx123456");
 			queue.add(mySession);
 			return mySession;
 		}

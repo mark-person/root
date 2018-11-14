@@ -6,8 +6,8 @@ import java.util.Set;
 
 import org.springframework.util.StringUtils;
 
-import com.ppx.cloud.common.exception.custom.PermissionMaxPageSizeException;
-import com.ppx.cloud.common.exception.custom.PermissionParamsException;
+import com.ppx.cloud.common.exception.security.PermissionMaxPageSizeException;
+import com.ppx.cloud.common.exception.security.PermissionParamsException;
 
 
 public class Page {

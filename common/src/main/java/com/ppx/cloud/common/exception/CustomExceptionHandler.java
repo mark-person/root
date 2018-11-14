@@ -9,8 +9,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
-import com.ppx.cloud.common.exception.custom.PermissionParamsException;
-import com.ppx.cloud.common.exception.custom.PermissionUrlException;
+import com.ppx.cloud.common.exception.security.PermissionParamsException;
+import com.ppx.cloud.common.exception.security.PermissionUrlException;
 
 
 
