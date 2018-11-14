@@ -16,6 +16,7 @@ import com.mysql.cj.xdevapi.SessionFactory;
  */
 public class MySessionPool {
 	
+	// 最大连接数
 	private final static int MaxSize = 3;
 
 	private static Deque<Session> queue = new ArrayDeque<Session>(MaxSize);
