@@ -43,6 +43,9 @@ public class MySessionPool {
 	
 	public static void closeSession(Session session) {
 		useNum--;
+		
+		
+		
 		session.commit();
 		queue.addFirst(session);
 	}
