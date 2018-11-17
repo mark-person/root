@@ -40,6 +40,8 @@ ${jrebel_args} --add-opens java.base/java.lang=ALL-UNNAMED
 # 去掉WARNING: Illegal reflective access by com.google.protobuf.UnsafeUtil
 -XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/java.nio=ALL-UNNAMED
 
+
+${jrebel_args} --add-opens java.base/java.lang=ALL-UNNAMED -XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/java.nio=ALL-UNNAMED
 ```
 
 
