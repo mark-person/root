@@ -1,8 +1,13 @@
 package com.ppx.cloud.monitor;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
+
+
 
 
 /**
@@ -12,13 +17,18 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> {
+	
+	private static Logger logger = LoggerFactory.getLogger(StartMonitor.class);
     
     //@Autowired
     //private AccessQueueConsumer accessQueueConsumer;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
-      
+    	logger.info("StartMonitor----------begin");
+    	
+    	
+    	
         
         // 启动日志处理队列
     	// accessQueueConsumer.start();

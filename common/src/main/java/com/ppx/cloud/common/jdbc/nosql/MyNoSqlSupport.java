@@ -11,12 +11,8 @@ import com.mysql.cj.xdevapi.AddStatement;
 import com.mysql.cj.xdevapi.Collection;
 import com.mysql.cj.xdevapi.DbDoc;
 import com.mysql.cj.xdevapi.DocResult;
-import com.mysql.cj.xdevapi.JsonNumber;
-import com.mysql.cj.xdevapi.Row;
-import com.mysql.cj.xdevapi.RowResult;
 import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
-import com.mysql.cj.xdevapi.Table;
 import com.ppx.cloud.common.exception.custom.NosqlException;
 
 /**
@@ -29,10 +25,10 @@ import com.ppx.cloud.common.exception.custom.NosqlException;
  * @author mark
  * @date 2018年11月13日
  */
-public abstract class MyNosqlSupport {
+public abstract class MyNoSqlSupport {
 	
 	public void batchAdd(String name, List<Map<Object, Object>> list) {
-		Session session = MySessionPool.getSession();
+		Session session = SessionPool.getSession();
 		try {
 			Schema myDb = session.getDefaultSchema();
 			Collection c = myDb.getCollection(name);
@@ -48,12 +44,12 @@ public abstract class MyNosqlSupport {
 		}  catch (Exception e) {
 			throw new NosqlException(e);
 		} finally {
-			MySessionPool.closeSession(session);
+			SessionPool.closeSession(session);
 		}
 	}
 	
 	public DbDoc get(String collectionName, String id) {
-		Session session = MySessionPool.getSession();
+		Session session = SessionPool.getSession();
 		DbDoc dbDoc = null;
 		try {
 			Schema myDb = session.getDefaultSchema();
@@ -61,14 +57,14 @@ public abstract class MyNosqlSupport {
 		} catch (Exception e) {
 			throw new NosqlException(e);
 		} finally {
-			MySessionPool.closeSession(session);
+			SessionPool.closeSession(session);
 		}
 		return dbDoc;
 	}
 	
 	
 	public DbDoc fetchOne(String collectionName, String searchCondition, Object... values) {
-		Session session = MySessionPool.getSession();
+		Session session = SessionPool.getSession();
 		
 		DbDoc dbDoc = null;
 		try {
@@ -80,14 +76,14 @@ public abstract class MyNosqlSupport {
 		} catch (Exception e) {
 			throw new NosqlException(e);
 		} finally {
-			MySessionPool.closeSession(session);
+			SessionPool.closeSession(session);
 		}
 		
 		return dbDoc;
 	}
 	
 	public void add(String collectionName, Map<String, Object> map) {
-		Session session = MySessionPool.getSession();
+		Session session = SessionPool.getSession();
 		
 		try {
 			Schema myDb = session.getDefaultSchema();
@@ -97,12 +93,12 @@ public abstract class MyNosqlSupport {
 		}  catch (Exception e) {
 			throw new NosqlException(e);
 		} finally {
-			MySessionPool.closeSession(session);
+			SessionPool.closeSession(session);
 		}
 	}
 	
 	public void testSql(String collectionName, String id, Map<?, ?> map) {
-		Session session = MySessionPool.getSession();
+		Session session = SessionPool.getSession();
 		
 		try {
 			Schema myDb = session.getDefaultSchema();
@@ -212,7 +208,7 @@ public abstract class MyNosqlSupport {
 		}  catch (Exception e) {
 			throw new NosqlException(e);
 		} finally {
-			MySessionPool.closeSession(session);
+			SessionPool.closeSession(session);
 		}
 	}
 	

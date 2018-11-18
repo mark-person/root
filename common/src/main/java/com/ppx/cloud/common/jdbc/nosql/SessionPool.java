@@ -13,10 +13,12 @@ import com.mysql.cj.xdevapi.SessionFactory;
  * @author mark
  * @date 2018年11月13日
  */
-public class MySessionPool {
+public class SessionPool {
 	
 	// 最大连接数
 	private final static int MAX_SIZE = 3;
+	
+	private final static String LOG = "log";
 
 	private static Deque<Session> queue = new ArrayDeque<Session>(MAX_SIZE);
 	
@@ -31,9 +33,13 @@ public class MySessionPool {
 		useNum++;
 		
 		if (queue.isEmpty()) {
-			Session mySession = new SessionFactory().getSession("mysqlx://localhost:33060/world_x?user=root&password=@Dengppx123456");
-			queue.add(mySession);
-			return mySession;
+			Session session = new SessionFactory().getSession("mysqlx://localhost:33060?user=root&password=@Dengppx123456");
+			session.createSchema(LOG, true);
+			
+			
+			
+			queue.add(session);
+			return session;
 		}
 		else {
 			return queue.pollFirst();

@@ -18,7 +18,7 @@ import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
 import com.mysql.cj.xdevapi.SessionFactory;
 import com.ppx.cloud.common.contoller.ControllerReturn;
-import com.ppx.cloud.common.jdbc.nosql.MySessionPool;
+import com.ppx.cloud.common.jdbc.nosql.LogSessionPool;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.common.util.ApplicationUtils;
 
