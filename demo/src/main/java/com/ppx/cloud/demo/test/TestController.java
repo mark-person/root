@@ -1,7 +1,5 @@
 package com.ppx.cloud.demo.test;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,14 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.mysql.cj.xdevapi.Collection;
-import com.mysql.cj.xdevapi.DbDoc;
-import com.mysql.cj.xdevapi.DocResult;
-import com.mysql.cj.xdevapi.Schema;
-import com.mysql.cj.xdevapi.Session;
-import com.mysql.cj.xdevapi.SessionFactory;
 import com.ppx.cloud.common.contoller.ControllerReturn;
-import com.ppx.cloud.common.jdbc.nosql.LogSessionPool;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.common.util.ApplicationUtils;
 
