@@ -5,6 +5,7 @@ package com.ppx.cloud.common.jdbc.nosql;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Set;
 
 import com.mysql.cj.xdevapi.Session;
 import com.mysql.cj.xdevapi.SessionFactory;
@@ -15,10 +16,14 @@ import com.mysql.cj.xdevapi.SessionFactory;
  */
 public class SessionPool {
 	
+	public final static String SCHEMA_LOG = "log";
+	
+	public final static Set<String> SCHEMA_SET = Set.of(SCHEMA_LOG);
+	
 	// 最大连接数
 	private final static int MAX_SIZE = 3;
 	
-	private final static String LOG = "log";
+	
 
 	private static Deque<Session> queue = new ArrayDeque<Session>(MAX_SIZE);
 	
@@ -28,15 +33,15 @@ public class SessionPool {
 		if (useNum >= MAX_SIZE) {
 			// 加上延时判断
 			throw new RuntimeException("The no sql connection pool is full. MAX_SIZE:" + MAX_SIZE);
-			
 		}
 		useNum++;
 		
 		if (queue.isEmpty()) {
 			Session session = new SessionFactory().getSession("mysqlx://localhost:33060?user=root&password=@Dengppx123456");
-			session.createSchema(LOG, true);
 			
-			
+			SCHEMA_SET.forEach(n -> {
+				session.createSchema(n, true);
+			});
 			
 			queue.add(session);
 			return session;
