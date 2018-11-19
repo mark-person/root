@@ -75,7 +75,6 @@ public class TestController {
     	
     	
     	
-    	
 //    	Session mySession = new SessionFactory().getSession("mysqlx://localhost:33060?user=root&password=@Dengppx123456");
 //    	long t1 = System.nanoTime();
 //    	for (int i = 0; i < 1; i++) {
