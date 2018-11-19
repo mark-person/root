@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tomcat.util.threads.TaskThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.common.util.ApplicationUtils;
+import com.ppx.cloud.monitor.pojo.AccessLog;
 
 @Controller
 public class TestController {
@@ -22,8 +24,7 @@ public class TestController {
 	@Autowired
 	private Test2ServiceImpl impl2;
 
-	public ModelAndView test() {
-		ModelAndView mv = new ModelAndView();
+	public ModelAndView test(ModelAndView mv) {
 		mv.addObject("list", list(new Page(), new Test()));
 		return mv;
 	}
@@ -62,8 +63,6 @@ public class TestController {
     	
     	
     	System.out.println("---------------------begin------------------");
-    	
-    	
     	
     	
     	

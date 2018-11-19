@@ -56,7 +56,8 @@ Ctrl+Shitf+L 二次 run 找到 Run last External 按F10
 * 作者设置eclipse
 -Duser.name=mark
 
-
+# 监控
+--add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
 
 
 

@@ -10,7 +10,9 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 import com.ppx.cloud.common.config.CommonMvcConfig;
-import com.ppx.cloud.common.util.ApplicationUtils;  
+import com.ppx.cloud.common.contoller.CommonInterceptor;
+import com.ppx.cloud.common.util.ApplicationUtils;
+import com.ppx.cloud.monitor.contoller.MonitorInterceptor;  
 
 
 
@@ -31,6 +33,9 @@ public class DemoMvcConfig extends CommonMvcConfig {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		super.addInterceptors(registry);
+		registry.addInterceptor(new CommonInterceptor()).excludePathPatterns("/static/**/*", "/favicon.ico", "/img/**/*");
+		registry.addInterceptor(new MonitorInterceptor()).excludePathPatterns("/static/**/*", "/favicon.ico", "/img/**/*");
+		
 	}
 	
 	@Override

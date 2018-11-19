@@ -3,6 +3,8 @@
  */
 package com.ppx.cloud;
 
+import java.io.File;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * @author mark
@@ -16,8 +18,27 @@ import com.mysql.cj.xdevapi.Session;
 import com.mysql.cj.xdevapi.SessionFactory;
 
 public class Test {
-
+	
 	public static void main(String[] args) {
+		System.out.println("==========1");
+		
+		File[] roots = File.listRoots();
+		
+		File f = new File("/");
+		
+		File[] fileList = f.listFiles();
+		
+		for (int i = 0; i < fileList.length; i++) {
+			System.out.println("fff:" + fileList[i].getName());
+		}
+		
+		System.out.println("9999999:" + f.length());
+		
+		//System.out.println("root:" + roots.length);
+		System.out.println("==========2");
+	}
+
+	public static void mainx(String[] args) {
 		
 		System.out.println("------------begin----------");
 		

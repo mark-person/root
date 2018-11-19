@@ -106,6 +106,7 @@ public class AccessLog {
         if (uri.length() > 64) {
             throw new PermissionUrlException();
         }
+        this.uri = uri;
     }
 
     public String getQueryString() {

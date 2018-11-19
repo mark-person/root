@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.AddResult;
 import com.mysql.cj.xdevapi.AddStatement;
 import com.mysql.cj.xdevapi.Collection;
+import com.mysql.cj.xdevapi.Result;
 import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
 import com.mysql.cj.xdevapi.SqlResult;
@@ -34,6 +35,16 @@ public class NoSqlTemplate implements AutoCloseable {
 				session.rollback();
 			}
 			SessionPool.closeSession(session);
+		}
+	}
+	
+	public Result addOrReplaceOne(String name, String id,  Map<String, Object> map) {
+		try {
+			Collection c = schema.createCollection(name, true);
+			return c.addOrReplaceOne(id, new ObjectMapper().writeValueAsString(map));
+		} catch (Throwable e) {
+			this.isException = true;
+			throw new RuntimeException(e);
 		}
 	}
 	

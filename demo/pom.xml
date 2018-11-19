@@ -20,6 +20,11 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.ppx.cloud</groupId>
+			<artifactId>root-monitor</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		
 	</dependencies>
 
@@ -53,6 +58,13 @@
 								<artifactItem>
 									<groupId>com.ppx.cloud</groupId>
 									<artifactId>root-common</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.ppx.cloud</groupId>
+									<artifactId>root-monitor</artifactId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>${project.build.directory}/classes</outputDirectory>

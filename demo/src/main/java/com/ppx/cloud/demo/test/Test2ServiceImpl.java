@@ -20,12 +20,12 @@ public class Test2ServiceImpl extends MyNoSqlSupport {
 
 	public void test() {
 		
-		var map = Map.of("value", 88);
-
-		super.testSql("test", "100", map);
-		
-		
-		
+//		var map = Map.of("value", 88);
+//
+//		super.testSql("test", "100", map);
+//		
+//		
+//		
 		
 		
 	}

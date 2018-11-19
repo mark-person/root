@@ -27,17 +27,19 @@ import com.ppx.cloud.monitor.pojo.AccessLog;
  */
 public class TaskThread extends Thread {
 	
-	/** @author mark */
+	/** @author mark 为了从线程里请求信息 */
     private AccessLog accessLog;
     
-    public AccessLog getAccessLog() {
-        return accessLog;
+    public static AccessLog getAccessLog() {
+    	TaskThread taskThread = (TaskThread)Thread.currentThread();
+    	return taskThread.accessLog;
     }
-
-    public void setAccessLog(AccessLog accessLog) {
-        this.accessLog = accessLog;
+    
+    public static void setAccessLog(AccessLog accessLog) {
+    	TaskThread taskThread = (TaskThread)Thread.currentThread();
+    	taskThread.accessLog = accessLog;
     }
-
+    
     private static final Log log = LogFactory.getLog(TaskThread.class);
     private final long creationTime;
 

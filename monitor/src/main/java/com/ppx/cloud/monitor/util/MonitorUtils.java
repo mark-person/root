@@ -181,14 +181,12 @@ public class MonitorUtils {
         return -1;
     }
     
-    public static Map<String, Long> getTotalSpace() {   
-        Map<String, Long> returnMap = new HashMap<String, Long>();
-        // 获取磁盘分区列表
-        File[] roots = File.listRoots();
-         for (File file : roots) {
-             returnMap.put(file.getPath(), file.getTotalSpace() / 1024 / 1024);
-        }
-        return returnMap;
+    public static long getTotalSpace() {   
+    	// 获取磁盘分区列表  File[] roots = File.listRoots();启动时java.lang.NoSuchMethodError: java.util.BitSet._jr$ig$wordsInUse
+    	
+    	File f = new File("/");
+    	long totalSpace = f.getTotalSpace() / 1024 / 1024;
+    	return totalSpace;
     }
     
     /**
