@@ -6,12 +6,14 @@ package com.ppx.cloud.monitor.util;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.util.StringUtils;
 
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.util.DateUtils;
+import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 
 /**
@@ -25,9 +27,17 @@ public class AccessLogUtils {
 		
 		String beginTime = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime());
 
+		String uri = a.getUri();
+		Pattern pattern = Pattern.compile("[0-9]*");
+		if (pattern.matcher(uri).matches()) {
+			uri = MonitorCache.getSeqUri(Integer.parseInt(uri));
+			uri = uri == null ? a.getUri() : uri;
+		}
+		
+		
 		StringBuilder accessSb = new StringBuilder(a.getIp()).append("[").append(beginTime).append("]")
 				.append(a.getSpendNanoTime() / 1000000).append(" ").append(a.getMethod()).append(" ")
-				.append(a.getUri());
+				.append(uri);
 		if (!StringUtils.isEmpty(a.getQueryString())) {
 			accessSb.append("?").append(a.getQueryString());
 		}
@@ -48,6 +58,8 @@ public class AccessLogUtils {
 		if (a.getSqlList().size() > 0) {
 			for (int i = 0; i < a.getSqlList().size(); i++) {
 				String v = a.getSqlList().get(i);
+				v = MonitorCache.getMd5Sql(v);
+				v = v == null ? a.getSqlList().get(i) : v;
 				a.getSqlList().set(i, v);
 			}
 

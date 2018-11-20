@@ -12,6 +12,7 @@ import com.ppx.cloud.common.exception.security.PermissionUrlException;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
+import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
 
@@ -138,6 +139,9 @@ public class AccessLog {
     	String sqlMd5 = MD5Utils.getMD5(sql);
     	if (MonitorCache.containsSqlMd5(sqlMd5)) {
     		 sqlList.add(sqlMd5);
+    		 if (MonitorConfig.IS_DEV) {
+    			 MonitorCache.addMd5Sql(sqlMd5, sql); 
+    		 }
     	}
     	else {
     		sqlList.add(sql);
