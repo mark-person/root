@@ -713,7 +713,25 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 					if (pss != null) {
 						pss.setValues(ps);
 					}
-					rs = ps.executeQuery();
+					
+					/** @author mark */
+                    AccessLog accessLog = TaskThread.getAccessLog();
+                    if (accessLog != null) {
+                        long nanoTime = System.nanoTime();
+                        accessLog.addSqlBeginTime(System.currentTimeMillis());
+                        
+                        rs = ps.executeQuery();
+                        
+                        rs.last();//移到最后一行
+                        int count = rs.getRow();
+                        rs.beforeFirst();//移到初始位置  
+                        accessLog.addSqlSpendTime((System.nanoTime() - nanoTime) / 1000000);
+                        accessLog.addSqlCount(count);
+                    }
+                    else {
+                        rs = ps.executeQuery();
+                    }
+                    
 					return rse.extractData(rs);
 				}
 				finally {
@@ -902,10 +920,27 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 				if (pss != null) {
 					pss.setValues(ps);
 				}
-				int rows = ps.executeUpdate();
-				if (logger.isTraceEnabled()) {
-					logger.trace("SQL update affected " + rows + " rows");
-				}
+				
+				/** @author mark */
+				int rows = -1;
+                AccessLog accessLog = TaskThread.getAccessLog();
+                if (accessLog != null) {
+                    accessLog.addSqlBeginTime(System.currentTimeMillis());
+                    long nanoTime = System.nanoTime();
+                    
+                    rows = ps.executeUpdate();
+                    
+                    accessLog.addSqlSpendTime((System.nanoTime() - nanoTime) / 1000000);
+                    accessLog.addSqlCount(rows);
+                }
+                else {
+                    rows = ps.executeUpdate();
+                }
+                
+                if (logger.isTraceEnabled()) {
+                    logger.trace("SQL update affected " + rows + " rows");
+                }
+                
 				return rows;
 			}
 			finally {
@@ -1556,6 +1591,13 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 		private final String sql;
 
 		public SimplePreparedStatementCreator(String sql) {
+			
+			/** @author mark */
+            AccessLog accessLog = TaskThread.getAccessLog();
+            if (accessLog != null) {
+                accessLog.addSql(sql);
+            }
+            
 			Assert.notNull(sql, "SQL must not be null");
 			this.sql = sql;
 		}

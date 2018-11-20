@@ -16,6 +16,7 @@ public class Test2ServiceImpl extends MyDaoSupport {
 
 	public void test() {
 		
+
 		getJdbcTemplate().queryForList("select * from test limit ?", 3);
 		
 		getJdbcTemplate().queryForList("select * from test limit ?", 3);
