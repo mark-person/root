@@ -61,6 +61,23 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
 //			t.addOrReplaceOne("start", ApplicationUtils.getServiceId(), startInfo);
 //		}
     	
+/**
+CREATE TABLE `sql_md5` (
+  `sql_md5` varchar(32) NOT NULL,
+  `sql_text` varchar(2048) DEFAULT NULL,
+  `sql_count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`sql_md5`),
+  KEY `idx_sql_count` (`sql_count`)
+)
+
+CREATE TABLE `uri_seq` (
+  `uri_seq` int(11) NOT NULL,
+  `uri_text` varchar(250) NOT NULL,
+  `uri_count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`uri_seq`)
+)
+*/
+    	
     	try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
     		String md5Sql = "select sql_md5 from (select sql_md5 from log.sql_md5 order by sql_count desc) t limit 2";
     		SqlResult md5Result = t.sql(md5Sql);
