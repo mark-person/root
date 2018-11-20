@@ -18,7 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import com.mysql.cj.xdevapi.SqlResult;
+import com.ppx.cloud.common.jdbc.nosql.NoSqlTemplate;
+import com.ppx.cloud.common.jdbc.nosql.SessionPool;
 import com.ppx.cloud.common.util.ApplicationUtils;
+import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.queue.AccessQueueConsumer;
 import com.ppx.cloud.monitor.util.MonitorUtils;
@@ -56,6 +60,25 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
 //			t.addOrReplaceOne("conf", ApplicationUtils.getServiceId(), config);
 //			t.addOrReplaceOne("start", ApplicationUtils.getServiceId(), startInfo);
 //		}
+    	
+    	try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
+    		String md5Sql = "select sql_md5 from (select sql_md5 from log.sql_md5 order by sql_count desc) t limit 2";
+    		SqlResult md5Result = t.sql(md5Sql);
+    		md5Result.forEach(r -> {
+    			MonitorCache.addSqlMd5(r.getString("sql_md5"));
+    		});
+    		
+    		String uriSql = "select uri_seq, uri_text from (select uri_seq, uri_text from log.uri_seq order by uri_count desc) t limit 2";
+    		SqlResult uriResult = t.sql(uriSql);
+    		uriResult.forEach(r -> {
+    			MonitorCache .addUriSeq(r.getString("uri_text"), r.getInt("uri_seq"));
+    		});
+    		
+    	}
+    	
+    	
+    	
+    	
     	
         
         // 启动日志处理队列

@@ -5,7 +5,10 @@ package com.ppx.cloud.demo.test;
 
 import org.springframework.stereotype.Service;
 
+import com.mysql.cj.xdevapi.SqlResult;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
+import com.ppx.cloud.common.jdbc.nosql.NoSqlTemplate;
+import com.ppx.cloud.common.jdbc.nosql.SessionPool;
 
 /**
  * @author mark
@@ -18,9 +21,8 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		
 		getJdbcTemplate().queryForList("select * from test limit ?", 3);
 		
-		System.out.println("---------end jdbc");
-		
-		
+		getJdbcTemplate().queryForList("select * from test limit ?", 3);
+	
 		
 	}
 }

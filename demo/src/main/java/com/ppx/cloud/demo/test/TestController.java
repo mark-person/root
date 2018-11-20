@@ -61,11 +61,7 @@ public class TestController {
     
     public void test2(HttpServletResponse response) {
     	
-    	
-    	System.out.println("---------------------begin------------------");
-    	
-    	
-    	
+    
     	impl2.test();
     
     	

@@ -94,8 +94,7 @@ public class MonitorUtils {
             Thread t = MonitorUtils.getThread(maxWorkerThreadName);
             if (t instanceof TaskThread) {
                 // 找出accessLog
-                TaskThread taskThread = (TaskThread)t;
-                AccessLog accessLog = taskThread.getAccessLog();
+                AccessLog accessLog = TaskThread.getAccessLog();
                 if (accessLog != null) {
                     info.put("accessLog", accessLog);
                 }
@@ -362,8 +361,7 @@ public class MonitorUtils {
         Thread thread = MonitorUtils.getThread(theadName);
         String threadMsg = "";
         if (thread != null && thread instanceof TaskThread) {
-            TaskThread tt = (TaskThread)thread;
-            AccessLog accessLog = tt.getAccessLog();
+            AccessLog accessLog = TaskThread.getAccessLog();
             List<String> infoList = AccessLogUtils.getInfoList(accessLog);
             threadMsg = StringUtils.collectionToDelimitedString(infoList, "\n");
         }

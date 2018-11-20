@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.ppx.cloud.common.exception.security.PermissionUrlException;
 import com.ppx.cloud.common.util.ApplicationUtils;
+import com.ppx.cloud.common.util.MD5Utils;
+import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
 
@@ -106,7 +108,14 @@ public class AccessLog {
         if (uri.length() > 64) {
             throw new PermissionUrlException();
         }
-        this.uri = uri;
+        
+        Integer seq = MonitorCache.getSqlSeq(uri);
+        if (seq != null) {
+        	this.uri = seq.toString();
+        }
+        else {
+        	this.uri = uri;
+        }
     }
 
     public String getQueryString() {
@@ -126,11 +135,13 @@ public class AccessLog {
     }
     
     public void addSql(String sql) {
-        // MongoDB索引字段的长度不能大于1024字节
-        if (sql != null && sql.length() > 1024) {
-            sql = sql.substring(0, 1024);
-        }
-        sqlList.add(sql);
+    	String sqlMd5 = MD5Utils.getMD5(sql);
+    	if (MonitorCache.containsSqlMd5(sqlMd5)) {
+    		 sqlList.add(sqlMd5);
+    	}
+    	else {
+    		sqlList.add(sql);
+    	}
     }
 
     public List<String> getSqlList() {
