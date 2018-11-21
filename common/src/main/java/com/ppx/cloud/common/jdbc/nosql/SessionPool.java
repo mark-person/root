@@ -37,6 +37,7 @@ public class SessionPool {
 		useNum++;
 		
 		if (queue.isEmpty()) {
+			// 改成启动判断是不是要创建schema,然后取的是带schema的连接
 			Session session = new SessionFactory().getSession("mysqlx://localhost:33060?user=root&password=@Dengppx123456");
 			
 			SCHEMA_SET.forEach(n -> {

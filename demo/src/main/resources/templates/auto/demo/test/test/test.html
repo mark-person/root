@@ -6,21 +6,16 @@
 
 
 <script type="text/javascript" th:inline="javascript">
-
 var controllerPath = contextPath + "auto/test/";
 var EXIST_MSG = "XXX已经存在";
 $(function() {
 	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
-	
-	// showLoading();
 });
 </script>
 </head>
 
 <body>
 <div class="container">
-
-<div>kkk</div>
 
 <div id="pageDiv" th:include="common/fragment::page('基本信息')">
 	<div th:fragment="query">

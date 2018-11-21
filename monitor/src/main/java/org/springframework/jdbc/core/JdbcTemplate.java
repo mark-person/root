@@ -644,7 +644,6 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 		try {
 			/** @author mark */
             AccessLog accessLog = TaskThread.getAccessLog();
-            accessLog.addSql(getSql(psc));
 			
 			ps = psc.createPreparedStatement(con);
 			applyStatementSettings(ps);
