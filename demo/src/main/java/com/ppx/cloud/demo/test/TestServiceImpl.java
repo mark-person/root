@@ -13,8 +13,6 @@ public class TestServiceImpl extends MyDaoSupport {
 
 	public List<Test> list(Page page, Test pojo) {
 		
-		
-
 		// 默认排序，后面加上需要从页面传过来的排序的，防止SQL注入
 		// page.addDefaultOrderName("test_id").addPermitOrderName("test_price").addUnique("test_id");
 

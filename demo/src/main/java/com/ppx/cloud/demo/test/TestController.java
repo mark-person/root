@@ -59,7 +59,7 @@ public class TestController {
     
     
     
-    public void test2(HttpServletResponse response) {
+    public Map<?, ?> test2() {
     	
     
     	impl2.test();
@@ -104,7 +104,8 @@ public class TestController {
 //    	System.out.println("..........spendTime:" + (System.nanoTime() - t1)/1000000);
     	
 		
-		ControllerReturn.returnJson(response, "sss");
+		return ControllerReturn.SUCCESS;
+		
     }
 	    
 }
