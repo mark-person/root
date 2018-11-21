@@ -3,6 +3,7 @@
  */
 package com.ppx.cloud.demo.test;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -25,6 +26,7 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		para.put("testId", 1);
 		nameTemplate.update("update test set test_name = '112' where test_id = :testId", para);
 	
+		
 		
 //		List<Object[]> list = new ArrayList<Object[]>();
 //		Object[] o1 = new Object[] {"1"};
