@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.ppx.cloud.common.jdbc.nosql.NoSqlTemplate;
-import com.ppx.cloud.common.jdbc.nosql.SessionPool;
+import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
+import com.ppx.cloud.common.jdbc.nosql.LogSessionPool;
 import com.ppx.cloud.common.util.ApplicationUtils;
 
 
@@ -19,7 +19,7 @@ import com.ppx.cloud.common.util.ApplicationUtils;
 @Service
 public class PersistenceImpl {
 	
-	private static final String COL_START = "conf";
+	private static final String COL_START = "start";
 	
 	private static final String COL_CONF = "conf";
 	
@@ -29,7 +29,7 @@ public class PersistenceImpl {
 	
 	
 	public static void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config, Map<String, Object> startInfo) {
-    	try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
+    	try (LogTemplate t = new LogTemplate()) {
 			t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
 			t.addOrReplaceOne(COL_CONF, ApplicationUtils.getServiceId(), config);
 			t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
@@ -37,7 +37,7 @@ public class PersistenceImpl {
 	}
 	
 	public static void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
-		try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
+		try (LogTemplate t = new LogTemplate()) {
         	t.addOrReplaceOne(COL_GATHER, ApplicationUtils.getServiceId(), gatherMap);
         	t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), lastUpdate);
         }

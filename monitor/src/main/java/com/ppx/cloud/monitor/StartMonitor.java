@@ -19,11 +19,12 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.mysql.cj.xdevapi.SqlResult;
-import com.ppx.cloud.common.jdbc.nosql.NoSqlTemplate;
-import com.ppx.cloud.common.jdbc.nosql.SessionPool;
+import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
+import com.ppx.cloud.common.jdbc.nosql.LogSessionPool;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.output.PersistenceImpl;
 import com.ppx.cloud.monitor.queue.AccessQueueConsumer;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
@@ -52,17 +53,16 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     public void onApplicationEvent(ContextRefreshedEvent event)  {
     	logger.info("StartMonitor----------begin1");
     	
-//    	var serviceInfo = getServiceInfo();
-//    	var config = getConfig();
-//    	var startInfo = getStartInfo();
-//    	try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
-//			t.addOrReplaceOne("service", ApplicationUtils.getServiceId(), serviceInfo);
-//			t.addOrReplaceOne("conf", ApplicationUtils.getServiceId(), config);
-//			t.addOrReplaceOne("start", ApplicationUtils.getServiceId(), startInfo);
-//		}
+    	
+    	
+    	var serviceInfo = getServiceInfo();
+    	var config = getConfig();
+    	var startInfo = getStartInfo();
+    	PersistenceImpl.insertStart(serviceInfo, config, startInfo);
+
     	
 /**
-CREATE TABLE `sql_md5` (
+CREATE TABLE `map_sql_md5` (
   `sql_md5` varchar(32) NOT NULL,
   `sql_text` varchar(2048) DEFAULT NULL,
   `sql_count` int(11) DEFAULT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE `sql_md5` (
   KEY `idx_sql_count` (`sql_count`)
 )
 
-CREATE TABLE `uri_seq` (
+CREATE TABLE `map_uri_seq` (
   `uri_seq` int(11) NOT NULL,
   `uri_text` varchar(250) NOT NULL,
   `uri_count` int(11) DEFAULT NULL,
@@ -78,20 +78,20 @@ CREATE TABLE `uri_seq` (
 )
 */
     	
-    	try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
-    		String md5Sql = "select sql_md5 from (select sql_md5 from log.sql_md5 order by sql_count desc) t limit 2";
-    		SqlResult md5Result = t.sql(md5Sql);
-    		md5Result.forEach(r -> {
-    			MonitorCache.addSqlMd5(r.getString("sql_md5"));
-    		});
-    		
-    		String uriSql = "select uri_seq, uri_text from (select uri_seq, uri_text from log.uri_seq order by uri_count desc) t limit 2";
-    		SqlResult uriResult = t.sql(uriSql);
-    		uriResult.forEach(r -> {
-    			MonitorCache .addUriSeq(r.getString("uri_text"), r.getInt("uri_seq"));
-    		});
-    		
-    	}
+    	
+//    	try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
+//    		String md5Sql = "select sql_md5 from (select sql_md5 from log.sql_md5 order by sql_count desc) t limit 2";
+//    		SqlResult md5Result = t.sql(md5Sql);
+//    		md5Result.forEach(r -> {
+//    			MonitorCache.addSqlMd5(r.getString("sql_md5"));
+//    		});
+//    		
+//    		String uriSql = "select uri_seq, uri_text from (select uri_seq, uri_text from log.uri_seq order by uri_count desc) t limit 2";
+//    		SqlResult uriResult = t.sql(uriSql);
+//    		uriResult.forEach(r -> {
+//    			MonitorCache .addUriSeq(r.getString("uri_text"), r.getInt("uri_seq"));
+//    		});
+//    	}
     	
     	
     	
@@ -143,7 +143,7 @@ CREATE TABLE `uri_seq` (
         machineMap.put("maxMemory", Runtime.getRuntime().maxMemory() / 1024 / 1024);
         // java虚拟机可用的处理器个数
         machineMap.put("availableProcessors", Runtime.getRuntime().availableProcessors());
-        machineMap.put("created", new Date());
+        machineMap.put("modified", new Date());
         machineMap.put("order", -1); // 排序
         machineMap.put("display", 1); // 显示/隐藏
         machineMap.put("type", "service");

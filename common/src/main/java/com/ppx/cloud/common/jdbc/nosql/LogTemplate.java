@@ -12,7 +12,16 @@ import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
 import com.mysql.cj.xdevapi.SqlResult;
 
-public class NoSqlTemplate implements AutoCloseable {
+/**
+ * c.modify("_id='100'").patch("{\"value\":if($.value2 is null, 1, 2)}").execute();
+ * c.modify("_id='100'").patch("{\"value\":cast(11.0 as SIGNED INTEGER)}").execute();
+ * 
+ * insert into test(doc) values("{\"_id\": \"100\", \"times3\": 1}") 
+ * on duplicate key update doc = JSON_SET(doc, '$.times3', ifnull(JSON_EXTRACT(doc,'$.times3'), 0) + 1)
+ * @author mark
+ *
+ */
+public class LogTemplate implements AutoCloseable {
 	
 	private Session session;
 	
@@ -20,12 +29,8 @@ public class NoSqlTemplate implements AutoCloseable {
 	
 	private boolean isException = false;
 	
-	public NoSqlTemplate(String schemaName) {
-		if (!SessionPool.SCHEMA_SET.contains(schemaName)) {
-			throw new RuntimeException("no found schema:" + schemaName);
-		}
-		session = SessionPool.getSession();
-		schema = session.getSchema(schemaName);
+	public LogTemplate() {
+		session = LogSessionPool.getSession();
 	}
 
 	@Override
@@ -34,7 +39,7 @@ public class NoSqlTemplate implements AutoCloseable {
 			if (isException) {
 				session.rollback();
 			}
-			SessionPool.closeSession(session);
+			LogSessionPool.closeSession(session);
 		}
 	}
 	
@@ -89,9 +94,7 @@ public class NoSqlTemplate implements AutoCloseable {
 	}
 
 	public static void main(String[] args) {
-		try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
-			
-			
+		try (LogTemplate t = new LogTemplate()) {
 			t.batchAdd("aaa", List.of(Map.of("abc", "value_abc")));
 		}
 
