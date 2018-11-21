@@ -55,10 +55,10 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     	
     	
     	
-    	var serviceInfo = getServiceInfo();
-    	var config = getConfig();
-    	var startInfo = getStartInfo();
-    	PersistenceImpl.insertStart(serviceInfo, config, startInfo);
+//    	var serviceInfo = getServiceInfo();
+//    	var config = getConfig();
+//    	var startInfo = getStartInfo();
+//    	PersistenceImpl.insertStart(serviceInfo, config, startInfo);
 
     	
 /**
@@ -70,6 +70,8 @@ CREATE TABLE `map_sql_md5` (
   KEY `idx_sql_count` (`sql_count`)
 )
 
+加上索引 
+
 CREATE TABLE `map_uri_seq` (
   `uri_seq` int(11) NOT NULL,
   `uri_text` varchar(250) NOT NULL,
@@ -79,19 +81,24 @@ CREATE TABLE `map_uri_seq` (
 */
     	
     	
-//    	try (NoSqlTemplate t = new NoSqlTemplate(SessionPool.SCHEMA_LOG)) {
-//    		String md5Sql = "select sql_md5 from (select sql_md5 from log.sql_md5 order by sql_count desc) t limit 2";
-//    		SqlResult md5Result = t.sql(md5Sql);
-//    		md5Result.forEach(r -> {
-//    			MonitorCache.addSqlMd5(r.getString("sql_md5"));
-//    		});
-//    		
-//    		String uriSql = "select uri_seq, uri_text from (select uri_seq, uri_text from log.uri_seq order by uri_count desc) t limit 2";
-//    		SqlResult uriResult = t.sql(uriSql);
-//    		uriResult.forEach(r -> {
-//    			MonitorCache .addUriSeq(r.getString("uri_text"), r.getInt("uri_seq"));
-//    		});
-//    	}
+    	try (LogTemplate t = new LogTemplate()) {
+    		
+    		if (t.existsTable("map_sql_md5")) {
+    			String md5Sql = "select sql_md5 from (select sql_md5 from map_sql_md5 order by sql_count desc) t limit 2";
+        		SqlResult md5Result = t.sql(md5Sql);
+        		md5Result.forEach(r -> {
+        			MonitorCache.addSqlMd5(r.getString("sql_md5"));
+        		});
+    		}
+    		
+    		if (t.existsTable("map_uri_seq")) {
+	    		String uriSql = "select uri_seq, uri_text from (select uri_seq, uri_text from map_uri_seq order by uri_count desc) t limit 2";
+	    		SqlResult uriResult = t.sql(uriSql);
+	    		uriResult.forEach(r -> {
+	    			MonitorCache .addUriSeq(r.getString("uri_text"), r.getInt("uri_seq"));
+	    		});
+    		}
+    	}
     	
     	
     	

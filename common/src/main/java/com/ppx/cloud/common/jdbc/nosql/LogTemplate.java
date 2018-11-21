@@ -11,6 +11,7 @@ import com.mysql.cj.xdevapi.Result;
 import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
 import com.mysql.cj.xdevapi.SqlResult;
+import com.mysql.cj.xdevapi.Table;
 
 /**
  * c.modify("_id='100'").patch("{\"value\":if($.value2 is null, 1, 2)}").execute();
@@ -31,6 +32,7 @@ public class LogTemplate implements AutoCloseable {
 	
 	public LogTemplate() {
 		session = LogSessionPool.getSession();
+		schema = session.getDefaultSchema();
 	}
 
 	@Override
@@ -91,6 +93,11 @@ public class LogTemplate implements AutoCloseable {
 			this.isException = true;
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public boolean existsTable(String tableName) {
+		List<Table> list = schema.getTables(tableName);
+		return list.isEmpty() ? false : true;
 	}
 
 	public static void main(String[] args) {
