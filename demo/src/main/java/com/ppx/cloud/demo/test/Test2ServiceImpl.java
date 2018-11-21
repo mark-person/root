@@ -3,9 +3,11 @@
  */
 package com.ppx.cloud.demo.test;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 
+import org.slf4j.MarkerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +19,15 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
  */
 @Service
 public class Test2ServiceImpl extends MyDaoSupport {
+	
+	// private Logger logger = LoggerFactory.getLogger(Test2ServiceImpl.class);
+	// logger.debug(MarkerFactory.getMarker("123"), "xxxxx");
 
 	public void test() {
 		
+		
 		NamedParameterJdbcTemplate nameTemplate = new NamedParameterJdbcTemplate(getJdbcTemplate());
+		
 		
 		var para = new HashMap<String, Object>();
 		para.put("testId", 1);

@@ -189,17 +189,15 @@ public class MonitorUtils {
     }
     
     /**
-     * 获取磁盘分区列表
+         * 获取磁盘分区列表
      * @return
      */
-    public static Map<String, Long> getUsableSpace() {  
-        Map<String, Long> returnMap = new HashMap<String, Long>();
-        // 获取磁盘分区列表
-        File[] roots = File.listRoots();
-         for (File file : roots) {
-             returnMap.put(file.getPath(), file.getUsableSpace() / 1024 / 1024);
-        }
-        return returnMap;
+    public static long getUsableSpace() {
+    	// 获取磁盘分区列表  File[] roots = File.listRoots();启动时java.lang.NoSuchMethodError: java.util.BitSet._jr$ig$wordsInUse
+    	
+        File f = new File("/");
+        long usableSpace = f.getUsableSpace() / 1024 / 1024;
+        return usableSpace;
     }
 
     /**

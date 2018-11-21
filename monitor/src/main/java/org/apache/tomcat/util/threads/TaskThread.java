@@ -31,8 +31,12 @@ public class TaskThread extends Thread {
     private AccessLog accessLog;
     
     public static AccessLog getAccessLog() {
-    	TaskThread taskThread = (TaskThread)Thread.currentThread();
-    	return taskThread.accessLog;
+    	Object obj = Thread.currentThread();
+    	if (obj instanceof TaskThread) {
+    		TaskThread taskThread = (TaskThread)obj;
+    		return taskThread.accessLog;
+    	}
+    	return null;
     }
     
     public static void setAccessLog(AccessLog accessLog) {
