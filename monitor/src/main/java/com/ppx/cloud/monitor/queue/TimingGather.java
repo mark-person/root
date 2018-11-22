@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.config.MonitorConfig;
-import com.ppx.cloud.monitor.output.PersistenceImpl;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -85,6 +84,6 @@ public class TimingGather {
         lastUpdate.put("modified", new Date());
         lastUpdate.put("lastConcurrentN", requestInfo.get("concurrentN"));
         
-        PersistenceImpl.insertGather(gatherMap, lastUpdate);
+        // PersistenceImpl.insertGather(gatherMap, lastUpdate);
 	}
 }

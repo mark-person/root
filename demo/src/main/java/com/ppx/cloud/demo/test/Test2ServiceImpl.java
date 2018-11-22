@@ -30,8 +30,17 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		
 		
 		var para = new HashMap<String, Object>();
-		para.put("testId", 1);
-		nameTemplate.update("update test set test_name = '112' where test_id = :testId", para);
+		para.put("testId", "(select '11')");
+		para.put("xxxx", 2222);
+		
+		int ccc = getJdbcTemplate().queryForObject("/*NamedParameter*/select 123", Integer.class);
+		
+		
+		
+		String c = nameTemplate.queryForObject("/*NamedParameter*/select :testId", para, String.class);
+		
+		System.out.println("ccccccccc:" + c);
+		// nameTemplate.update("update test set test_name = '112' where test_id = :testId", para);
 	
 		
 		

@@ -20,12 +20,9 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import com.mysql.cj.xdevapi.SqlResult;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
-import com.ppx.cloud.common.jdbc.nosql.LogSessionPool;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.config.MonitorConfig;
-import com.ppx.cloud.monitor.output.PersistenceImpl;
-import com.ppx.cloud.monitor.queue.AccessQueueConsumer;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
 
@@ -35,7 +32,7 @@ import com.ppx.cloud.monitor.util.MonitorUtils;
  * @author mark
  * @date 2018年6月16日
  */
-@Service
+//@Service
 public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> {
 	
 	private static Logger logger = LoggerFactory.getLogger(StartMonitor.class);
@@ -47,7 +44,7 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     private WebApplicationContext context;
     
     @Autowired
-    private AccessQueueConsumer accessQueueConsumer;
+   // private AccessQueueConsumer accessQueueConsumer;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
@@ -81,32 +78,32 @@ CREATE TABLE `map_uri_seq` (
 */
     	
     	
-    	try (LogTemplate t = new LogTemplate()) {
-    		
-    		if (t.existsTable("map_sql_md5")) {
-    			String md5Sql = "select sql_md5 from (select sql_md5 from map_sql_md5 order by sql_count desc) t limit 2";
-        		SqlResult md5Result = t.sql(md5Sql);
-        		md5Result.forEach(r -> {
-        			MonitorCache.addSqlMd5(r.getString("sql_md5"));
-        		});
-    		}
-    		
-    		if (t.existsTable("map_uri_seq")) {
-	    		String uriSql = "select uri_seq, uri_text from (select uri_seq, uri_text from map_uri_seq order by uri_count desc) t limit 2";
-	    		SqlResult uriResult = t.sql(uriSql);
-	    		uriResult.forEach(r -> {
-	    			MonitorCache .addUriSeq(r.getString("uri_text"), r.getInt("uri_seq"));
-	    		});
-    		}
-    	}
-    	
+//    	try (LogTemplate t = new LogTemplate()) {
+//    		
+//    		if (t.existsTable("map_sql_md5")) {
+//    			String md5Sql = "select sql_md5 from (select sql_md5 from map_sql_md5 order by sql_count desc) t limit 2";
+//        		SqlResult md5Result = t.sql(md5Sql);
+//        		md5Result.forEach(r -> {
+//        			MonitorCache.addSqlMd5(r.getString("sql_md5"));
+//        		});
+//    		}
+//    		
+//    		if (t.existsTable("map_uri_seq")) {
+//	    		String uriSql = "select uri_seq, uri_text from (select uri_seq, uri_text from map_uri_seq order by uri_count desc) t limit 2";
+//	    		SqlResult uriResult = t.sql(uriSql);
+//	    		uriResult.forEach(r -> {
+//	    			MonitorCache .addUriSeq(r.getString("uri_text"), r.getInt("uri_seq"));
+//	    		});
+//    		}
+//    	}
+//    	
     	
     	
     	
     	
         
         // 启动日志处理队列
-    	accessQueueConsumer.start();
+    //	accessQueueConsumer.start();
     	
     	
     	logger.info("StartMonitor----------end");
