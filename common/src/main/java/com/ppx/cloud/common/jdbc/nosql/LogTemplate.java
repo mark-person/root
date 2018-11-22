@@ -55,10 +55,10 @@ public class LogTemplate implements AutoCloseable {
 		}
 	}
 	
-	public AddResult add(String name, Map<Object, Object> map) {
+	public AddResult add(String name, Object obj) {
 		try {
 			Collection c = schema.createCollection(name, true);
-			AddStatement as = c.add(new ObjectMapper().writeValueAsString(map));
+			AddStatement as = c.add(new ObjectMapper().writeValueAsString(obj));
 			return as.execute();
 		} catch (Throwable e) {
 			this.isException = true;
@@ -66,12 +66,12 @@ public class LogTemplate implements AutoCloseable {
 		}
 	}
 	
-	public AddResult batchAdd(String name, List<Map<Object, Object>> list)  {
+	public AddResult batchAdd(String name, List<Object> list)  {
 		try {
 			Collection c = schema.createCollection(name, true);
 			AddStatement as = null;
-			for (Map<Object, Object> map : list) {
-				String json = new ObjectMapper().writeValueAsString(map);
+			for (Object obj : list) {
+				String json = new ObjectMapper().writeValueAsString(obj);
 				as = (as == null) ? c.add(json) : as.add(json);
 			}
 			if (as != null) {

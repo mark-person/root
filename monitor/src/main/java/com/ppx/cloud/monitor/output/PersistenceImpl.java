@@ -1,15 +1,19 @@
 package com.ppx.cloud.monitor.output;
 
-
+import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.mysql.cj.Query;
+import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
-import com.ppx.cloud.common.jdbc.nosql.LogSessionPool;
 import com.ppx.cloud.common.util.ApplicationUtils;
-
-
+import com.ppx.cloud.common.util.DateUtils;
+import com.ppx.cloud.monitor.persistence.AccessEntity;
+import com.ppx.cloud.monitor.pojo.AccessLog;
 
 /**
  * 
@@ -18,35 +22,97 @@ import com.ppx.cloud.common.util.ApplicationUtils;
  */
 @Service
 public class PersistenceImpl {
-	
+
 	private static final String COL_START = "start";
-	
+
 	private static final String COL_CONF = "conf";
-	
+
 	private static final String COL_GATHER = "gather";
-	
+
 	private static final String COL_SERVICE = "service";
-	
-	
-	public static void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config, Map<String, Object> startInfo) {
-    	try (LogTemplate t = new LogTemplate()) {
+
+	private static final String COL_ACCESS = "access";
+
+	public static void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
+			Map<String, Object> startInfo) {
+		try (LogTemplate t = new LogTemplate()) {
 			t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
 			t.addOrReplaceOne(COL_CONF, ApplicationUtils.getServiceId(), config);
 			t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
 		}
 	}
-	
+
 	public static void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
 		try (LogTemplate t = new LogTemplate()) {
-        	t.addOrReplaceOne(COL_GATHER, ApplicationUtils.getServiceId(), gatherMap);
-        	t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), lastUpdate);
-        }
+			t.addOrReplaceOne(COL_GATHER, ApplicationUtils.getServiceId(), gatherMap);
+			t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), lastUpdate);
+		}
 	}
-	
-	
-	
-	
-    
+
+	public static void insertAccess(AccessEntity entity) {
+		String dateStr = new SimpleDateFormat(DateUtils.DATE_PATTERN).format(entity.getB());
+		try (LogTemplate t = new LogTemplate()) {
+			t.add(COL_ACCESS + dateStr, entity);
+		}
+	}
+
+	public void insertUriStat(AccessLog a) {
+		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
+		
+		/**
+		 insert into conf(doc) values('{\"_id\":\"95adb6e77a0884d9e50232cb8c5c969d\", \"times\": 1}')
+on duplicate key update doc = JSON_SET(doc, '$.times', ifnull(JSON_EXTRACT(doc,'$.times'), 0) + 1, '$.value', JSON_EXTRACT(doc,'$.value') + 1)
+		 */
+		String uriStatSql = "insert into uri_stat(doc) values(\"{\"_id\": \"100\", \"times3\": 1}\")" +
+			" on duplicate key update doc = JSON_SET(doc, '$.times', ifnull(JSON_EXTRACT(doc,'$.times'), 0) + 1)";
+		
+		
+
+		Criteria criteria = Criteria.where("_id").is(a.getUri());
+		Query query = Query.query(criteria);
+
+		Update update = new Update();
+		update.inc("times", 1);
+		update.inc("totalTime", spendTime);
+		update.max("maxTime", spendTime);
+		update.setOnInsert("firsted", a.getBeginTime());
+		update.set("lasted", a.getBeginTime());
+		distribute(update, spendTime);
+
+		// 插入或更新数据
+		Map<?, ?> map = mongoTemplate.findAndModify(query, update,
+				FindAndModifyOptions.options().upsert(true).returnNew(true), Map.class, COL_URI_STAT);
+
+		// 更新平均值
+		Update newUpdate = new Update();
+		newUpdate.set("avgTime", (Integer) map.get("totalTime") / (Integer) map.get("times"));
+		// 最大详情
+		if ((Integer) map.get("maxTime") >= spendTime) {
+			// 最大值对应对象
+			Map<String, Object> maxMap = new LinkedHashMap<String, Object>(8);
+			maxMap.put("sid", ApplicationUtils.getServiceId());
+			if (a.getQueryString() != null) {
+				maxMap.put("str", a.getQueryString());
+			}
+			maxMap.put("maxed", a.getBeginTime());
+			if (!a.getSqlList().isEmpty()) {
+				maxMap.put("sql", a.getSqlList());
+				maxMap.put("sqls", StringUtils.collectionToCommaDelimitedString(a.getSqlSpendTime()));
+				maxMap.put("sqlc", StringUtils.collectionToCommaDelimitedString(a.getSqlCount()));
+
+				StringBuilder sqla = new StringBuilder();
+				if (!a.getSqlArgMap().isEmpty()) {
+					a.getSqlArgMap().forEach((k, v) -> {
+						sqla.append(v.toString());
+					});
+					maxMap.put("sqla", sqla.toString());
+				}
+			}
+			newUpdate.set("maxDetail", maxMap);
+		}
+		mongoTemplate.updateFirst(query, newUpdate, COL_URI_STAT);
+	}
+
 //    public void upsertService(String serviceId, Update update) {
 //        Criteria criteria = Criteria.where("_id").is(serviceId);
 //        mongoTemplate.upsert(Query.query(criteria), update, COL_SERVICE);
@@ -91,53 +157,7 @@ public class PersistenceImpl {
 //        }
 //    }
 //
-//    public void insertUriStat(AccessLog a) {
-//        int spendTime = (int)(a.getSpendNanoTime() / 1000000);
-//        
-//        Criteria criteria = Criteria.where("_id").is(a.getUri());
-//        Query query = Query.query(criteria);
-//
-//        Update update = new Update();
-//        update.inc("times", 1);
-//        update.inc("totalTime", spendTime);
-//        update.max("maxTime", spendTime);
-//        update.setOnInsert("firsted", a.getBeginTime());
-//        update.set("lasted", a.getBeginTime());
-//        distribute(update, spendTime);
-//
-//        // 插入或更新数据
-//        Map<?, ?> map = mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().upsert(true).returnNew(true),
-//                Map.class, COL_URI_STAT);
-//        
-//        // 更新平均值
-//        Update newUpdate = new Update();
-//        newUpdate.set("avgTime", (Integer)map.get("totalTime") / (Integer)map.get("times"));
-//        // 最大详情
-//        if ((Integer)map.get("maxTime") >= spendTime) {
-//            // 最大值对应对象
-//            Map<String, Object> maxMap = new LinkedHashMap<String, Object>(8);
-//            maxMap.put("sid", ApplicationUtils.getServiceId());
-//            if (a.getQueryString() != null) {
-//                maxMap.put("str", a.getQueryString());
-//            }
-//            maxMap.put("maxed", a.getBeginTime());
-//            if (!a.getSqlList().isEmpty()) {
-//                maxMap.put("sql", a.getSqlList() );
-//                maxMap.put("sqls", StringUtils.collectionToCommaDelimitedString(a.getSqlSpendTime()));
-//                maxMap.put("sqlc", StringUtils.collectionToCommaDelimitedString(a.getSqlCount()));
-//                
-//                StringBuilder sqla = new StringBuilder();
-//                if (!a.getSqlArgMap().isEmpty()) {
-//                    a.getSqlArgMap().forEach((k, v) -> {
-//                        sqla.append(v.toString());
-//                    });
-//                    maxMap.put("sqla", sqla.toString());
-//                }
-//            }
-//            newUpdate.set("maxDetail", maxMap);     
-//        }
-//        mongoTemplate.updateFirst(query, newUpdate, COL_URI_STAT);    
-//    }
+
 //    
 //    public void insertSqlStat(AccessLog a) {
 //        
@@ -308,21 +328,20 @@ public class PersistenceImpl {
 //        warningOp.ensureIndex(new Index().on("lasted", Direction.DESC));
 //    }
 //    
-//    private void distribute(Update update, long t) {
-//        if (t < 10) {
-//            update.inc("ms0_10", 1);
-//        } else if (t < 100) {
-//            update.inc("ms10_100", 1);
-//        } else if (t < 1000) {
-//            update.inc("ms100_s1", 1);
-//        } else if (t < 3000) {
-//            update.inc("s1_3", 1);
-//        } else if (t < 10000) {
-//            update.inc("s3_10", 1);
-//        } else {
-//            update.inc("s10_", 1);
-//        }
-//    }
-    
-}
+	private void distribute(Map<String, Object> map, long t) {
+		if (t < 10) {
+			map.inc("ms0_10", 1);
+		} else if (t < 100) {
+			update.inc("ms10_100", 1);
+		} else if (t < 1000) {
+			update.inc("ms100_s1", 1);
+		} else if (t < 3000) {
+			update.inc("s1_3", 1);
+		} else if (t < 10000) {
+			update.inc("s3_10", 1);
+		} else {
+			update.inc("s10_", 1);
+		}
+	}
 
+}
