@@ -4,7 +4,6 @@
 package com.ppx.cloud.common.jdbc.nosql;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,17 +24,12 @@ public class Update {
 
 	private List<String> setList = new ArrayList<String>();
 
-	// * insert into test(doc) values("{\"_id\": \"100\", \"times3\": 1}")
-	// * on duplicate key update doc = JSON_SET(doc, '$.times3',
-	// ifnull(JSON_EXTRACT(doc,'$.times3'), 0) + 1)
-
 	public Update(String collectionName, String _id) {
 		this.collectionName = collectionName;
 		valueMap.put("_id", _id);
 	}
 
 	public Update inc(String name, int n) {
-		// '$.times3', ifnull(convert(JSON_EXTRACT(doc,'$.times3'), SIGNED), 0) + 1)
 		// 先加到value
 		String s = "";
 		valueMap.put(name, n);
@@ -51,10 +45,7 @@ public class Update {
 	public Update max(String name, int n) {
 		// 先加到value
 		valueMap.put(name, n);
-
-		// '$.times3', convert(if(JSON_EXTRACT(doc,'$.times3') > 15,
-		// JSON_EXTRACT(doc,'$.times3'), 15), SIGNED)
-		String s = "'$.times3', convert(if(JSON_EXTRACT(doc,'$." + name + "') > " + n + ", JSON_EXTRACT(doc,'$." + name
+		String s = "'$." + name + "', convert(if(JSON_EXTRACT(doc,'$." + name + "') > " + n + ", JSON_EXTRACT(doc,'$." + name
 				+ "'), " + n + "), SIGNED)";
 		setList.add(s);
 		return this;
@@ -63,10 +54,7 @@ public class Update {
 	public Update min(String name, int n) {
 		// 先加到value
 		valueMap.put(name, n);
-
-		// '$.times3', convert(if(JSON_EXTRACT(doc,'$.times3') < 15,
-		// JSON_EXTRACT(doc,'$.times3'), 15), SIGNED)
-		String s = "'$.times3', convert(if(JSON_EXTRACT(doc,'$." + name + "') < " + n + ", JSON_EXTRACT(doc,'$." + name
+		String s = "'$." + name + "', convert(if(JSON_EXTRACT(doc,'$." + name + "') < " + n + ", JSON_EXTRACT(doc,'$." + name
 				+ "'), " + n + "), SIGNED)";
 		setList.add(s);
 
@@ -106,8 +94,8 @@ public class Update {
 	}
 
 	public static void main(String[] args) {
-		Update u = new Update("conf", "123");
-		u.inc("times", 1);
-		System.out.println("999999:" + u);
+		Update u = new Update("conf", "1000");
+		u.max("times", 1200);
+		System.out.println("" + u);
 	}
 }
