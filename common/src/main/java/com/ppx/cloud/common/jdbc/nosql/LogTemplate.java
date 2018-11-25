@@ -1,7 +1,9 @@
 package com.ppx.cloud.common.jdbc.nosql;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.AddResult;
@@ -102,9 +104,21 @@ public class LogTemplate implements AutoCloseable {
 		return list.isEmpty() ? false : true;
 	}
 
+	
+	// 测试用
+	public Schema getSchema() {
+		return schema;
+	}
 	public static void main(String[] args) {
 		try (LogTemplate t = new LogTemplate()) {
-			t.batchAdd("aaa", List.of(Map.of("abc", "value_abc")));
+			
+			
+			
+			Indexes indexes = Indexes.createIndex("test");
+			indexes.add("idx_test_value", "numeric");
+			indexes.add("idx_test_value2", "text(100)");
+			indexes.createIndex(t);
+			
 		}
 
 		System.out.println("------------end");
