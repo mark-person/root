@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.AddResult;
 import com.mysql.cj.xdevapi.AddStatement;
 import com.mysql.cj.xdevapi.Collection;
+import com.mysql.cj.xdevapi.DbDoc;
+import com.mysql.cj.xdevapi.JsonString;
+import com.mysql.cj.xdevapi.JsonValue;
 import com.mysql.cj.xdevapi.Result;
 import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
@@ -59,6 +62,7 @@ public class LogTemplate implements AutoCloseable {
 		try {
 			Collection c = schema.createCollection(name, true);
 			AddStatement as = c.add(new ObjectMapper().writeValueAsString(obj));
+			
 			return as.execute();
 		} catch (Throwable e) {
 			this.isException = true;
@@ -100,9 +104,19 @@ public class LogTemplate implements AutoCloseable {
 		return list.isEmpty() ? false : true;
 	}
 
+	
+	// 测试用
+	public Schema getSchema() {
+		return schema;
+	}
 	public static void main(String[] args) {
 		try (LogTemplate t = new LogTemplate()) {
-			t.batchAdd("aaa", List.of(Map.of("abc", "value_abc")));
+			
+			Collection c = t.getSchema().createCollection("test", true);
+			
+			String index = "{\"fields\": [{\"field\": \"$.value\", \"type\": \"numeric\" }]}";
+			c.createIndex("idx_test_value", index);
+			
 		}
 
 		System.out.println("------------end");

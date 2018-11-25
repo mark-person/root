@@ -59,6 +59,7 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
 
     	
 /**
+TODO 直接使用统计表，并建索引，不需要下面两张表
 CREATE TABLE `map_sql_md5` (
   `sql_md5` varchar(32) NOT NULL,
   `sql_text` varchar(2048) DEFAULT NULL,
