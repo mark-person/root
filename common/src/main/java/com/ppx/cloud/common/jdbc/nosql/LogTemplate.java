@@ -1,15 +1,14 @@
 package com.ppx.cloud.common.jdbc.nosql;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.AddResult;
 import com.mysql.cj.xdevapi.AddStatement;
 import com.mysql.cj.xdevapi.Collection;
-import com.mysql.cj.xdevapi.DbDoc;
-import com.mysql.cj.xdevapi.JsonString;
-import com.mysql.cj.xdevapi.JsonValue;
 import com.mysql.cj.xdevapi.Result;
 import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
@@ -112,10 +111,12 @@ public class LogTemplate implements AutoCloseable {
 	public static void main(String[] args) {
 		try (LogTemplate t = new LogTemplate()) {
 			
-			Collection c = t.getSchema().createCollection("test", true);
 			
-			String index = "{\"fields\": [{\"field\": \"$.value\", \"type\": \"numeric\" }]}";
-			c.createIndex("idx_test_value", index);
+			
+			Indexes indexes = Indexes.createIndex("test");
+			indexes.add("idx_test_value", "numeric");
+			indexes.add("idx_test_value2", "text(100)");
+			indexes.createIndex(t);
 			
 		}
 
