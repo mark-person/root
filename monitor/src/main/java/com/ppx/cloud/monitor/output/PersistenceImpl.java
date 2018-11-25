@@ -1,15 +1,15 @@
 package com.ppx.cloud.monitor.output;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.mysql.cj.Query;
-import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
+import com.ppx.cloud.common.jdbc.nosql.Update;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.monitor.persistence.AccessEntity;
@@ -32,6 +32,8 @@ public class PersistenceImpl {
 	private static final String COL_SERVICE = "service";
 
 	private static final String COL_ACCESS = "access";
+	
+	private static final String COL_URI_STAT = "uri_stat";
 
 	public static void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
 			Map<String, Object> startInfo) {
@@ -59,19 +61,8 @@ public class PersistenceImpl {
 	public void insertUriStat(AccessLog a) {
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		
-		/**
-		 insert into conf(doc) values('{\"_id\":\"95adb6e77a0884d9e50232cb8c5c969d\", \"times\": 1}')
-on duplicate key update doc = JSON_SET(doc, '$.times', ifnull(JSON_EXTRACT(doc,'$.times'), 0) + 1, '$.value', JSON_EXTRACT(doc,'$.value') + 1)
-		 */
-		String uriStatSql = "insert into uri_stat(doc) values(\"{\"_id\": \"100\", \"times3\": 1}\")" +
-			" on duplicate key update doc = JSON_SET(doc, '$.times', ifnull(JSON_EXTRACT(doc,'$.times'), 0) + 1)";
 		
-		
-
-		Criteria criteria = Criteria.where("_id").is(a.getUri());
-		Query query = Query.query(criteria);
-
-		Update update = new Update();
+		Update update = new Update(COL_URI_STAT, a.getUri());
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
 		update.max("maxTime", spendTime);
@@ -79,14 +70,17 @@ on duplicate key update doc = JSON_SET(doc, '$.times', ifnull(JSON_EXTRACT(doc,'
 		update.set("lasted", a.getBeginTime());
 		distribute(update, spendTime);
 
-		// 插入或更新数据
-		Map<?, ?> map = mongoTemplate.findAndModify(query, update,
-				FindAndModifyOptions.options().upsert(true).returnNew(true), Map.class, COL_URI_STAT);
-
+		try (LogTemplate t = new LogTemplate()) {
+			t.sql(update);
+		}
+		
+		// 平均值用update搞定, 缓存uri最大值
+		
 		// 更新平均值
-		Update newUpdate = new Update();
-		newUpdate.set("avgTime", (Integer) map.get("totalTime") / (Integer) map.get("times"));
+		//Update newUpdate = new Update();
+		//newUpdate.set("avgTime", (Integer) map.get("totalTime") / (Integer) map.get("times"));
 		// 最大详情
+		var map = new HashMap();
 		if ((Integer) map.get("maxTime") >= spendTime) {
 			// 最大值对应对象
 			Map<String, Object> maxMap = new LinkedHashMap<String, Object>(8);
@@ -108,9 +102,9 @@ on duplicate key update doc = JSON_SET(doc, '$.times', ifnull(JSON_EXTRACT(doc,'
 					maxMap.put("sqla", sqla.toString());
 				}
 			}
-			newUpdate.set("maxDetail", maxMap);
+			//newUpdate.set("maxDetail", maxMap);
 		}
-		mongoTemplate.updateFirst(query, newUpdate, COL_URI_STAT);
+		//mongoTemplate.updateFirst(query, newUpdate, COL_URI_STAT);
 	}
 
 //    public void upsertService(String serviceId, Update update) {
@@ -328,9 +322,9 @@ on duplicate key update doc = JSON_SET(doc, '$.times', ifnull(JSON_EXTRACT(doc,'
 //        warningOp.ensureIndex(new Index().on("lasted", Direction.DESC));
 //    }
 //    
-	private void distribute(Map<String, Object> map, long t) {
+	private void distribute(Update update, long t) {
 		if (t < 10) {
-			map.inc("ms0_10", 1);
+			update.inc("ms0_10", 1);
 		} else if (t < 100) {
 			update.inc("ms10_100", 1);
 		} else if (t < 1000) {
