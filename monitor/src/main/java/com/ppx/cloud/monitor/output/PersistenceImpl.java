@@ -102,6 +102,7 @@ public class PersistenceImpl {
 					maxMap.put("sqla", sqla.toString());
 				}
 			}
+			
 			//newUpdate.set("maxDetail", maxMap);
 		}
 		//mongoTemplate.updateFirst(query, newUpdate, COL_URI_STAT);
