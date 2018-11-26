@@ -60,6 +60,7 @@ public class AccessQueueConsumer {
                     if (!MonitorConfig.IS_DEV) {
                         ConsoleImpl.print(a);
                     }
+                    
                 }
             }
         }
