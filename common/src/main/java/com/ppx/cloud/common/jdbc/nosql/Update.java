@@ -4,6 +4,7 @@
 package com.ppx.cloud.common.jdbc.nosql;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,12 @@ public class Update {
 	public Update set(String name, Object obj) {
 		String s = "";
 		if (obj instanceof String) {
-			s = "'$." + name + "', '" + obj + "'";
+			if (obj.toString().startsWith("JSON_EXTRACT")) {
+				s = "'$." + name + "', " + obj;
+			}
+			else {
+				s = "'$." + name + "', '" + obj + "'";
+			}
 		} else {
 			s = "'$." + name + "', " + obj;
 		}
@@ -97,7 +103,6 @@ public class Update {
 		String valueString = "";
 		try {
 			valueString = new ObjectMapper().writeValueAsString(valueMap);
-			//valueString = valueString.replaceAll("\\\"", "");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -107,10 +112,25 @@ public class Update {
 				+ "') on duplicate key update doc = JSON_SET(doc, " + setString + ")";
 		return s;
 	}
+	
+	// select JSON_CONTAINS(doc, '"abc"', '$.uri') from test
+	// addToSet  select JSON_EXTRACT(JSON_ARRAY_APPEND(doc, '$.uri', 'cccc'), '$.uri') from test
+	
+	public Update addToSet(String name, String value) {
+		valueMap.put(name, Arrays.asList(value));
+		String s = "'$." + name + "', if(JSON_CONTAINS(doc, '\"" + value + "\"', '$." + name + "') != 1, JSON_EXTRACT(JSON_ARRAY_APPEND(doc, '$." + name
+				+ "', '\"" + value + "\"'), '$." + name + "'), JSON_EXTRACT(doc, '$." + name + "'))";
+		setList.add(s);
+		return this;
+	}
 
 	public static void main(String[] args) {
 		Update u = new Update("conf", "1000");
 		u.max("times", 1200, "max", Map.of("abc", "abcValue"));
+		// u.set("avg", "JSON_EXTRACT(doc,'$.times') / JSON_EXTRACT(doc,'$.times')");
+		
+		u.addToSet("uri", "abc");
+		
 		System.out.println("" + u);
 	}
 }

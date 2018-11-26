@@ -103,6 +103,10 @@ public class LogTemplate implements AutoCloseable {
 		List<Table> list = schema.getTables(tableName);
 		return list.isEmpty() ? false : true;
 	}
+	
+	public Collection createCollection(String collectionName) {
+		return schema.createCollection(collectionName, true);
+	}
 
 	
 	// 测试用

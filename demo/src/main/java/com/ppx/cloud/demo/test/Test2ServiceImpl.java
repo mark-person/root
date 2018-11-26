@@ -41,7 +41,7 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		 
 		//String c = nameTemplate.queryForObject("/*NamedParameter*/select :testId", para, String.class);
 		
-		System.out.println("ccccccccc:" + c);
+		System.out.println("1111cccccccccccccc:" + c);
 		// nameTemplate.update("update test set test_name = '112' where test_id = :testId", para);
 	
 		

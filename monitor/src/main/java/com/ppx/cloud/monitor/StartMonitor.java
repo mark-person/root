@@ -18,11 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.mysql.cj.xdevapi.SqlResult;
-import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.util.ApplicationUtils;
-import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.output.PersistenceImpl;
+import com.ppx.cloud.monitor.queue.AccessQueueConsumer;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
 
@@ -32,7 +31,7 @@ import com.ppx.cloud.monitor.util.MonitorUtils;
  * @author mark
  * @date 2018年6月16日
  */
-//@Service
+@Service
 public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> {
 	
 	private static Logger logger = LoggerFactory.getLogger(StartMonitor.class);
@@ -44,7 +43,7 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     private WebApplicationContext context;
     
     @Autowired
-   // private AccessQueueConsumer accessQueueConsumer;
+    private AccessQueueConsumer accessQueueConsumer;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
@@ -57,6 +56,7 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
 //    	var startInfo = getStartInfo();
 //    	PersistenceImpl.insertStart(serviceInfo, config, startInfo);
 
+    	PersistenceImpl.createFixedIndex();
     	
 /**
 TODO 直接使用统计表，并建索引，不需要下面两张表
@@ -104,7 +104,7 @@ CREATE TABLE `map_uri_seq` (
     	
         
         // 启动日志处理队列
-    //	accessQueueConsumer.start();
+    	accessQueueConsumer.start();
     	
     	
     	logger.info("StartMonitor----------end");

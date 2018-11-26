@@ -138,7 +138,7 @@ public class AccessLog {
     
     public void addSql(String sql) {
     	String sqlMd5 = MD5Utils.getMD5(sql);
-    	if (MonitorCache.containsSqlMd5(sqlMd5)) {
+    	if (MonitorCache.getSqlPojo(sqlMd5) != null) {
     		 sqlList.add(sqlMd5);
     		 if (MonitorConfig.IS_DEV) {
     			 MonitorCache.addMd5Sql(sqlMd5, sql); 

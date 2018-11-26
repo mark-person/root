@@ -18,24 +18,24 @@ import com.ppx.cloud.monitor.config.MonitorConfig;
 public class MonitorCache {
 	
 	// 存放数据库sql的md5值，用作缓存
-	private static Set<String> sqlMd5Set = new HashSet<String>();
+	private static Map<String, SqlPojo> sqlMd5Map = new HashMap<String, SqlPojo>();
 	
 	// 存放数据库uri的sequence值，用作缓存
 	private static Map<String, UriPojo> uriMap = new HashMap<String, UriPojo>();
 	
-	public static boolean containsSqlMd5(String sqlMd5) {
-		return sqlMd5Set.contains(sqlMd5);
+	public static SqlPojo getSqlPojo(String sqlMd5) {
+		return sqlMd5Map.get(sqlMd5);
 	}
 	
-	public static void addSqlMd5(String sqlMd5) {
-		sqlMd5Set.add(sqlMd5);
+	public static void addSql(String sqlMd5, SqlPojo sqlPojo) {
+		sqlMd5Map.put(sqlMd5, sqlPojo);
 	}
 	
 	public static UriPojo getUri(String uri) {
 		return uriMap.get(uri);
 	}
 	
-	public static void addUriSeq(String uri, UriPojo uriPojo) {
+	public static void addUri(String uri, UriPojo uriPojo) {
 		uriMap.put(uri, uriPojo);
 		
 		if (MonitorConfig.IS_DEV) {

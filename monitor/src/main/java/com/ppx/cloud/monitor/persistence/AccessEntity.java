@@ -4,6 +4,7 @@ package com.ppx.cloud.monitor.persistence;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.util.ApplicationUtils;
@@ -12,6 +13,7 @@ import com.ppx.cloud.monitor.pojo.AccessLog;
 public class AccessEntity {
     
     // 缩写:serviceId referer queryString method beginTime spendTime useMemory cacheKey accountId
+	@JsonIgnore
     private String _id;
     private String sid;
     private String uri;
