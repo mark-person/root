@@ -1,12 +1,16 @@
 package com.ppx.cloud.monitor.output;
 
 import java.text.SimpleDateFormat;
+import java.util.BitSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.ppx.cloud.common.exception.ErrorBean;
+import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.jdbc.nosql.Update;
 import com.ppx.cloud.common.util.ApplicationUtils;
@@ -17,6 +21,8 @@ import com.ppx.cloud.monitor.cache.UriPojo;
 import com.ppx.cloud.monitor.persistence.AccessEntity;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 import com.ppx.cloud.monitor.pojo.DebugEntity;
+import com.ppx.cloud.monitor.pojo.ErrorEntity;
+import com.ppx.cloud.monitor.util.MonitorUtils;
 
 /**
  * 
@@ -41,6 +47,14 @@ public class PersistenceImpl {
 	private static final String COL_SQL_STAT = "sql_stat";
 	
 	private static final String COL_DEBUG = "debug";
+	
+	private static final String COL_WARNING = "warning";
+	
+	private static final String COL_ERROR = "error";
+	
+	private static final String COL_ERROR_DETAIL = "error_detail";
+	
+	
 
 	public static void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
 			Map<String, Object> startInfo) {
@@ -202,6 +216,48 @@ public class PersistenceImpl {
 //	        // 更新到service
 //	        upsertService(ApplicationUtils.getServiceId(), Update.update("lastResponse", avgTime));
 	    }
+	  
+	  public void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity debug) {
+	        ErrorBean errorBean = ErrorCode.getErroCode(throwable);
+	        errorEntity.setC(errorBean.getCode());
+	        
+	        // 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情
+	        if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
+	            errorEntity.setP(debug.getP());
+	            errorEntity.setIn(debug.getIn());
+	            try (LogTemplate t = new LogTemplate()) {
+	    			t.add(COL_ERROR, errorEntity);
+	    		}
+	        }
+	        else {
+	        	try (LogTemplate t = new LogTemplate()) {
+	    			t.add(COL_ERROR, errorEntity);
+	    		}
+	            
+	            Map<String, Object> detailErrorMap = new HashMap<String, Object>();
+	            detailErrorMap.put("_id", errorEntity.get_id());
+	            detailErrorMap.put("exception", MonitorUtils.getExcepiton(throwable));
+	            detailErrorMap.put("debug", debug.toJsonObject());
+	            try (LogTemplate t = new LogTemplate()) {
+	    			t.add(COL_ERROR_DETAIL, errorEntity);
+	    		}
+	        }
+	    }
+	  
+	public void insertWarning(AccessLog a, BitSet content) {
+//		Criteria criteria = Criteria.where("sid").is(ApplicationUtils.getServiceId()).and("uri").is(a.getUri());
+//		Update update = Update.update("lasted", a.getBeginTime());
+//		
+//		
+//		update.setOnInsert("beginTime", a.getBeginTime());
+//		update.bitwise("content").or(content.toLongArray()[0]);
+//		mongoTemplate.upsert(Query.query(criteria), update, COL_WARNING);
+//		
+//		try (LogTemplate t = new LogTemplate()) {
+//			
+//		}
+		
+	}
 	
 
 //    public void upsertService(String serviceId, Update update) {
@@ -219,53 +275,14 @@ public class PersistenceImpl {
 //        return mongoTemplate.findOne(Query.query(criteria), Map.class, COL_CONIFG);
 //    }
 //    
-//    public void insertStartLog(Map<String, Object> map) {       
-//        mongoTemplate.insert(map, COL_START);
-//    }
-//    
-//    public void insertAccess(AccessEntity entity) {
-//        String dateStr = dateFormat.format(entity.get_id().getDate());
-//        mongoTemplate.insert(entity, COL_ACCESS + dateStr);        
-//    }
-//    
-//    public void insertError(ErrorEntity errorEntity, Throwable t, DebugEntity debug) {
-//        ErrorBean errorBean = ErrorCode.getErroCode(t);
-//        errorEntity.setC(errorBean.getCode());
-//        
-//        // 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情
-//        if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
-//            errorEntity.setP(debug.getP());
-//            errorEntity.setIn(debug.getIn());
-//            mongoTemplate.insert(errorEntity, COL_ERROR);
-//        }
-//        else {
-//            mongoTemplate.insert(errorEntity, COL_ERROR);
-//            Map<String, Object> detailErrorMap = new HashMap<String, Object>();
-//            detailErrorMap.put("_id", errorEntity.get_id());
-//            detailErrorMap.put("exception", AccessUtils.getExcepiton(t));
-//            detailErrorMap.put("debug", debug.toJsonObject());
-//            mongoTemplate.insert(detailErrorMap, COL_ERROR_DETAIL);
-//        }
-//    }
-//
 
-//    
-  
-//    
 
 //    
 //    public void insertGather(Map<String, Object> map) {    
 //        mongoTemplate.insert(map, COL_GATHER);
 //    }
 //    
-//    public void insertWarning(AccessLog a, BitSet content) {
-//        Criteria criteria = Criteria.where("sid").is(ApplicationUtils.getServiceId())
-//                .and("uri").is(a.getUri());
-//        Update update = Update.update("lasted", a.getBeginTime());
-//        update.setOnInsert("beginTime", a.getBeginTime());
-//        update.bitwise("content").or(content.toLongArray()[0]);
-//        mongoTemplate.upsert(Query.query(criteria), update, COL_WARNING);
-//    }
+
 //    
 //    private static String lastIndexDate = "";
 //    // 创建access索引 

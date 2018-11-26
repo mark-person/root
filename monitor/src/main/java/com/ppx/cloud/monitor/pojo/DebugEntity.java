@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ppx.cloud.common.config.ObjectMappingCustomer;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.persistence.AccessEntity;
 
@@ -194,14 +195,13 @@ public class DebugEntity {
         return debug;
     }
     
-//    public BasicDBObject toJsonObject() {
-//        BasicDBObject debugJsonObject = null;
-//        try {
-//            String debugJson = new ObjectMappingCustomer().writeValueAsString(this);
-//            debugJsonObject = BasicDBObject.parse(debugJson);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return debugJsonObject;
-//    }
+    public String toJsonObject() {
+    	String debugJson = "";
+        try {
+            debugJson = new ObjectMappingCustomer().writeValueAsString(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return debugJson;
+    }
 }
