@@ -3,6 +3,7 @@
  */
 package com.ppx.cloud.demo.test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.slf4j.MarkerFactory;
@@ -30,14 +31,14 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		
 		
 		var para = new HashMap<String, Object>();
-		para.put("testId", "(select '11')");
+		para.put("testId", Arrays.asList(1, 2));
 		para.put("xxxx", 2222);
 		
-		int ccc = getJdbcTemplate().queryForObject("/*NamedParameter*/select 123", Integer.class);
+		int c = nameTemplate.queryForObject("select count(*) from test where test_id in (:testId)", para, Integer.class);
 		
 		
 		
-		String c = nameTemplate.queryForObject("/*NamedParameter*/select :testId", para, String.class);
+		//String c = nameTemplate.queryForObject("/*NamedParameter*/select :testId", para, String.class);
 		
 		System.out.println("ccccccccc:" + c);
 		// nameTemplate.update("update test set test_name = '112' where test_id = :testId", para);
