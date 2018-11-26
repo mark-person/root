@@ -45,7 +45,6 @@ public class AccessQueueConsumer {
     private void consumeAccessLog() {
         AccessLog a;
         while ((a = AccessQueue.getQueue().poll()) != null) {
-        	System.out.println("99999999");
             if (MonitorConfig.IS_DEV) {
                 ConsoleImpl.print(a);
             }

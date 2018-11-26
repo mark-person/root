@@ -26,22 +26,27 @@ public class Test2ServiceImpl extends MyDaoSupport {
 
 	public void test() {
 		
+		int c1 = getJdbcTemplate().queryForObject("select ?", Integer.class, 108);
+		
+		
+		getJdbcTemplate().update("update test set test_name = 'xxxx' where test_id = 12");
+		
 		
 		NamedParameterJdbcTemplate nameTemplate = new NamedParameterJdbcTemplate(getJdbcTemplate());
 		
 		
 		var para = new HashMap<String, Object>();
-		para.put("testId", Arrays.asList(1, 2));
+		para.put("test_name", "name");
 		para.put("xxxx", 2222);
 		
-		int c = nameTemplate.queryForObject("select count(*) from test where test_id in (:testId)", para, Integer.class);
+		int c = nameTemplate.queryForObject("select count(*) from test where test_name like :test_name '%'", para, Integer.class);
 		
+		int cc = nameTemplate.queryForObject("select count(*) from test where test_name like :test_name '%'", para, Integer.class);
 		
 		
 		 
 		//String c = nameTemplate.queryForObject("/*NamedParameter*/select :testId", para, String.class);
 		
-		System.out.println("1111cccccccccccccc:" + c);
 		// nameTemplate.update("update test set test_name = '112' where test_id = :testId", para);
 	
 		

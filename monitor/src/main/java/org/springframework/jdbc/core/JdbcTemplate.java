@@ -642,15 +642,9 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 		Connection con = DataSourceUtils.getConnection(obtainDataSource());
 		PreparedStatement ps = null;
 		try {
-			/** @author mark */
-            AccessLog accessLog = TaskThread.getAccessLog();
-			
 			ps = psc.createPreparedStatement(con);
 			applyStatementSettings(ps);
 			T result = action.doInPreparedStatement(ps);
-			if (result instanceof ArrayList) {
-				accessLog.addSqlCount(((ArrayList<?>)result).size());
-			}
 			
 			handleWarnings(ps);
 			return result;

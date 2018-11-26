@@ -404,7 +404,7 @@ public class NamedParameterJdbcTemplate implements NamedParameterJdbcOperations 
 		AccessLog accessLog = TaskThread.getAccessLog();
 		accessLog.addSql(sql);
         int sqlIndex = accessLog.getSqlList().size();
-        accessLog.addSqlArg(sqlIndex, params);
+        accessLog.addSqlArg(sqlIndex - 1, params);
         
 		
 		return pscf.newPreparedStatementCreator(params);
