@@ -88,9 +88,10 @@ public class LogTemplate implements AutoCloseable {
 		return null;
 	}
 	
-	public SqlResult sql(String sql) {
+	public SqlResult sql(Object sql) {
+		if (sql == null) return null;
 		try {
-			SqlResult r = session.sql(sql).execute();
+			SqlResult r = session.sql(sql.toString()).execute();
 			return r;
 		} catch (Exception e) {
 			this.isException = true;

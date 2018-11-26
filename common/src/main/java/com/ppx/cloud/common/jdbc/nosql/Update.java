@@ -66,7 +66,7 @@ public class Update {
 		return this;
 	}
 
-	public Update setOnUpdate(String name, Object obj) {
+	public Update set(String name, Object obj) {
 		String s = "";
 		if (obj instanceof String) {
 			s = "'$." + name + "', '" + obj + "'";
