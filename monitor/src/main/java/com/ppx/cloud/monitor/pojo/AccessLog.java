@@ -12,6 +12,7 @@ import com.ppx.cloud.common.exception.security.PermissionUrlException;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
+import com.ppx.cloud.monitor.cache.UriPojo;
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
@@ -110,9 +111,9 @@ public class AccessLog {
             throw new PermissionUrlException();
         }
         
-        Integer seq = MonitorCache.getSqlSeq(uri);
-        if (seq != null) {
-        	this.uri = seq.toString();
+        UriPojo uriPojo = MonitorCache.getUri(uri);
+        if (uriPojo != null) {
+        	this.uri = uriPojo.getUriSeq().toString();
         }
         else {
         	this.uri = uri;

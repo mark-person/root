@@ -50,6 +50,23 @@ public class Update {
 		setList.add(s);
 		return this;
 	}
+	
+	public Update max(String name, int n, String setName, Object setValue) {
+		String json = "";
+		try {
+			json = new ObjectMapper().writeValueAsString(setValue);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		// 先加到value
+		
+		valueMap.put(setName, setValue);
+		String s = "'$." + setName + "', if(JSON_EXTRACT(doc,'$." + name + "') > " + n + ", JSON_EXTRACT(doc,'$." + setName
+				+ "'), '" + json + "')";
+		setList.add(s);
+		return this;
+	}
 
 	public Update min(String name, int n) {
 		// 先加到value
@@ -57,7 +74,6 @@ public class Update {
 		String s = "'$." + name + "', convert(if(JSON_EXTRACT(doc,'$." + name + "') < " + n + ", JSON_EXTRACT(doc,'$." + name
 				+ "'), " + n + "), SIGNED)";
 		setList.add(s);
-
 		return this;
 	}
 
@@ -81,21 +97,20 @@ public class Update {
 		String valueString = "";
 		try {
 			valueString = new ObjectMapper().writeValueAsString(valueMap);
-			valueString = "\"" + valueString.replaceAll("\"", "\\\\\"") + "\"";
+			//valueString = valueString.replaceAll("\\\"", "");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		
 		String setString = StringUtils.collectionToCommaDelimitedString(setList);
-		String s = "insert into " + collectionName + "(doc) values(" + valueString
-				+ ") on duplicate key update doc = JSON_SET(doc, " + setString + ")";
+		String s = "insert into " + collectionName + "(doc) values('" + valueString
+				+ "') on duplicate key update doc = JSON_SET(doc, " + setString + ")";
 		return s;
 	}
 
 	public static void main(String[] args) {
 		Update u = new Update("conf", "1000");
-		u.max("times", 1200);
+		u.max("times", 1200, "max", Map.of("abc", "abcValue"));
 		System.out.println("" + u);
 	}
 }

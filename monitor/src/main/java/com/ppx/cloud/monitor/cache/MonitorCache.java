@@ -21,7 +21,7 @@ public class MonitorCache {
 	private static Set<String> sqlMd5Set = new HashSet<String>();
 	
 	// 存放数据库uri的sequence值，用作缓存
-	private static Map<String, Integer> uriSeqMap = new HashMap<String, Integer>();
+	private static Map<String, UriPojo> uriMap = new HashMap<String, UriPojo>();
 	
 	public static boolean containsSqlMd5(String sqlMd5) {
 		return sqlMd5Set.contains(sqlMd5);
@@ -31,15 +31,15 @@ public class MonitorCache {
 		sqlMd5Set.add(sqlMd5);
 	}
 	
-	public static Integer getSqlSeq(String uri) {
-		return uriSeqMap.get(uri);
+	public static UriPojo getUri(String uri) {
+		return uriMap.get(uri);
 	}
 	
-	public static void addUriSeq(String uri, Integer seq) {
-		uriSeqMap.put(uri, seq);
+	public static void addUriSeq(String uri, UriPojo uriPojo) {
+		uriMap.put(uri, uriPojo);
 		
 		if (MonitorConfig.IS_DEV) {
-			addSeqUri(seq, uri);
+			addSeqUri(uriPojo.getUriSeq(), uri);
 		}
 	}
 	

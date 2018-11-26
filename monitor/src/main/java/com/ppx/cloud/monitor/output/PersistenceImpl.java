@@ -12,6 +12,8 @@ import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.jdbc.nosql.Update;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
+import com.ppx.cloud.monitor.cache.MonitorCache;
+import com.ppx.cloud.monitor.cache.UriPojo;
 import com.ppx.cloud.monitor.persistence.AccessEntity;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 
@@ -58,10 +60,33 @@ public class PersistenceImpl {
 		}
 	}
 
+	
+	private Map<String, Object> getUriMaxDetail(AccessLog a) {
+		// uri最大请求时间对应对象
+		var maxMap = new LinkedHashMap<String, Object>(8);
+		maxMap.put("sid", ApplicationUtils.getServiceId());
+		if (a.getQueryString() != null) {
+			maxMap.put("str", a.getQueryString());
+		}
+		maxMap.put("maxed", a.getBeginTime());
+		if (!a.getSqlList().isEmpty()) {
+			maxMap.put("sql", a.getSqlList());
+			maxMap.put("sqls", StringUtils.collectionToCommaDelimitedString(a.getSqlSpendTime()));
+			maxMap.put("sqlc", StringUtils.collectionToCommaDelimitedString(a.getSqlCount()));
+
+			StringBuilder sqla = new StringBuilder();
+			if (!a.getSqlArgMap().isEmpty()) {
+				a.getSqlArgMap().forEach((k, v) -> {
+					sqla.append(v.toString());
+				});
+				maxMap.put("sqla", sqla.toString());
+			}
+		}
+		return maxMap;
+	}
+	
 	public void insertUriStat(AccessLog a) {
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
-		
-		
 		Update update = new Update(COL_URI_STAT, a.getUri());
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
@@ -69,43 +94,18 @@ public class PersistenceImpl {
 		update.setOnInsert("firsted", a.getBeginTime());
 		update.set("lasted", a.getBeginTime());
 		distribute(update, spendTime);
+		
+		// maxTime, 缓存uri最大值
+		UriPojo uriPojo = MonitorCache.getUri(a.getUri());
+		if (uriPojo != null && spendTime > uriPojo.getMaxTime()) {
+			Map<String, Object> maxMap = getUriMaxDetail(a);
+		}
 
 		try (LogTemplate t = new LogTemplate()) {
 			t.sql(update);
 		}
 		
-		// 平均值用update搞定, 缓存uri最大值
-		
-		// 更新平均值
-		//Update newUpdate = new Update();
-		//newUpdate.set("avgTime", (Integer) map.get("totalTime") / (Integer) map.get("times"));
-		// 最大详情
-		var map = new HashMap();
-		if ((Integer) map.get("maxTime") >= spendTime) {
-			// 最大值对应对象
-			Map<String, Object> maxMap = new LinkedHashMap<String, Object>(8);
-			maxMap.put("sid", ApplicationUtils.getServiceId());
-			if (a.getQueryString() != null) {
-				maxMap.put("str", a.getQueryString());
-			}
-			maxMap.put("maxed", a.getBeginTime());
-			if (!a.getSqlList().isEmpty()) {
-				maxMap.put("sql", a.getSqlList());
-				maxMap.put("sqls", StringUtils.collectionToCommaDelimitedString(a.getSqlSpendTime()));
-				maxMap.put("sqlc", StringUtils.collectionToCommaDelimitedString(a.getSqlCount()));
-
-				StringBuilder sqla = new StringBuilder();
-				if (!a.getSqlArgMap().isEmpty()) {
-					a.getSqlArgMap().forEach((k, v) -> {
-						sqla.append(v.toString());
-					});
-					maxMap.put("sqla", sqla.toString());
-				}
-			}
-			
-			//newUpdate.set("maxDetail", maxMap);
-		}
-		//mongoTemplate.updateFirst(query, newUpdate, COL_URI_STAT);
+		// 1.平均值用update搞定(Integer) map.get("totalTime") / (Integer) map.get("times"), 2.缓存uri最大值
 	}
 
 //    public void upsertService(String serviceId, Update update) {
