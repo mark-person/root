@@ -37,6 +37,7 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		int c = nameTemplate.queryForObject("select count(*) from test where test_id in (:testId)", para, Integer.class);
 		
 		
+		
 		 
 		//String c = nameTemplate.queryForObject("/*NamedParameter*/select :testId", para, String.class);
 		
