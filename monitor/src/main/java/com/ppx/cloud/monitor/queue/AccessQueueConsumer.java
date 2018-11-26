@@ -75,8 +75,7 @@ public class AccessQueueConsumer {
         PersistenceImpl.insertAccess(accessEntity);
         PersistenceImpl.createAccessIndex(accessEntity);
         PersistenceImpl.insertUriStat(a);
-        
-//        PersistenceImpl.insertSqlStat(a);
+        PersistenceImpl.insertSqlStat(a);
 //        
 //        DebugEntity debugEntity = null;
 //        if (MonitorConfig.IS_DEBUG) {

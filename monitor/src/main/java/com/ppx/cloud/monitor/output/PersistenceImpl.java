@@ -16,6 +16,7 @@ import com.ppx.cloud.monitor.cache.SqlPojo;
 import com.ppx.cloud.monitor.cache.UriPojo;
 import com.ppx.cloud.monitor.persistence.AccessEntity;
 import com.ppx.cloud.monitor.pojo.AccessLog;
+import com.ppx.cloud.monitor.pojo.DebugEntity;
 
 /**
  * 
@@ -38,6 +39,8 @@ public class PersistenceImpl {
 	private static final String COL_URI_STAT = "uri_stat";
 
 	private static final String COL_SQL_STAT = "sql_stat";
+	
+	private static final String COL_DEBUG = "debug";
 
 	public static void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
 			Map<String, Object> startInfo) {
@@ -166,6 +169,40 @@ public class PersistenceImpl {
 		}
 		
 	}
+	
+	public void insertDebug(DebugEntity debugAccess) {
+		try (LogTemplate t = new LogTemplate()) {
+			t.add(COL_DEBUG, debugAccess);
+		}
+	}
+	
+	  public void insertResponse(AccessLog a, String _id) {
+//	        String hh = dateHhFormat.format(objectId.getDate());
+//	        
+//	        // 有异常和静态uri不统计
+//	        // 机器ID yyyyMMddHH小时 访问量 总时间
+//	        Criteria criteria = Criteria.where("sid")
+//	                .is(ApplicationUtils.getServiceId()).and("hh").is(hh);
+//	        Query query = Query.query(criteria);
+//	        
+//	        Update update = new Update();
+//	        update.inc("times", 1);
+//	        update.inc("totalTime", a.getSpendNanoTime() / 1000000);      
+//	        
+//	        // 插入或更新数据
+//	        Map<?, ?> map = mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().upsert(true).returnNew(true),
+//	                Map.class, COL_RESPONSE);
+//	        
+//	        // 更新平均值
+//	        Update newUpdate = new Update();
+//	        long avgTime = (Long)map.get("totalTime") / (Integer)map.get("times");
+//	        newUpdate.set("avgTime", avgTime);
+//	        mongoTemplate.updateFirst(query, newUpdate, COL_RESPONSE);
+//	        
+//	        // 更新到service
+//	        upsertService(ApplicationUtils.getServiceId(), Update.update("lastResponse", avgTime));
+	    }
+	
 
 //    public void upsertService(String serviceId, Update update) {
 //        Criteria criteria = Criteria.where("_id").is(serviceId);
@@ -213,36 +250,9 @@ public class PersistenceImpl {
 //
 
 //    
-//    public void insertResponse(AccessLog a, ObjectId objectId) {
-//        String hh = dateHhFormat.format(objectId.getDate());
-//        
-//        // 有异常和静态uri不统计
-//        // 机器ID yyyyMMddHH小时 访问量 总时间
-//        Criteria criteria = Criteria.where("sid")
-//                .is(ApplicationUtils.getServiceId()).and("hh").is(hh);
-//        Query query = Query.query(criteria);
-//        
-//        Update update = new Update();
-//        update.inc("times", 1);
-//        update.inc("totalTime", a.getSpendNanoTime() / 1000000);      
-//        
-//        // 插入或更新数据
-//        Map<?, ?> map = mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().upsert(true).returnNew(true),
-//                Map.class, COL_RESPONSE);
-//        
-//        // 更新平均值
-//        Update newUpdate = new Update();
-//        long avgTime = (Long)map.get("totalTime") / (Integer)map.get("times");
-//        newUpdate.set("avgTime", avgTime);
-//        mongoTemplate.updateFirst(query, newUpdate, COL_RESPONSE);
-//        
-//        // 更新到service
-//        upsertService(ApplicationUtils.getServiceId(), Update.update("lastResponse", avgTime));
-//    }
+  
 //    
-//    public void insertDebug(DebugEntity debugAccess) {
-//        mongoTemplate.insert(debugAccess, COL_DEBUG);
-//    }
+
 //    
 //    public void insertGather(Map<String, Object> map) {    
 //        mongoTemplate.insert(map, COL_GATHER);
