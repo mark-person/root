@@ -20,8 +20,9 @@ create table stat_uri (
     totalTime int not null default 1,
     maxTime int not null,
     firsted timestamp not null default current_timestamp,
-    lasted timestamp not null,
-    maxDetail json
+    lasted timestamp not null default current_timestamp,
+    maxDetail json,
+    sql_set json
 )
 
 

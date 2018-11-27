@@ -96,8 +96,8 @@ public class UpdateSql {
 	
 	
 	public UpdateSql addToSet(String name, String value) {
-		valueMap.put(name, "'[" + value + "]'");
-		String s =  name + "=if(JSON_CONTAINS(doc, '\"" + value + "\"', '$." + name + "') != 1, JSON_EXTRACT(JSON_ARRAY_APPEND(" + name + ", '$', '\"" + value + "\"'), '$." + name + "'), JSON_EXTRACT(" + name + ", '$'))";
+		valueMap.put(name, "'[\"" + value + "\"]'");
+		String s =  name + "=if(JSON_CONTAINS(" + name + ", '\"" + value + "\"', '$') != 1, JSON_EXTRACT(JSON_ARRAY_APPEND(" + name + ", '$', '" + value + "'), '$'), JSON_EXTRACT(" + name + ", '$'))";
 		setList.add(s);
 		return this;
 	}
@@ -106,11 +106,12 @@ public class UpdateSql {
 		UpdateSql u = new UpdateSql("stat_uri", "uri_seq", 1);
 		//u.setOnInsert("lasted", "now()");
 		u.set("lasted", "now()");
-		u.inc("times", 1);
+		//u.inc("times", 1);
 		
-		u.addToSet("set", "abc");
+		u.addToSet("sql_set", "xxxxx");
+		
 		//u.inc("totalTime", 5);
-		//u.max("maxTime", 100);
+		u.max("maxTime", 100);
 		//u.max("maxTime", 100, "maxDetail", Map.of("mark", 1233));
 		
 		System.out.println("" + u);
