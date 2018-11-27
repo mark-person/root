@@ -158,18 +158,18 @@ public class PersistenceImpl {
 
 			// sql开始执行时间
 			long sqlBeginTime = a.getSqlBeginTime().get(i);
-			update.setOnInsert("firsted", sqlBeginTime);
-			update.set("lasted", sqlBeginTime);
+			//update.setOnInsert("firsted", sqlBeginTime);
+			//update.set("lasted", sqlBeginTime);
 
 			// sql执行时间
 			int spendTime = a.getSqlSpendTime().get(i);
-			update.inc("totalTime", spendTime);
-			update.max("maxTime", spendTime);
-			distribute(update, spendTime);
-			update.max("maxSqlCount", a.getSqlCount().get(i));
+			//update.inc("totalTime", spendTime);
+			//update.max("maxTime", spendTime);
+			//distribute(update, spendTime);
+			//update.max("maxSqlCount", a.getSqlCount().get(i));
 			// uri
 			update.addToSet("uri", a.getUri());
-			update.set("avgTime", "JSON_EXTRACT(doc,'$.totalTime') / JSON_EXTRACT(doc,'$.times')");
+			//update.set("avgTime", "JSON_EXTRACT(doc,'$.totalTime') / JSON_EXTRACT(doc,'$.times')");
 
 			// maxTime, 缓存uri最大的maxTime值
 			SqlPojo sqlPojo = MonitorCache.getSqlPojo(a.getSqlList().get(i));
@@ -184,13 +184,13 @@ public class PersistenceImpl {
 		
 	}
 	
-	public void insertDebug(DebugEntity debugAccess) {
+	public static void insertDebug(DebugEntity debugAccess) {
 		try (LogTemplate t = new LogTemplate()) {
 			t.add(COL_DEBUG, debugAccess);
 		}
 	}
 	
-	  public void insertResponse(AccessLog a, String _id) {
+	  public static void insertResponse(AccessLog a, String _id) {
 //	        String hh = dateHhFormat.format(objectId.getDate());
 //	        
 //	        // 有异常和静态uri不统计
@@ -217,7 +217,7 @@ public class PersistenceImpl {
 //	        upsertService(ApplicationUtils.getServiceId(), Update.update("lastResponse", avgTime));
 	    }
 	  
-	  public void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity debug) {
+	  public static void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity debug) {
 	        ErrorBean errorBean = ErrorCode.getErroCode(throwable);
 	        errorEntity.setC(errorBean.getCode());
 	        
@@ -306,6 +306,7 @@ public class PersistenceImpl {
 	public static void createFixedIndex() {
 		try (LogTemplate t = new LogTemplate()) {
 			t.createCollection(COL_URI_STAT);
+			t.createCollection(COL_SQL_STAT);
 		}
 //        // error索引
 //        IndexOperations errorOp = mongoTemplate.indexOps(COL_ERROR);

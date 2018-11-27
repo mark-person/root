@@ -110,6 +110,8 @@ public class Update {
 		String setString = StringUtils.collectionToCommaDelimitedString(setList);
 		String s = "insert into " + collectionName + "(doc) values('" + valueString
 				+ "') on duplicate key update doc = JSON_SET(doc, " + setString + ")";
+		
+		System.out.println("ssssss:" + s);
 		return s;
 	}
 	

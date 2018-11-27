@@ -34,6 +34,15 @@
 			<systemPath>${basedir}/lib/aspose-words-18.9-jdk16-crack.jar</systemPath>
 		</dependency>
 		
+		<dependency>
+			<groupId>aspose</groupId>
+			<artifactId>slides</artifactId>
+			<version>18.10-jdk16</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/aspose-slides-18.10-jdk16.jar</systemPath>
+		</dependency>
+		
+		
 	</dependencies>
 
 

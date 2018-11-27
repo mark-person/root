@@ -1,17 +1,16 @@
 package com.ppx.cloud.monitor.queue;
 
-import java.util.BitSet;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.output.ConsoleImpl;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
 import com.ppx.cloud.monitor.persistence.AccessEntity;
 import com.ppx.cloud.monitor.pojo.AccessLog;
+import com.ppx.cloud.monitor.pojo.DebugEntity;
+import com.ppx.cloud.monitor.pojo.ErrorEntity;
 
 
 /**
@@ -60,7 +59,6 @@ public class AccessQueueConsumer {
                     if (!MonitorConfig.IS_DEV) {
                         ConsoleImpl.print(a);
                     }
-                    
                 }
             }
         }
@@ -76,23 +74,23 @@ public class AccessQueueConsumer {
         PersistenceImpl.createAccessIndex(accessEntity);
         PersistenceImpl.insertUriStat(a);
         PersistenceImpl.insertSqlStat(a);
-//        
-//        DebugEntity debugEntity = null;
-//        if (MonitorConfig.IS_DEBUG) {
-//            // debug日志
-//            debugEntity = DebugEntity.getInstance(a, accessEntity.get_id());
-//            mongodbService.insertDebug(debugEntity);  
-//        }
-//        if (a.getThrowable() == null) {
-//            // 响应时间统计(有异常的不统计响应时间)
-//            mongodbService.insertResponse(a, accessEntity.get_id());
-//        }
-//        else {
-//            // 异常处理
-//            debugEntity = debugEntity == null ? DebugEntity.getInstance(a, accessEntity.get_id()) : debugEntity;
-//            ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
-//            mongodbService.insertError(e, a.getThrowable(), debugEntity);
-//        }
+       
+        DebugEntity debugEntity = null;
+        if (MonitorConfig.IS_DEBUG) {
+            // debug日志
+            debugEntity = DebugEntity.getInstance(a, accessEntity.get_id());
+            PersistenceImpl.insertDebug(debugEntity);
+        }
+        if (a.getThrowable() == null) {
+            // 响应时间统计(有异常的不统计响应时间)
+        	PersistenceImpl.insertResponse(a, accessEntity.get_id());
+        }
+        else {
+            // 异常处理
+            debugEntity = debugEntity == null ? DebugEntity.getInstance(a, accessEntity.get_id()) : debugEntity;
+            ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
+            PersistenceImpl.insertError(e, a.getThrowable(), debugEntity);
+        }
         
 //        // warning访问日志 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //        if (MonitorConfig.IS_WARNING) {
