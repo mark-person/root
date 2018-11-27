@@ -97,8 +97,7 @@ public class UpdateSql {
 	
 	public UpdateSql addToSet(String name, String value) {
 		valueMap.put(name, "'[" + value + "]'");
-		String s =  name + "=if(JSON_CONTAINS(doc, '\"" + value + "\"', '$." + name + "') != 1, JSON_EXTRACT(JSON_ARRAY_APPEND(" + name + ", '$." + name
-				+ "', '\"" + value + "\"'), '$." + name + "'), JSON_EXTRACT(doc, '$." + name + "'))";
+		String s =  name + "=if(JSON_CONTAINS(doc, '\"" + value + "\"', '$." + name + "') != 1, JSON_EXTRACT(JSON_ARRAY_APPEND(" + name + ", '$', '\"" + value + "\"'), '$." + name + "'), JSON_EXTRACT(" + name + ", '$'))";
 		setList.add(s);
 		return this;
 	}
