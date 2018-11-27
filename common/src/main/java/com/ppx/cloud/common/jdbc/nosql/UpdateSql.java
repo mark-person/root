@@ -114,6 +114,7 @@ public class UpdateSql {
 		u.max("maxTime", 100);
 		//u.max("maxTime", 100, "maxDetail", Map.of("mark", 1233));
 		
+		
 		System.out.println("" + u);
 	}
 }
