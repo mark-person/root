@@ -48,20 +48,19 @@ public class PersistenceImpl {
 	private static final String COL_STAT_URI = "stat_uri";
 
 	private static final String COL_STAT_SQL = "stat_sql";
-	
+
 	private static final String COL_STAT_RESPONSE = "stat_response";
-	
+
 	private static final String COL_STAT_WARNING = "stat_warning";
-
-	private static final String COL_DEBUG = "debug";
-
-	private static final String COL_WARNING = "warning";
 
 	private static final String COL_ERROR = "error";
 
 	private static final String COL_ERROR_DETAIL = "error_detail";
-	
+
+	private static final String COL_DEBUG = "debug";
+
 	private LogTemplate t;
+
 	public static PersistenceImpl getInstance(LogTemplate t) {
 		PersistenceImpl impl = new PersistenceImpl();
 		impl.t = t;
@@ -73,7 +72,7 @@ public class PersistenceImpl {
 		t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
 		t.addOrReplaceOne(COL_CONF, ApplicationUtils.getServiceId(), config);
 		t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
-		
+
 	}
 
 	public void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
@@ -83,10 +82,10 @@ public class PersistenceImpl {
 
 	public String insertAccess(AccessEntity entity) {
 		String dateStr = new SimpleDateFormat(DateUtils.DATE_PATTERN).format(entity.getB());
-		
+
 		List<String> list = t.add(COL_ACCESS + dateStr, entity).getGeneratedIds();
 		return list.get(0);
-		
+
 	}
 
 	private Map<String, Object> getUriMaxDetail(AccessLog a) {
@@ -116,7 +115,7 @@ public class PersistenceImpl {
 	public void insertStatUri(AccessLog a) {
 
 		UpdateSql update = new UpdateSql(COL_STAT_URI, "uri_seq",
-				"(select uri_seq from map_uri_seq where uri_text = '/test/test')");
+				"(select uri_seq from map_uri_seq where uri_text = '" + a.getUri() + "')");
 
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
@@ -142,7 +141,7 @@ public class PersistenceImpl {
 		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
 				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
 		t.sql(update, update.getBindValueList());
-		
+
 	}
 
 	private Map<String, Object> getSqlMaxDetail(AccessLog a, int i) {
@@ -162,7 +161,6 @@ public class PersistenceImpl {
 	}
 
 	public void insertStatSql(AccessLog a) {
-
 		if (a.getSqlList().size() != a.getSqlBeginTime().size()
 				|| a.getSqlList().size() != a.getSqlSpendTime().size()) {
 			System.err.println("----------------errro:monitor sql");
@@ -208,30 +206,30 @@ public class PersistenceImpl {
 			t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
 					Arrays.asList(sqlMd5, sqlText, sqlMd5));
 			t.sql(update, update.getBindValueList());
-			
+
 		}
 
 	}
 
 	public void insertDebug(DebugEntity debugAccess) {
 		t.add(COL_DEBUG, debugAccess);
-		
+
 	}
 
 	public void insertResponse(AccessLog a) {
 		// 机器ID yyyyMMddHH小时 访问量 总时间
 		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
-		
-		UpdateSql update = new UpdateSql(COL_STAT_RESPONSE, "service_id,hh", "'" + ApplicationUtils.getServiceId() + "','" + hh + "'");
-		int spendTime = (int)(a.getSpendNanoTime() / 1e6);
+
+		UpdateSql update = new UpdateSql(COL_STAT_RESPONSE, "service_id,hh",
+				"'" + ApplicationUtils.getServiceId() + "','" + hh + "'");
+		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
 		update.set("avgTime", "totalTime/times");
 		update.max("maxTime", spendTime);
-		
-	
+
 		t.sql(update);
-		
+
 	}
 
 	public void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity debug) {
@@ -243,7 +241,7 @@ public class PersistenceImpl {
 			errorEntity.setP(debug.getP());
 			errorEntity.setIn(debug.getIn());
 			t.add(COL_ERROR, errorEntity);
-			
+
 		} else {
 			t.add(COL_ERROR, errorEntity);
 			Map<String, Object> detailErrorMap = new HashMap<String, Object>();
@@ -258,9 +256,9 @@ public class PersistenceImpl {
 		UpdateSql update = new UpdateSql(COL_STAT_WARNING, "uri", "'" + a.getUri() + "'");
 		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
 		update.set("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
-	
+
 		t.sql(update);
-	
+
 	}
 
 //    public void upsertService(String serviceId, Update update) {
@@ -273,17 +271,16 @@ public class PersistenceImpl {
 //        mongoTemplate.upsert(Query.query(criteria), update, COL_CONIFG);
 //    }
 //    
-//    public Map<?, ?> getConfig(String serviceId){
-//        Criteria criteria = Criteria.where("_id").is(serviceId);
-//        return mongoTemplate.findOne(Query.query(criteria), Map.class, COL_CONIFG);
-//    }
-//    
-
-//    
-//    public void insertGather(Map<String, Object> map) {    
-//        mongoTemplate.insert(map, COL_GATHER);
-//    }
-//    
+    public Map<?, ?> getConfig(String serviceId){
+        //Criteria criteria = Criteria.where("_id").is(serviceId);
+        //return mongoTemplate.findOne(Query.query(criteria), Map.class, COL_CONIFG);
+    	return null;
+    }
+    
+	public void insertGather(Map<String, Object> map) {
+		t.add(COL_GATHER, map);
+	}
+    
 
 //    
 //    private static String lastIndexDate = "";
