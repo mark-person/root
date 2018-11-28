@@ -60,32 +60,36 @@ public class PersistenceImpl {
 	private static final String COL_ERROR = "error";
 
 	private static final String COL_ERROR_DETAIL = "error_detail";
+	
+	private LogTemplate t;
+	public static PersistenceImpl getInstance(LogTemplate t) {
+		PersistenceImpl impl = new PersistenceImpl();
+		impl.t = t;
+		return impl;
+	}
 
-	public static void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
+	public void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
 			Map<String, Object> startInfo) {
-		try (LogTemplate t = new LogTemplate()) {
-			t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
-			t.addOrReplaceOne(COL_CONF, ApplicationUtils.getServiceId(), config);
-			t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
-		}
+		t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
+		t.addOrReplaceOne(COL_CONF, ApplicationUtils.getServiceId(), config);
+		t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
+		
 	}
 
-	public static void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
-		try (LogTemplate t = new LogTemplate()) {
-			t.addOrReplaceOne(COL_GATHER, ApplicationUtils.getServiceId(), gatherMap);
-			t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), lastUpdate);
-		}
+	public void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
+		t.addOrReplaceOne(COL_GATHER, ApplicationUtils.getServiceId(), gatherMap);
+		t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), lastUpdate);
 	}
 
-	public static String insertAccess(AccessEntity entity) {
+	public String insertAccess(AccessEntity entity) {
 		String dateStr = new SimpleDateFormat(DateUtils.DATE_PATTERN).format(entity.getB());
-		try (LogTemplate t = new LogTemplate()) {
-			List<String> list = t.add(COL_ACCESS + dateStr, entity).getGeneratedIds();
-			return list.get(0);
-		}
+		
+		List<String> list = t.add(COL_ACCESS + dateStr, entity).getGeneratedIds();
+		return list.get(0);
+		
 	}
 
-	private static Map<String, Object> getUriMaxDetail(AccessLog a) {
+	private Map<String, Object> getUriMaxDetail(AccessLog a) {
 		// uri最大请求时间对应对象
 		var maxMap = new LinkedHashMap<String, Object>(8);
 		maxMap.put("sid", ApplicationUtils.getServiceId());
@@ -109,7 +113,7 @@ public class PersistenceImpl {
 		return maxMap;
 	}
 
-	public static void insertStatUri(AccessLog a) {
+	public void insertStatUri(AccessLog a) {
 
 		UpdateSql update = new UpdateSql(COL_STAT_URI, "uri_seq",
 				"(select uri_seq from map_uri_seq where uri_text = '/test/test')");
@@ -135,14 +139,13 @@ public class PersistenceImpl {
 		}
 		update.set("avgTime", "totalTime/times");
 
-		try (LogTemplate t = new LogTemplate()) {
-			t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
-					+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
-			t.sql(update, update.getBindValueList());
-		}
+		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
+				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
+		t.sql(update, update.getBindValueList());
+		
 	}
 
-	private static Map<String, Object> getSqlMaxDetail(AccessLog a, int i) {
+	private Map<String, Object> getSqlMaxDetail(AccessLog a, int i) {
 		// 最大值对应对象
 		Map<String, Object> maxMap = new LinkedHashMap<String, Object>();
 		maxMap.put("sid", ApplicationUtils.getServiceId());
@@ -158,7 +161,7 @@ public class PersistenceImpl {
 		return maxMap;
 	}
 
-	public static void insertStatSql(AccessLog a) {
+	public void insertStatSql(AccessLog a) {
 
 		if (a.getSqlList().size() != a.getSqlBeginTime().size()
 				|| a.getSqlList().size() != a.getSqlSpendTime().size()) {
@@ -202,22 +205,20 @@ public class PersistenceImpl {
 					sqlPojo.setMaxTime(spendTime);
 				}
 			}
-			try (LogTemplate t = new LogTemplate()) {
-				t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
-						Arrays.asList(sqlMd5, sqlText, sqlMd5));
-				t.sql(update, update.getBindValueList());
-			}
+			t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
+					Arrays.asList(sqlMd5, sqlText, sqlMd5));
+			t.sql(update, update.getBindValueList());
+			
 		}
 
 	}
 
-	public static void insertDebug(DebugEntity debugAccess) {
-		try (LogTemplate t = new LogTemplate()) {
-			t.add(COL_DEBUG, debugAccess);
-		}
+	public void insertDebug(DebugEntity debugAccess) {
+		t.add(COL_DEBUG, debugAccess);
+		
 	}
 
-	public static void insertResponse(AccessLog a) {
+	public void insertResponse(AccessLog a) {
 		// 机器ID yyyyMMddHH小时 访问量 总时间
 		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
 		
@@ -228,12 +229,12 @@ public class PersistenceImpl {
 		update.set("avgTime", "totalTime/times");
 		update.max("maxTime", spendTime);
 		
-		try (LogTemplate t = new LogTemplate()) {
-			t.sql(update);
-		}
+	
+		t.sql(update);
+		
 	}
 
-	public static void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity debug) {
+	public void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity debug) {
 		ErrorBean errorBean = ErrorCode.getErroCode(throwable);
 		errorEntity.setC(errorBean.getCode());
 
@@ -241,32 +242,25 @@ public class PersistenceImpl {
 		if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
 			errorEntity.setP(debug.getP());
 			errorEntity.setIn(debug.getIn());
-			try (LogTemplate t = new LogTemplate()) {
-				t.add(COL_ERROR, errorEntity);
-			}
+			t.add(COL_ERROR, errorEntity);
+			
 		} else {
-			try (LogTemplate t = new LogTemplate()) {
-				t.add(COL_ERROR, errorEntity);
-			}
-
+			t.add(COL_ERROR, errorEntity);
 			Map<String, Object> detailErrorMap = new HashMap<String, Object>();
 			detailErrorMap.put("_id", errorEntity.get_id());
 			detailErrorMap.put("exception", MonitorUtils.getExcepiton(throwable));
 			detailErrorMap.put("debug", debug.toJsonObject());
-			try (LogTemplate t = new LogTemplate()) {
-				t.add(COL_ERROR_DETAIL, errorEntity);
-			}
+			t.add(COL_ERROR_DETAIL, errorEntity);
 		}
 	}
 
-	public static void insertWarning(AccessLog a, BitSet content) {
+	public void insertWarning(AccessLog a, BitSet content) {
 		UpdateSql update = new UpdateSql(COL_STAT_WARNING, "uri", "'" + a.getUri() + "'");
 		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
 		update.set("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
-		try (LogTemplate t = new LogTemplate()) {
-			t.sql(update);
-		}
-
+	
+		t.sql(update);
+	
 	}
 
 //    public void upsertService(String serviceId, Update update) {
@@ -294,7 +288,7 @@ public class PersistenceImpl {
 //    
 //    private static String lastIndexDate = "";
 //    // 创建access索引 
-	public static void createAccessIndex(AccessEntity accessEntity) {
+	public void createAccessIndex(AccessEntity accessEntity) {
 
 //	        String today = dateFormat.format(objectId.getDate());
 //	        if (!lastIndexDate.equals(today)) {
@@ -311,7 +305,7 @@ public class PersistenceImpl {
 
 //    
 //    // 创建(不包括access_yyyy-MM-dd)
-	public static void createFixedIndex() {
+	public void createFixedIndex() {
 		try (LogTemplate t = new LogTemplate()) {
 			// t.createCollection(COL_URI_STAT);
 			// t.createCollection(COL_STAT_SQL);

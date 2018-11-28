@@ -56,7 +56,7 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
 //    	var startInfo = getStartInfo();
 //    	PersistenceImpl.insertStart(serviceInfo, config, startInfo);
 
-    	PersistenceImpl.createFixedIndex();
+    	//PersistenceImpl.createFixedIndex();
     	
 /**
 TODO 直接使用统计表，并建索引，不需要下面两张表

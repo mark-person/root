@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.output.ConsoleImpl;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
@@ -70,91 +71,100 @@ public class AccessQueueConsumer {
     
 
     private void logToDb(AccessLog a) {
+    	MonitorConfig.IS_DEBUG = false;
+    	MonitorConfig.IS_WARNING = false;
     	
+    	long t1 = System.currentTimeMillis();
         
         AccessEntity accessEntity = AccessEntity.getInstance(a);
         
         // 访问日志、 访问日志索引、uri统计、sql统计、响应统计
-        String _id = PersistenceImpl.insertAccess(accessEntity);
-        PersistenceImpl.createAccessIndex(accessEntity);
-        PersistenceImpl.insertStatUri(a);
-        PersistenceImpl.insertStatSql(a);
+        try (LogTemplate t = new LogTemplate()) {
+        	PersistenceImpl impl = PersistenceImpl.getInstance(t);
+        	String _id = impl.insertAccess(accessEntity);
+        	impl.createAccessIndex(accessEntity);
+        	impl.insertStatUri(a);
+        	impl.insertStatSql(a);
+        	
+        	DebugEntity debugEntity = null;
+            if (MonitorConfig.IS_DEBUG) {
+                // debug日志
+                debugEntity = DebugEntity.getInstance(a, _id);
+                impl.insertDebug(debugEntity);
+            }
+            
+    	    if (a.getThrowable() == null) {
+    	    	// 响应时间统计(有异常的不统计响应时间)
+    	    	impl.insertResponse(a);
+    	    }
+    	    else {
+                // 异常处理
+                debugEntity = debugEntity == null ? DebugEntity.getInstance(a, _id) : debugEntity;
+                ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
+                impl.insertError(e, a.getThrowable(), debugEntity);
+            }
         
-        DebugEntity debugEntity = null;
-        if (MonitorConfig.IS_DEBUG) {
-            // debug日志
-            debugEntity = DebugEntity.getInstance(a, _id);
-            PersistenceImpl.insertDebug(debugEntity);
-        }
-        
-	    if (a.getThrowable() == null) {
-	    	// 响应时间统计(有异常的不统计响应时间)
-	    	PersistenceImpl.insertResponse(a);
-	    }
-	    else {
-            // 异常处理
-            debugEntity = debugEntity == null ? DebugEntity.getInstance(a, _id) : debugEntity;
-            ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
-            PersistenceImpl.insertError(e, a.getThrowable(), debugEntity);
-        }
        
-        // warning访问日志 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        if (MonitorConfig.IS_WARNING) {
-            // >>>>>>>>>>>>>> 警告信息 begin >>>>>>>>>>>>>>
-            BitSet bs = new BitSet();
-
-            // 检查是否有未关闭的数据库连接
-            String warn = AccessAnalysisUtils.checkConnection(a.getGetConnTimes(), a.getReleaseConnTimes());
-            if (!StringUtils.isEmpty(warn)) {
-                BitSet b = new BitSet();
-                b.set(1);
-                bs.xor(b);
-            }
-
-            // 检查for update有没有加上事务
-            warn = AccessAnalysisUtils.checkForUpdate(a.getSqlList(), a.getTransactionTimes());
-            if (!StringUtils.isEmpty(warn)) {
-                BitSet b = new BitSet();
-                b.set(2);
-                bs.xor(b);
-            }
-
-            // 检查非安全SQL，没有加上where条件
-            warn = AccessAnalysisUtils.checkUnSafeSql(a.getSqlList());
-            if (!StringUtils.isEmpty(warn)) {
-                BitSet b = new BitSet();
-                b.set(3);
-                bs.xor(b);
-            }
-
-            // 检查事务个数是否大于1
-            warn = AccessAnalysisUtils.checkTransactionTimes(a.getTransactionTimes());
-            if (!StringUtils.isEmpty(warn)) {
-                BitSet b = new BitSet();
-                b.set(4);
-                bs.xor(b);
-            }
-
-            // 检查多个操作SQL是否没有使用事务
-            warn = AccessAnalysisUtils.checkNoTransaction(a.getSqlList(), a.getTransactionTimes());
-            if (!StringUtils.isEmpty(warn)) {
-                BitSet b = new BitSet();
-                b.set(5);
-                bs.xor(b);
-            }
-            
-            // 检查注入SQL
-            warn = AccessAnalysisUtils.checkAntiSql(a.getSqlList());
-            if (!StringUtils.isEmpty(warn)) {
-                BitSet b = new BitSet();
-                b.set(6);
-                bs.xor(b);
-            }
-            
-            if (!bs.isEmpty()) {
-            	PersistenceImpl.insertWarning(a, bs);
-            }           
+	        // warning访问日志 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	        if (MonitorConfig.IS_WARNING) {
+	            // >>>>>>>>>>>>>> 警告信息 begin >>>>>>>>>>>>>>
+	            BitSet bs = new BitSet();
+	
+	            // 检查是否有未关闭的数据库连接
+	            String warn = AccessAnalysisUtils.checkConnection(a.getGetConnTimes(), a.getReleaseConnTimes());
+	            if (!StringUtils.isEmpty(warn)) {
+	                BitSet b = new BitSet();
+	                b.set(1);
+	                bs.xor(b);
+	            }
+	
+	            // 检查for update有没有加上事务
+	            warn = AccessAnalysisUtils.checkForUpdate(a.getSqlList(), a.getTransactionTimes());
+	            if (!StringUtils.isEmpty(warn)) {
+	                BitSet b = new BitSet();
+	                b.set(2);
+	                bs.xor(b);
+	            }
+	
+	            // 检查非安全SQL，没有加上where条件
+	            warn = AccessAnalysisUtils.checkUnSafeSql(a.getSqlList());
+	            if (!StringUtils.isEmpty(warn)) {
+	                BitSet b = new BitSet();
+	                b.set(3);
+	                bs.xor(b);
+	            }
+	
+	            // 检查事务个数是否大于1
+	            warn = AccessAnalysisUtils.checkTransactionTimes(a.getTransactionTimes());
+	            if (!StringUtils.isEmpty(warn)) {
+	                BitSet b = new BitSet();
+	                b.set(4);
+	                bs.xor(b);
+	            }
+	
+	            // 检查多个操作SQL是否没有使用事务
+	            warn = AccessAnalysisUtils.checkNoTransaction(a.getSqlList(), a.getTransactionTimes());
+	            if (!StringUtils.isEmpty(warn)) {
+	                BitSet b = new BitSet();
+	                b.set(5);
+	                bs.xor(b);
+	            }
+	            
+	            // 检查注入SQL
+	            warn = AccessAnalysisUtils.checkAntiSql(a.getSqlList());
+	            if (!StringUtils.isEmpty(warn)) {
+	                BitSet b = new BitSet();
+	                b.set(6);
+	                bs.xor(b);
+	            }
+	            
+	            if (!bs.isEmpty()) {
+	            	impl.insertWarning(a, bs);
+	            }           
+	        }
         }
+        
+        System.out.println("tttttttttttt:" + (System.currentTimeMillis() - t1));
     }
     
    
