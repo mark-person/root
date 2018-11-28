@@ -12,6 +12,7 @@ import java.util.Map;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.cj.xdevapi.JsonValue;
 
 /**
  * @author mark
@@ -24,8 +25,15 @@ public class UpdateSql {
 	private Map<String, Object> valueMap = new LinkedHashMap<String, Object>();
 
 	private List<String> setList = new ArrayList<String>();
+	
+	private List<Object> bindValueList = new ArrayList<Object>(); 
+	
+	
+	public List<Object> getBindValueList() {
+		return bindValueList;
+	}
 
-	public UpdateSql(String tableName, String pkName, Integer pkValue) {
+	public UpdateSql(String tableName, String pkName, String pkValue) {
 		this.tableName = tableName;
 		valueMap.put(pkName, pkValue);
 	}
@@ -33,7 +41,7 @@ public class UpdateSql {
 	public UpdateSql inc(String name, int n) {
 		// 先加到value
 		String s = "";
-		if (n > 0) {
+		if (n >= 0) {
 			s = name + "=" + name + "+" + n;
 		} else {
 			s = name + "=" + name + n;
@@ -59,8 +67,10 @@ public class UpdateSql {
 		}
 		
 		// 先加到value
-		valueMap.put(setName, "'" + json + "'");
-		String s = setName + "=if(" + name + ">" + n + "," + setName + ",'" + json + "')";
+		valueMap.put(setName, "?");
+		String s = setName + "=if(" + name + ">" + n + "," + setName + ",?)";
+		bindValueList.add(json);
+		bindValueList.add(json);
 		setList.add(s);
 		return this;
 	}
@@ -79,7 +89,16 @@ public class UpdateSql {
 	}
 
 	public UpdateSql set(String name, Object obj) {
+		// 先加到value
+		valueMap.put(name, obj);
 		String s = name + "=" + obj;
+		setList.add(s);
+		return this;
+	}
+	
+	public UpdateSql set(String name, String insertValue, String setValue) {
+		valueMap.put(name, insertValue);
+		String s = name + "=" + setValue;
 		setList.add(s);
 		return this;
 	}
@@ -91,6 +110,7 @@ public class UpdateSql {
 		
 		String s = "insert into " + tableName + "(" + columnString + ") values(" + valueString
 				+ ") on duplicate key update " + setString;
+		//System.out.println("xxxxxxs:" + s);
 		return s;
 	}
 	
@@ -103,15 +123,22 @@ public class UpdateSql {
 	}
 
 	public static void main(String[] args) {
-		UpdateSql u = new UpdateSql("stat_uri", "uri_seq", 1);
-		//u.setOnInsert("lasted", "now()");
+		// insert into map_uri_seq(uri_text) values('/test/test') on duplicate key update uri_times=uri_times+1
+		// 或使用insert into map_uri_seq(uri_tex) select '/test/test' from dual where not exists(select 1 from map_uri_seq where uri_text = '/test/test')
+		
+		UpdateSql u = new UpdateSql("stat_uri", "uri_seq", "(select uri_seq from map_uri_seq where uri_text = '/test/test')");
 		u.set("lasted", "now()");
-		//u.inc("times", 1);
-		
-		u.addToSet("sql_set", "xxxxx");
-		
-		//u.inc("totalTime", 5);
+		u.inc("totalTime",100);
 		u.max("maxTime", 100);
+		u.inc("times", 1);
+		u.set("avgTime", "totalTime/times");
+		
+		
+		u.set("distribute", "'[1,0,0,0,0]'",  "JSON_SET(distribute, '$[0]', JSON_EXTRACT(distribute, '$[0]') + 1)");
+		
+		//u.addToSet("sql_set", "xxxxx");
+		
+		
 		//u.max("maxTime", 100, "maxDetail", Map.of("mark", 1233));
 		
 		

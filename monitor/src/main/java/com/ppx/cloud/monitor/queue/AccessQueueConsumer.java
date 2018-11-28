@@ -66,31 +66,33 @@ public class AccessQueueConsumer {
     
 
     private void logToDb(AccessLog a) {
+    	
         
         AccessEntity accessEntity = AccessEntity.getInstance(a);
         
         // 访问日志、 访问日志索引、uri统计、sql统计、响应统计
         PersistenceImpl.insertAccess(accessEntity);
         PersistenceImpl.createAccessIndex(accessEntity);
-        PersistenceImpl.insertUriStat(a);
-        PersistenceImpl.insertSqlStat(a);
-       
-        DebugEntity debugEntity = null;
-        if (MonitorConfig.IS_DEBUG) {
-            // debug日志
-            debugEntity = DebugEntity.getInstance(a, accessEntity.get_id());
-            PersistenceImpl.insertDebug(debugEntity);
-        }
-        if (a.getThrowable() == null) {
-            // 响应时间统计(有异常的不统计响应时间)
-        	PersistenceImpl.insertResponse(a, accessEntity.get_id());
-        }
-        else {
-            // 异常处理
-            debugEntity = debugEntity == null ? DebugEntity.getInstance(a, accessEntity.get_id()) : debugEntity;
-            ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
-            PersistenceImpl.insertError(e, a.getThrowable(), debugEntity);
-        }
+        PersistenceImpl.insertStatUri(a);
+        PersistenceImpl.insertStatSql(a);
+        
+//       
+//        DebugEntity debugEntity = null;
+//        if (MonitorConfig.IS_DEBUG) {
+//            // debug日志
+//            debugEntity = DebugEntity.getInstance(a, accessEntity.get_id());
+//            PersistenceImpl.insertDebug(debugEntity);
+//        }
+//        if (a.getThrowable() == null) {
+//            // 响应时间统计(有异常的不统计响应时间)
+//        	PersistenceImpl.insertResponse(a, accessEntity.get_id());
+//        }
+//        else {
+//            // 异常处理
+//            debugEntity = debugEntity == null ? DebugEntity.getInstance(a, accessEntity.get_id()) : debugEntity;
+//            ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
+//            PersistenceImpl.insertError(e, a.getThrowable(), debugEntity);
+//        }
         
 //        // warning访问日志 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //        if (MonitorConfig.IS_WARNING) {

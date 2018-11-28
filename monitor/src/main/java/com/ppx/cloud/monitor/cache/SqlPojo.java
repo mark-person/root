@@ -8,23 +8,28 @@ package com.ppx.cloud.monitor.cache;
  * @date 2018年11月26日
  */
 public class SqlPojo {
-	private Integer sqlMd5;
+	private String sqlMd5;
 	
-	private Long maxTime;
+	private int maxTime;
+	
+	public SqlPojo(String sqlMd5, int maxTime) {
+		this.sqlMd5 = sqlMd5;
+		this.maxTime = maxTime;
+	}
 
-	public Integer getSqlMd5() {
+	public String getSqlMd5() {
 		return sqlMd5;
 	}
 
-	public void setSqlMd5(Integer sqlMd5) {
+	public void setSqlMd5(String sqlMd5) {
 		this.sqlMd5 = sqlMd5;
 	}
 
-	public Long getMaxTime() {
+	public int getMaxTime() {
 		return maxTime;
 	}
 
-	public void setMaxTime(Long maxTime) {
+	public void setMaxTime(int maxTime) {
 		this.maxTime = maxTime;
 	}
 	

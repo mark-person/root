@@ -1,6 +1,7 @@
 package com.ppx.cloud.monitor.output;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -12,9 +13,10 @@ import org.springframework.util.StringUtils;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
-import com.ppx.cloud.common.jdbc.nosql.Update;
+import com.ppx.cloud.common.jdbc.nosql.UpdateSql;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
+import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.cache.SqlPojo;
 import com.ppx.cloud.monitor.cache.UriPojo;
@@ -42,9 +44,9 @@ public class PersistenceImpl {
 
 	private static final String COL_ACCESS = "access";
 
-	private static final String COL_URI_STAT = "uri_stat";
+	private static final String COL_STAT_URI = "stat_uri";
 
-	private static final String COL_SQL_STAT = "sql_stat";
+	private static final String COL_STAT_SQL = "stat_sql";
 	
 	private static final String COL_DEBUG = "debug";
 	
@@ -103,27 +105,36 @@ public class PersistenceImpl {
 		return maxMap;
 	}
 
-	public static void insertUriStat(AccessLog a) {
+	public static void insertStatUri(AccessLog a) {
+		
+		UpdateSql update = new UpdateSql(COL_STAT_URI, "uri_seq", "(select uri_seq from map_uri_seq where uri_text = '/test/test')");
+		
+		
+		
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
-		Update update = new Update(COL_URI_STAT, a.getUri());
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
 		update.max("maxTime", spendTime);
-		update.setOnInsert("firsted", a.getBeginTime());
-		update.set("lasted", a.getBeginTime());
+		update.setOnInsert("firsted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
+		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
 		distribute(update, spendTime);
 
 		// maxTime, 缓存uri最大的maxTime值
 		UriPojo uriPojo = MonitorCache.getUri(a.getUri());
-		if (uriPojo != null && spendTime > uriPojo.getMaxTime()) {
+		if (uriPojo == null || spendTime > uriPojo.getMaxTime()) {
 			Map<String, Object> maxMap = getUriMaxDetail(a);
 			update.max("maxTime", spendTime, "maxDetail", maxMap);
+			
+			if (uriPojo != null) {
+				uriPojo.setMaxTime(spendTime);
+			}
 		}
-
-		update.set("avgTime", "JSON_EXTRACT(doc,'$.totalTime') / JSON_EXTRACT(doc,'$.times')");
+		update.set("avgTime", "totalTime/times");
 
 		try (LogTemplate t = new LogTemplate()) {
-			t.sql(update);
+			t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri() + 
+					"' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
+			t.sql(update, update.getBindValueList());
 		}
 	}
 
@@ -143,42 +154,54 @@ public class PersistenceImpl {
 		return maxMap;
 	}
 
-	public static void insertSqlStat(AccessLog a) {
+	public static void insertStatSql(AccessLog a) {
 
 		if (a.getSqlList().size() != a.getSqlBeginTime().size()
 				|| a.getSqlList().size() != a.getSqlSpendTime().size()) {
+			System.out.println("----------------errro:monitor sql");
 			return;
 		}
 
 		// 一个请求对应多个sql
 		for (int i = 0; i < a.getSqlList().size(); i++) {
+			
+			String sqlText = a.getSqlList().get(i);
+			String sqlMd5 = sqlText;
+			if (sqlText.length() != 32) {
+				sqlMd5 = MD5Utils.getMD5(sqlText);
+			}
 			// sql执行异常时，长度不一样
-			Update update = new Update(COL_SQL_STAT, a.getSqlList().get(i));
+			UpdateSql update = new UpdateSql(COL_STAT_SQL, "sql_md5", "'" + sqlMd5 + "'");
 			update.inc("times", 1);
 
 			// sql开始执行时间
 			long sqlBeginTime = a.getSqlBeginTime().get(i);
-			//update.setOnInsert("firsted", sqlBeginTime);
-			//update.set("lasted", sqlBeginTime);
+			update.set("lasted",  "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(sqlBeginTime) + "'");
 
 			// sql执行时间
 			int spendTime = a.getSqlSpendTime().get(i);
-			//update.inc("totalTime", spendTime);
-			//update.max("maxTime", spendTime);
-			//distribute(update, spendTime);
-			//update.max("maxSqlCount", a.getSqlCount().get(i));
+			update.inc("totalTime", spendTime);
+			update.max("maxTime", spendTime);
+			distribute(update, spendTime);
+			update.max("maxSqlCount", a.getSqlCount().get(i));
 			// uri
 			update.addToSet("uri", a.getUri());
-			//update.set("avgTime", "JSON_EXTRACT(doc,'$.totalTime') / JSON_EXTRACT(doc,'$.times')");
+			update.set("avgTime", "totalTime/times");
 
 			// maxTime, 缓存uri最大的maxTime值
 			SqlPojo sqlPojo = MonitorCache.getSqlPojo(a.getSqlList().get(i));
-			if (sqlPojo != null && spendTime > sqlPojo.getMaxTime()) {
+			if (sqlPojo == null || spendTime > sqlPojo.getMaxTime()) {
 				Map<String, Object> maxMap = getSqlMaxDetail(a, i);
 				update.max("maxTime", spendTime, "maxDetail", maxMap);
+				
+				if (sqlPojo != null) {
+					sqlPojo.setMaxTime(spendTime);
+				}
 			}
 			try (LogTemplate t = new LogTemplate()) {
-				t.sql(update);
+				t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)"
+						, Arrays.asList(sqlMd5, sqlText, sqlMd5));
+				t.sql(update, update.getBindValueList());
 			}
 		}
 		
@@ -305,8 +328,8 @@ public class PersistenceImpl {
 //    // 创建(不包括access_yyyy-MM-dd)
 	public static void createFixedIndex() {
 		try (LogTemplate t = new LogTemplate()) {
-			t.createCollection(COL_URI_STAT);
-			t.createCollection(COL_SQL_STAT);
+			//t.createCollection(COL_URI_STAT);
+			//t.createCollection(COL_STAT_SQL);
 		}
 //        // error索引
 //        IndexOperations errorOp = mongoTemplate.indexOps(COL_ERROR);
@@ -360,19 +383,25 @@ public class PersistenceImpl {
 //        warningOp.ensureIndex(new Index().on("lasted", Direction.DESC));
 	}
 
-	private static void distribute(Update update, long t) {
+	private static void distribute(UpdateSql update, int t) {
 		if (t < 10) {
-			update.inc("ms0_10", 1);
+			//update.inc("ms0_10", 1);
+			update.set("distribute", "'[1,0,0,0,0,0]'",  "JSON_SET(distribute, '$[0]', JSON_EXTRACT(distribute, '$[0]') + 1)");
 		} else if (t < 100) {
-			update.inc("ms10_100", 1);
+			//update.inc("ms10_100", 1);
+			update.set("distribute", "'[0,1,0,0,0,0]'",  "JSON_SET(distribute, '$[1]', JSON_EXTRACT(distribute, '$[1]') + 1)");
 		} else if (t < 1000) {
-			update.inc("ms100_s1", 1);
+			//update.inc("ms100_s1", 1);
+			update.set("distribute", "'[0,0,1,0,0,0]'",  "JSON_SET(distribute, '$[2]', JSON_EXTRACT(distribute, '$[2]') + 1)");
 		} else if (t < 3000) {
-			update.inc("s1_3", 1);
+			//update.inc("s1_3", 1);
+			update.set("distribute", "'[0,0,0,1,0,0]'",  "JSON_SET(distribute, '$[3]', JSON_EXTRACT(distribute, '$[3]') + 1)");
 		} else if (t < 10000) {
-			update.inc("s3_10", 1);
+			//update.inc("s3_10", 1);
+			update.set("distribute", "'[0,0,0,0,1,0]'",  "JSON_SET(distribute, '$[4]', JSON_EXTRACT(distribute, '$[4]') + 1)");
 		} else {
-			update.inc("s10_", 1);
+			//update.inc("s10_", 1);
+			update.set("distribute", "'[0,0,0,0,0,1]'",  "JSON_SET(distribute, '$[5]', JSON_EXTRACT(distribute, '$[5]') + 1)");
 		}
 	}
 

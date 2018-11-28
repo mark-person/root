@@ -26,6 +26,16 @@ public class Test2ServiceImpl extends MyDaoSupport {
 
 	public void test() {
 		
+		
+		
+//		try {
+//			Thread.sleep(2060);
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		}
+//		
+				
+		
 		int c1 = getJdbcTemplate().queryForObject("select ?", Integer.class, 108);
 		
 		

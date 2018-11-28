@@ -27,7 +27,7 @@ public class MonitorCache {
 		return sqlMd5Map.get(sqlMd5);
 	}
 	
-	public static void addSql(String sqlMd5, SqlPojo sqlPojo) {
+	public static void putSql(String sqlMd5, SqlPojo sqlPojo) {
 		sqlMd5Map.put(sqlMd5, sqlPojo);
 	}
 	
@@ -35,7 +35,7 @@ public class MonitorCache {
 		return uriMap.get(uri);
 	}
 	
-	public static void addUri(String uri, UriPojo uriPojo) {
+	public static void putUri(String uri, UriPojo uriPojo) {
 		uriMap.put(uri, uriPojo);
 		
 		if (MonitorConfig.IS_DEV) {

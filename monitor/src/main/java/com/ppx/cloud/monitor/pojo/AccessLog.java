@@ -113,7 +113,7 @@ public class AccessLog {
         
         UriPojo uriPojo = MonitorCache.getUri(uri);
         if (uriPojo != null) {
-        	this.uri = uriPojo.getUriSeq().toString();
+        	this.uri = uriPojo.getUriSeq() + "";
         }
         else {
         	this.uri = uri;

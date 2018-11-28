@@ -61,7 +61,6 @@ public class LogTemplate implements AutoCloseable {
 		try {
 			Collection c = schema.createCollection(name, true);
 			AddStatement as = c.add(new ObjectMapper().writeValueAsString(obj));
-			
 			return as.execute();
 		} catch (Throwable e) {
 			this.isException = true;
@@ -92,6 +91,17 @@ public class LogTemplate implements AutoCloseable {
 		if (sql == null) return null;
 		try {
 			SqlResult r = session.sql(sql.toString()).execute();
+			return r;
+		} catch (Exception e) {
+			this.isException = true;
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public SqlResult sql(Object sql, List<Object> bindValue) {
+		if (sql == null) return null;
+		try {
+			SqlResult r = session.sql(sql.toString()).bind(bindValue).execute();
 			return r;
 		} catch (Exception e) {
 			this.isException = true;

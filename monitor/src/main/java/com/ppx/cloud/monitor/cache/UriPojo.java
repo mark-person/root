@@ -9,23 +9,28 @@ package com.ppx.cloud.monitor.cache;
  */
 public class UriPojo {
 	
-	private Integer uriSeq;
+	private int uriSeq;
 	
-	private Long maxTime;
+	private int maxTime;
+	
+	public UriPojo(int uriSeq, int maxTime) {
+		this.uriSeq = uriSeq;
+		this.maxTime = maxTime;
+	}
 
-	public Integer getUriSeq() {
+	public int getUriSeq() {
 		return uriSeq;
 	}
 
-	public void setUriSeq(Integer uriSeq) {
+	public void setUriSeq(int uriSeq) {
 		this.uriSeq = uriSeq;
 	}
 
-	public Long getMaxTime() {
+	public int getMaxTime() {
 		return maxTime;
 	}
 
-	public void setMaxTime(Long maxTime) {
+	public void setMaxTime(int maxTime) {
 		this.maxTime = maxTime;
 	}
 	
