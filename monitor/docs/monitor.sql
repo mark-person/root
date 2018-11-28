@@ -41,6 +41,23 @@ create table stat_sql (
     uri json
 );
 
+create table stat_response (
+    /** TODO 改成uri_seq*/
+	uri varchar(250) not null,
+	times int not null default 1,
+    totalTime int not null default 1,
+    maxTime int not null,
+    avgTime int not null,
+    primary key(service_id, hh)
+);
+
+create table stat_warning (
+	uri varchar(250) not null primary key,
+	firsted timestamp not null default current_timestamp,
+    lasted timestamp not null default current_timestamp,
+    content int
+)
+
 
 
 

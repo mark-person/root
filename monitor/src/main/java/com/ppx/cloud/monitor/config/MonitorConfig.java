@@ -50,7 +50,12 @@ public class MonitorConfig {
             throw new InitException("spring.profiles.active is empty");
         }
         IS_DEV = "dev".equals(active) ? true : false;
-        IS_DEBUG = IS_DEV ? true : false;
+        // IS_DEBUG = IS_DEV ? true : false;
+        
+        if (IS_DEV) {
+        	IS_DEBUG = true;
+        	IS_WARNING = true;
+        }
         return null;
     }
     

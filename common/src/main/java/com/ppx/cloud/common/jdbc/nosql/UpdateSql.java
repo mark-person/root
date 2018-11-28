@@ -37,7 +37,7 @@ public class UpdateSql {
 		this.tableName = tableName;
 		valueMap.put(pkName, pkValue);
 	}
-
+	
 	public UpdateSql inc(String name, int n) {
 		// 先加到value
 		String s = "";

@@ -1,9 +1,7 @@
 package com.ppx.cloud.common.jdbc.nosql;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.AddResult;
@@ -14,6 +12,7 @@ import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
 import com.mysql.cj.xdevapi.SqlResult;
 import com.mysql.cj.xdevapi.Table;
+import com.ppx.cloud.common.config.ObjectMappingCustomer;
 
 /**
  * c.modify("_id='100'").patch("{\"value\":if($.value2 is null, 1, 2)}").execute();
@@ -60,7 +59,7 @@ public class LogTemplate implements AutoCloseable {
 	public AddResult add(String name, Object obj) {
 		try {
 			Collection c = schema.createCollection(name, true);
-			AddStatement as = c.add(new ObjectMapper().writeValueAsString(obj));
+			AddStatement as = c.add(new ObjectMappingCustomer().writeValueAsString(obj));
 			return as.execute();
 		} catch (Throwable e) {
 			this.isException = true;

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -48,15 +49,17 @@ public class PersistenceImpl {
 
 	private static final String COL_STAT_SQL = "stat_sql";
 	
+	private static final String COL_STAT_RESPONSE = "stat_response";
+	
+	private static final String COL_STAT_WARNING = "stat_warning";
+
 	private static final String COL_DEBUG = "debug";
-	
+
 	private static final String COL_WARNING = "warning";
-	
+
 	private static final String COL_ERROR = "error";
-	
+
 	private static final String COL_ERROR_DETAIL = "error_detail";
-	
-	
 
 	public static void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
 			Map<String, Object> startInfo) {
@@ -74,10 +77,11 @@ public class PersistenceImpl {
 		}
 	}
 
-	public static void insertAccess(AccessEntity entity) {
+	public static String insertAccess(AccessEntity entity) {
 		String dateStr = new SimpleDateFormat(DateUtils.DATE_PATTERN).format(entity.getB());
 		try (LogTemplate t = new LogTemplate()) {
-			t.add(COL_ACCESS + dateStr, entity);
+			List<String> list = t.add(COL_ACCESS + dateStr, entity).getGeneratedIds();
+			return list.get(0);
 		}
 	}
 
@@ -106,16 +110,16 @@ public class PersistenceImpl {
 	}
 
 	public static void insertStatUri(AccessLog a) {
-		
-		UpdateSql update = new UpdateSql(COL_STAT_URI, "uri_seq", "(select uri_seq from map_uri_seq where uri_text = '/test/test')");
-		
-		
-		
+
+		UpdateSql update = new UpdateSql(COL_STAT_URI, "uri_seq",
+				"(select uri_seq from map_uri_seq where uri_text = '/test/test')");
+
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
 		update.max("maxTime", spendTime);
-		update.setOnInsert("firsted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
+		update.setOnInsert("firsted",
+				"'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
 		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
 		distribute(update, spendTime);
 
@@ -124,7 +128,7 @@ public class PersistenceImpl {
 		if (uriPojo == null || spendTime > uriPojo.getMaxTime()) {
 			Map<String, Object> maxMap = getUriMaxDetail(a);
 			update.max("maxTime", spendTime, "maxDetail", maxMap);
-			
+
 			if (uriPojo != null) {
 				uriPojo.setMaxTime(spendTime);
 			}
@@ -132,8 +136,8 @@ public class PersistenceImpl {
 		update.set("avgTime", "totalTime/times");
 
 		try (LogTemplate t = new LogTemplate()) {
-			t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri() + 
-					"' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
+			t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
+					+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
 			t.sql(update, update.getBindValueList());
 		}
 	}
@@ -158,13 +162,13 @@ public class PersistenceImpl {
 
 		if (a.getSqlList().size() != a.getSqlBeginTime().size()
 				|| a.getSqlList().size() != a.getSqlSpendTime().size()) {
-			System.out.println("----------------errro:monitor sql");
+			System.err.println("----------------errro:monitor sql");
 			return;
 		}
 
 		// 一个请求对应多个sql
 		for (int i = 0; i < a.getSqlList().size(); i++) {
-			
+
 			String sqlText = a.getSqlList().get(i);
 			String sqlMd5 = sqlText;
 			if (sqlText.length() != 32) {
@@ -176,7 +180,7 @@ public class PersistenceImpl {
 
 			// sql开始执行时间
 			long sqlBeginTime = a.getSqlBeginTime().get(i);
-			update.set("lasted",  "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(sqlBeginTime) + "'");
+			update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(sqlBeginTime) + "'");
 
 			// sql执行时间
 			int spendTime = a.getSqlSpendTime().get(i);
@@ -193,95 +197,77 @@ public class PersistenceImpl {
 			if (sqlPojo == null || spendTime > sqlPojo.getMaxTime()) {
 				Map<String, Object> maxMap = getSqlMaxDetail(a, i);
 				update.max("maxTime", spendTime, "maxDetail", maxMap);
-				
+
 				if (sqlPojo != null) {
 					sqlPojo.setMaxTime(spendTime);
 				}
 			}
 			try (LogTemplate t = new LogTemplate()) {
-				t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)"
-						, Arrays.asList(sqlMd5, sqlText, sqlMd5));
+				t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
+						Arrays.asList(sqlMd5, sqlText, sqlMd5));
 				t.sql(update, update.getBindValueList());
 			}
 		}
-		
+
 	}
-	
+
 	public static void insertDebug(DebugEntity debugAccess) {
 		try (LogTemplate t = new LogTemplate()) {
 			t.add(COL_DEBUG, debugAccess);
 		}
 	}
-	
-	  public static void insertResponse(AccessLog a, String _id) {
-//	        String hh = dateHhFormat.format(objectId.getDate());
-//	        
-//	        // 有异常和静态uri不统计
-//	        // 机器ID yyyyMMddHH小时 访问量 总时间
-//	        Criteria criteria = Criteria.where("sid")
-//	                .is(ApplicationUtils.getServiceId()).and("hh").is(hh);
-//	        Query query = Query.query(criteria);
-//	        
-//	        Update update = new Update();
-//	        update.inc("times", 1);
-//	        update.inc("totalTime", a.getSpendNanoTime() / 1000000);      
-//	        
-//	        // 插入或更新数据
-//	        Map<?, ?> map = mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().upsert(true).returnNew(true),
-//	                Map.class, COL_RESPONSE);
-//	        
-//	        // 更新平均值
-//	        Update newUpdate = new Update();
-//	        long avgTime = (Long)map.get("totalTime") / (Integer)map.get("times");
-//	        newUpdate.set("avgTime", avgTime);
-//	        mongoTemplate.updateFirst(query, newUpdate, COL_RESPONSE);
-//	        
-//	        // 更新到service
-//	        upsertService(ApplicationUtils.getServiceId(), Update.update("lastResponse", avgTime));
-	    }
-	  
-	  public static void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity debug) {
-	        ErrorBean errorBean = ErrorCode.getErroCode(throwable);
-	        errorEntity.setC(errorBean.getCode());
-	        
-	        // 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情
-	        if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
-	            errorEntity.setP(debug.getP());
-	            errorEntity.setIn(debug.getIn());
-	            try (LogTemplate t = new LogTemplate()) {
-	    			t.add(COL_ERROR, errorEntity);
-	    		}
-	        }
-	        else {
-	        	try (LogTemplate t = new LogTemplate()) {
-	    			t.add(COL_ERROR, errorEntity);
-	    		}
-	            
-	            Map<String, Object> detailErrorMap = new HashMap<String, Object>();
-	            detailErrorMap.put("_id", errorEntity.get_id());
-	            detailErrorMap.put("exception", MonitorUtils.getExcepiton(throwable));
-	            detailErrorMap.put("debug", debug.toJsonObject());
-	            try (LogTemplate t = new LogTemplate()) {
-	    			t.add(COL_ERROR_DETAIL, errorEntity);
-	    		}
-	        }
-	    }
-	  
-	public void insertWarning(AccessLog a, BitSet content) {
-//		Criteria criteria = Criteria.where("sid").is(ApplicationUtils.getServiceId()).and("uri").is(a.getUri());
-//		Update update = Update.update("lasted", a.getBeginTime());
-//		
-//		
-//		update.setOnInsert("beginTime", a.getBeginTime());
-//		update.bitwise("content").or(content.toLongArray()[0]);
-//		mongoTemplate.upsert(Query.query(criteria), update, COL_WARNING);
-//		
-//		try (LogTemplate t = new LogTemplate()) {
-//			
-//		}
+
+	public static void insertResponse(AccessLog a) {
+		// 机器ID yyyyMMddHH小时 访问量 总时间
+		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
 		
+		UpdateSql update = new UpdateSql(COL_STAT_RESPONSE, "service_id,hh", "'" + ApplicationUtils.getServiceId() + "','" + hh + "'");
+		int spendTime = (int)(a.getSpendNanoTime() / 1e6);
+		update.inc("times", 1);
+		update.inc("totalTime", spendTime);
+		update.set("avgTime", "totalTime/times");
+		update.max("maxTime", spendTime);
+		
+		try (LogTemplate t = new LogTemplate()) {
+			t.sql(update);
+		}
 	}
-	
+
+	public static void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity debug) {
+		ErrorBean errorBean = ErrorCode.getErroCode(throwable);
+		errorEntity.setC(errorBean.getCode());
+
+		// 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情
+		if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
+			errorEntity.setP(debug.getP());
+			errorEntity.setIn(debug.getIn());
+			try (LogTemplate t = new LogTemplate()) {
+				t.add(COL_ERROR, errorEntity);
+			}
+		} else {
+			try (LogTemplate t = new LogTemplate()) {
+				t.add(COL_ERROR, errorEntity);
+			}
+
+			Map<String, Object> detailErrorMap = new HashMap<String, Object>();
+			detailErrorMap.put("_id", errorEntity.get_id());
+			detailErrorMap.put("exception", MonitorUtils.getExcepiton(throwable));
+			detailErrorMap.put("debug", debug.toJsonObject());
+			try (LogTemplate t = new LogTemplate()) {
+				t.add(COL_ERROR_DETAIL, errorEntity);
+			}
+		}
+	}
+
+	public static void insertWarning(AccessLog a, BitSet content) {
+		UpdateSql update = new UpdateSql(COL_STAT_WARNING, "uri", "'" + a.getUri() + "'");
+		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
+		update.set("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
+		try (LogTemplate t = new LogTemplate()) {
+			t.sql(update);
+		}
+
+	}
 
 //    public void upsertService(String serviceId, Update update) {
 //        Criteria criteria = Criteria.where("_id").is(serviceId);
@@ -298,7 +284,6 @@ public class PersistenceImpl {
 //        return mongoTemplate.findOne(Query.query(criteria), Map.class, COL_CONIFG);
 //    }
 //    
-
 
 //    
 //    public void insertGather(Map<String, Object> map) {    
@@ -328,8 +313,8 @@ public class PersistenceImpl {
 //    // 创建(不包括access_yyyy-MM-dd)
 	public static void createFixedIndex() {
 		try (LogTemplate t = new LogTemplate()) {
-			//t.createCollection(COL_URI_STAT);
-			//t.createCollection(COL_STAT_SQL);
+			// t.createCollection(COL_URI_STAT);
+			// t.createCollection(COL_STAT_SQL);
 		}
 //        // error索引
 //        IndexOperations errorOp = mongoTemplate.indexOps(COL_ERROR);
@@ -385,23 +370,29 @@ public class PersistenceImpl {
 
 	private static void distribute(UpdateSql update, int t) {
 		if (t < 10) {
-			//update.inc("ms0_10", 1);
-			update.set("distribute", "'[1,0,0,0,0,0]'",  "JSON_SET(distribute, '$[0]', JSON_EXTRACT(distribute, '$[0]') + 1)");
+			// update.inc("ms0_10", 1);
+			update.set("distribute", "'[1,0,0,0,0,0]'",
+					"JSON_SET(distribute, '$[0]', JSON_EXTRACT(distribute, '$[0]') + 1)");
 		} else if (t < 100) {
-			//update.inc("ms10_100", 1);
-			update.set("distribute", "'[0,1,0,0,0,0]'",  "JSON_SET(distribute, '$[1]', JSON_EXTRACT(distribute, '$[1]') + 1)");
+			// update.inc("ms10_100", 1);
+			update.set("distribute", "'[0,1,0,0,0,0]'",
+					"JSON_SET(distribute, '$[1]', JSON_EXTRACT(distribute, '$[1]') + 1)");
 		} else if (t < 1000) {
-			//update.inc("ms100_s1", 1);
-			update.set("distribute", "'[0,0,1,0,0,0]'",  "JSON_SET(distribute, '$[2]', JSON_EXTRACT(distribute, '$[2]') + 1)");
+			// update.inc("ms100_s1", 1);
+			update.set("distribute", "'[0,0,1,0,0,0]'",
+					"JSON_SET(distribute, '$[2]', JSON_EXTRACT(distribute, '$[2]') + 1)");
 		} else if (t < 3000) {
-			//update.inc("s1_3", 1);
-			update.set("distribute", "'[0,0,0,1,0,0]'",  "JSON_SET(distribute, '$[3]', JSON_EXTRACT(distribute, '$[3]') + 1)");
+			// update.inc("s1_3", 1);
+			update.set("distribute", "'[0,0,0,1,0,0]'",
+					"JSON_SET(distribute, '$[3]', JSON_EXTRACT(distribute, '$[3]') + 1)");
 		} else if (t < 10000) {
-			//update.inc("s3_10", 1);
-			update.set("distribute", "'[0,0,0,0,1,0]'",  "JSON_SET(distribute, '$[4]', JSON_EXTRACT(distribute, '$[4]') + 1)");
+			// update.inc("s3_10", 1);
+			update.set("distribute", "'[0,0,0,0,1,0]'",
+					"JSON_SET(distribute, '$[4]', JSON_EXTRACT(distribute, '$[4]') + 1)");
 		} else {
-			//update.inc("s10_", 1);
-			update.set("distribute", "'[0,0,0,0,0,1]'",  "JSON_SET(distribute, '$[5]', JSON_EXTRACT(distribute, '$[5]') + 1)");
+			// update.inc("s10_", 1);
+			update.set("distribute", "'[0,0,0,0,0,1]'",
+					"JSON_SET(distribute, '$[5]', JSON_EXTRACT(distribute, '$[5]') + 1)");
 		}
 	}
 
