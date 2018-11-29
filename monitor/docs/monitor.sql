@@ -1,3 +1,23 @@
+create table service (
+  service_id varchar(32) NOT NULL,
+  service_info json,
+  service_last_info json,
+  PRIMARY KEY (service_id)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 create table map_uri_seq (

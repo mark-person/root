@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.mysql.cj.xdevapi.DbDoc;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
@@ -41,7 +42,7 @@ public class PersistenceImpl {
 
 	private static final String COL_GATHER = "gather";
 
-	private static final String COL_SERVICE = "service";
+	private static final String TABLE_SERVICE = "service";
 
 	private static final String COL_ACCESS = "access";
 
@@ -69,15 +70,26 @@ public class PersistenceImpl {
 
 	public void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
 			Map<String, Object> startInfo) {
-		t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
+		// t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
+		
+		//updateSql
+		UpdateSql updateSql = new UpdateSql(TABLE_SERVICE, "service_id", "'" + ApplicationUtils.getServiceId() + "'");
+		updateSql.setJson("service_info", serviceInfo);
+		updateSql.execute(t);
+		
+		
 		t.addOrReplaceOne(COL_CONF, ApplicationUtils.getServiceId(), config);
 		t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
 
 	}
 
 	public void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
-		t.addOrReplaceOne(COL_GATHER, ApplicationUtils.getServiceId(), gatherMap);
-		t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), lastUpdate);
+		t.add(COL_GATHER, gatherMap);
+		
+		//updateSql
+		UpdateSql updateSql = new UpdateSql(TABLE_SERVICE, "service_id", "'" + ApplicationUtils.getServiceId() + "'");
+		updateSql.setJson("service_last_info", lastUpdate);
+		updateSql.execute(t);
 	}
 
 	public String insertAccess(AccessEntity entity) {
@@ -85,7 +97,6 @@ public class PersistenceImpl {
 
 		List<String> list = t.add(COL_ACCESS + dateStr, entity).getGeneratedIds();
 		return list.get(0);
-
 	}
 
 	private Map<String, Object> getUriMaxDetail(AccessLog a) {
@@ -271,10 +282,8 @@ public class PersistenceImpl {
 //        mongoTemplate.upsert(Query.query(criteria), update, COL_CONIFG);
 //    }
 //    
-    public Map<?, ?> getConfig(String serviceId){
-        //Criteria criteria = Criteria.where("_id").is(serviceId);
-        //return mongoTemplate.findOne(Query.query(criteria), Map.class, COL_CONIFG);
-    	return null;
+    public DbDoc getConfig(String serviceId){
+    	return t.find(COL_CONF, serviceId);
     }
     
 	public void insertGather(Map<String, Object> map) {

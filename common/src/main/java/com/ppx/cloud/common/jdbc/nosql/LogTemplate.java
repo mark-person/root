@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.AddResult;
 import com.mysql.cj.xdevapi.AddStatement;
 import com.mysql.cj.xdevapi.Collection;
+import com.mysql.cj.xdevapi.DbDoc;
 import com.mysql.cj.xdevapi.Result;
 import com.mysql.cj.xdevapi.Schema;
 import com.mysql.cj.xdevapi.Session;
@@ -113,25 +114,29 @@ public class LogTemplate implements AutoCloseable {
 		return list.isEmpty() ? false : true;
 	}
 	
+	
+	
 	public Collection createCollection(String collectionName) {
 		return schema.createCollection(collectionName, true);
 	}
+	
+	public DbDoc find(String collectionName, String id) {
+		Collection c = schema.createCollection(collectionName, true);
+		return c.getOne(id);
+	}
 
 	
-	// 测试用
 	public Schema getSchema() {
 		return schema;
 	}
+	
 	public static void main(String[] args) {
 		try (LogTemplate t = new LogTemplate()) {
 			
+			Map<?, ?> doc = t.find("conf", "192.168.101.73:8081");
 			
 			
-			Indexes indexes = Indexes.createIndex("test");
-			indexes.add("idx_test_value", "numeric");
-			indexes.add("idx_test_value2", "text(100)");
-			indexes.createIndex(t);
-			
+			System.out.println("xxxxxxxx:" + Integer.parseInt(doc.get("gatherInterval").toString()) );
 		}
 
 		System.out.println("------------end");

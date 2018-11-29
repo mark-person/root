@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
@@ -48,13 +49,18 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
     	logger.info("StartMonitor----------begin1");
+    	// 初始化OperatingSystemMXBean对象
+        OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
+        MonitorUtils.setOperatingSystemMXBean(operatingSystemMXBean);
     	
     	
+    	var serviceInfo = getServiceInfo();
+    	var config = getConfig();
+    	var startInfo = getStartInfo();
+    	try (LogTemplate t = new LogTemplate()) {
+    		PersistenceImpl.getInstance(t).insertStart(serviceInfo, config, startInfo);
+    	}
     	
-//    	var serviceInfo = getServiceInfo();
-//    	var config = getConfig();
-//    	var startInfo = getStartInfo();
-//    	PersistenceImpl.insertStart(serviceInfo, config, startInfo);
 
     	//PersistenceImpl.createFixedIndex();
     	

@@ -4,7 +4,6 @@
 package com.ppx.cloud.common.jdbc.nosql;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mysql.cj.xdevapi.JsonValue;
-import com.mysql.cj.xdevapi.Session;
+import com.mysql.cj.xdevapi.SqlResult;
 
 /**
  * @author mark
@@ -98,6 +96,22 @@ public class UpdateSql {
 		return this;
 	}
 	
+	public UpdateSql setJson(String name, Object obj) {
+		String json = "";
+		try {
+			json = new ObjectMapper().writeValueAsString(obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// 先加到value
+		valueMap.put(name, "?");
+		String s = name + "=?";
+		setList.add(s);
+		bindValueList.add(json);
+		bindValueList.add(json);
+		return this;
+	}
+	
 	public UpdateSql set(String name, String insertValue, String setValue) {
 		valueMap.put(name, insertValue);
 		String s = name + "=" + setValue;
@@ -123,7 +137,18 @@ public class UpdateSql {
 		setList.add(s);
 		return this;
 	}
-
+	
+	public SqlResult execute(LogTemplate t) {
+		if (bindValueList.isEmpty()) {
+			return t.sql(this.toString());
+		}
+		else {
+			return t.sql(this.toString(), bindValueList);
+		}
+	}
+	
+	
+	
 	public static void main(String[] args) {
 		// insert into map_uri_seq(uri_text) values('/test/test') on duplicate key update uri_times=uri_times+1
 		// 或使用insert into map_uri_seq(uri_tex) select '/test/test' from dual where not exists(select 1 from map_uri_seq where uri_text = '/test/test')

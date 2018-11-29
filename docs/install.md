@@ -41,7 +41,7 @@ ${jrebel_args} --add-opens java.base/java.lang=ALL-UNNAMED
 -XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/java.nio=ALL-UNNAMED
 
 
-${jrebel_args} --add-opens java.base/java.lang=ALL-UNNAMED -XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/java.nio=ALL-UNNAMED
+${jrebel_args} --add-opens java.base/java.lang=ALL-UNNAMED -XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
 ```
 
 

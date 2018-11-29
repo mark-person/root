@@ -2,6 +2,7 @@ package com.ppx.cloud.monitor.queue;
 
 import java.util.BitSet;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,28 +33,24 @@ public class AccessQueueConsumer {
 
 	public void start() {
 		// 启动后调用
-		logger.info("AccessQueueConsumer.start()>>>>>>>>>>>>>>>>");
+		logger.info("AccessQueueConsumer.start()...");
 
 		new Thread(() -> {
-			try {
-				// 定时采集,刚开机cpu占100%
-				Thread.sleep(10 * 1000);
-				TimingGather.gather();
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-
 			// 加上try内防止线程死掉
 			try {
+				// 定时采集,刚开机cpu占100%
+				TimeUnit.SECONDS.sleep(10);
+				TimingGather.gather();
+				
 				while (true) {
 					consumeAccessLog();
 					
 					// 间隔
-					threadRun();
+					intervalRun();
 					Thread.sleep(20);
 				}
 			} catch (Throwable e) {
-				e.printStackTrace();
+				logger.error("AccessQueueConsumer.Thread", e);
 			}
 		}).start();
 	}
@@ -84,25 +81,25 @@ public class AccessQueueConsumer {
 	private long lastGatherNanoTime = System.nanoTime();
 	private long lastGetConfNanoTime = System.nanoTime();
 
-	private void threadRun() {
+	private void intervalRun() {
 		// 采集间隔
 		long currentNanoTime = System.nanoTime();
-		if (currentNanoTime - lastGatherNanoTime >= MonitorConfig.GATHER_INTERVAL * 1000000) {
+		if (currentNanoTime - lastGatherNanoTime >= MonitorConfig.GATHER_INTERVAL * 1e6) {
 			lastGatherNanoTime = currentNanoTime;
 			TimingGather.gather();
 		}
 
 		// 同步配置数据
-		if (currentNanoTime - lastGetConfNanoTime >= MonitorConfig.SYNC_CONF_INTERVAL * 1000000) {
+		if (currentNanoTime - lastGetConfNanoTime >= MonitorConfig.SYNC_CONF_INTERVAL * 1e6) {
 			lastGetConfNanoTime = currentNanoTime;
-
 			try (LogTemplate t = new LogTemplate()) {
 				Map<?, ?> map = PersistenceImpl.getInstance(t).getConfig(ApplicationUtils.getServiceId());
+				 
 				if (map != null) {
-					MonitorConfig.IS_DEBUG = (Boolean) map.get("isDebug");
-					MonitorConfig.IS_WARNING = (Boolean) map.get("isWarning");
-					MonitorConfig.GATHER_INTERVAL = (Long) map.get("gatherInterval");
-					MonitorConfig.DUMP_THREAD_MAX_TIME = (Long) map.get("dumpThreadMaxTime");
+					MonitorConfig.IS_DEBUG = "true".equals((map.get("isDebug").toString()));
+					MonitorConfig.IS_WARNING = "true".equals((map.get("isWarning").toString()));;
+					MonitorConfig.GATHER_INTERVAL = Integer.parseInt(map.get("gatherInterval").toString());
+					MonitorConfig.DUMP_THREAD_MAX_TIME = Integer.parseInt(map.get("dumpThreadMaxTime").toString());
 				}
 			}
 		}
