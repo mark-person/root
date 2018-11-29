@@ -73,7 +73,7 @@ public class PersistenceImpl {
 		// t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
 		
 		//updateSql
-		UpdateSql updateSql = new UpdateSql(TABLE_SERVICE, "service_id", "'" + ApplicationUtils.getServiceId() + "'");
+		UpdateSql updateSql = new UpdateSql(true, TABLE_SERVICE, "service_id", "'" + ApplicationUtils.getServiceId() + "'");
 		updateSql.setJson("service_info", serviceInfo);
 		updateSql.execute(t);
 		
@@ -87,7 +87,7 @@ public class PersistenceImpl {
 		t.add(COL_GATHER, gatherMap);
 		
 		//updateSql
-		UpdateSql updateSql = new UpdateSql(TABLE_SERVICE, "service_id", "'" + ApplicationUtils.getServiceId() + "'");
+		UpdateSql updateSql = new UpdateSql(true, TABLE_SERVICE, "service_id", "'" + ApplicationUtils.getServiceId() + "'");
 		updateSql.setJson("service_last_info", lastUpdate);
 		updateSql.execute(t);
 	}
@@ -125,7 +125,7 @@ public class PersistenceImpl {
 
 	public void insertStatUri(AccessLog a) {
 
-		UpdateSql update = new UpdateSql(COL_STAT_URI, "uri_seq",
+		UpdateSql update = new UpdateSql(true, COL_STAT_URI, "uri_seq",
 				"(select uri_seq from map_uri_seq where uri_text = '" + a.getUri() + "')");
 
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
@@ -151,7 +151,7 @@ public class PersistenceImpl {
 
 		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
 				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
-		t.sql(update, update.getBindValueList());
+		update.execute(t);
 
 	}
 
@@ -187,7 +187,7 @@ public class PersistenceImpl {
 				sqlMd5 = MD5Utils.getMD5(sqlText);
 			}
 			// sql执行异常时，长度不一样
-			UpdateSql update = new UpdateSql(COL_STAT_SQL, "sql_md5", "'" + sqlMd5 + "'");
+			UpdateSql update = new UpdateSql(true, COL_STAT_SQL, "sql_md5", "'" + sqlMd5 + "'");
 			update.inc("times", 1);
 
 			// sql开始执行时间
@@ -216,7 +216,7 @@ public class PersistenceImpl {
 			}
 			t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
 					Arrays.asList(sqlMd5, sqlText, sqlMd5));
-			t.sql(update, update.getBindValueList());
+			update.execute(t);
 
 		}
 
@@ -231,7 +231,7 @@ public class PersistenceImpl {
 		// 机器ID yyyyMMddHH小时 访问量 总时间
 		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
 
-		UpdateSql update = new UpdateSql(COL_STAT_RESPONSE, "service_id,hh",
+		UpdateSql update = new UpdateSql(true, COL_STAT_RESPONSE, "service_id,hh",
 				"'" + ApplicationUtils.getServiceId() + "','" + hh + "'");
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
@@ -264,9 +264,9 @@ public class PersistenceImpl {
 	}
 
 	public void insertWarning(AccessLog a, BitSet content) {
-		UpdateSql update = new UpdateSql(COL_STAT_WARNING, "uri", "'" + a.getUri() + "'");
+		UpdateSql update = new UpdateSql(true, COL_STAT_WARNING, "uri", "'" + a.getUri() + "'");
 		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
-		update.set("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
+		update.setSql("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
 
 		t.sql(update);
 
@@ -371,27 +371,27 @@ public class PersistenceImpl {
 	private static void distribute(UpdateSql update, int t) {
 		if (t < 10) {
 			// update.inc("ms0_10", 1);
-			update.set("distribute", "'[1,0,0,0,0,0]'",
+			update.setSql("distribute", "'[1,0,0,0,0,0]'",
 					"JSON_SET(distribute, '$[0]', JSON_EXTRACT(distribute, '$[0]') + 1)");
 		} else if (t < 100) {
 			// update.inc("ms10_100", 1);
-			update.set("distribute", "'[0,1,0,0,0,0]'",
+			update.setSql("distribute", "'[0,1,0,0,0,0]'",
 					"JSON_SET(distribute, '$[1]', JSON_EXTRACT(distribute, '$[1]') + 1)");
 		} else if (t < 1000) {
 			// update.inc("ms100_s1", 1);
-			update.set("distribute", "'[0,0,1,0,0,0]'",
+			update.setSql("distribute", "'[0,0,1,0,0,0]'",
 					"JSON_SET(distribute, '$[2]', JSON_EXTRACT(distribute, '$[2]') + 1)");
 		} else if (t < 3000) {
 			// update.inc("s1_3", 1);
-			update.set("distribute", "'[0,0,0,1,0,0]'",
+			update.setSql("distribute", "'[0,0,0,1,0,0]'",
 					"JSON_SET(distribute, '$[3]', JSON_EXTRACT(distribute, '$[3]') + 1)");
 		} else if (t < 10000) {
 			// update.inc("s3_10", 1);
-			update.set("distribute", "'[0,0,0,0,1,0]'",
+			update.setSql("distribute", "'[0,0,0,0,1,0]'",
 					"JSON_SET(distribute, '$[4]', JSON_EXTRACT(distribute, '$[4]') + 1)");
 		} else {
 			// update.inc("s10_", 1);
-			update.set("distribute", "'[0,0,0,0,0,1]'",
+			update.setSql("distribute", "'[0,0,0,0,0,1]'",
 					"JSON_SET(distribute, '$[5]', JSON_EXTRACT(distribute, '$[5]') + 1)");
 		}
 	}

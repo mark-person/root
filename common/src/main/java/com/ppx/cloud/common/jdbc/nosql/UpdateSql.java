@@ -4,22 +4,32 @@
 package com.ppx.cloud.common.jdbc.nosql;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.SqlResult;
+import com.ppx.cloud.common.config.ObjectMappingCustomer;
+
 
 /**
+ * 
  * @author mark
- * @date 2018年11月22日
+ * @date 2018年11月29日
  */
 public class UpdateSql {
+	
+	private static Logger logger = LoggerFactory.getLogger(UpdateSql.class);
 
+	private boolean upsert;
+	
 	private String tableName;
 
 	private Map<String, Object> valueMap = new LinkedHashMap<String, Object>();
@@ -28,33 +38,35 @@ public class UpdateSql {
 	
 	private List<Object> bindValueList = new ArrayList<Object>(); 
 	
+	private Object[] pkValue;
 	
-	public List<Object> getBindValueList() {
-		return bindValueList;
-	}
-
-	public UpdateSql(String tableName, String pkName, String pkValue) {
+	// 组合主键pkName用逗号分开
+	public UpdateSql(boolean upsert, String tableName, String pkName, Object... pkValue) {
+		this.upsert = upsert;
 		this.tableName = tableName;
-		valueMap.put(pkName, pkValue);
+		this.pkValue = pkValue.clone();
+		if (upsert) {
+			valueMap.put(pkName, "?");
+			bindValueList.addAll(Arrays.asList(pkValue));
+		}
+		else {
+			valueMap.put(pkName.replaceAll(",", "=? and ") + "=?", "?");
+		}
 	}
 	
 	public UpdateSql inc(String name, int n) {
-		// 先加到value
-		String s = "";
-		if (n >= 0) {
-			s = name + "=" + name + "+" + n;
-		} else {
-			s = name + "=" + name + n;
+		if (upsert) {
+			valueMap.put(name, n);
 		}
-		setList.add(s);
+		setList.add(name + "=" + name + (n >= 0 ? "+" + n : n));
 		return this;
 	}
 
 	public UpdateSql max(String name, int n) {
-		// 先加到value
-		valueMap.put(name, n);
-		String s = name + "=if(" + name + ">" + n + "," + name + "," + n + ")";
-		setList.add(s);
+		if (upsert) {
+			valueMap.put(name, n);
+		}
+		setList.add(name + "=if(" + name + ">" + n + "," + name + "," + n + ")");
 		return this;
 	}
 	
@@ -76,46 +88,68 @@ public class UpdateSql {
 	}
 
 	public UpdateSql min(String name, int n) {
-		// 先加到value
-		valueMap.put(name, n);
-		String s = name + "=if(" + name + "<" + n + "," + name + "," + n + ")";
-		setList.add(s);
+		if (upsert) {
+			valueMap.put(name, n);
+		}
+		setList.add(name + "=if(" + name + "<" + n + "," + name + "," + n + ")");
 		return this;
 	}
 
-	public UpdateSql setOnInsert(String name, Object obj) {
-		valueMap.put(name, obj);
+	public UpdateSql setOnInsert(String name, Object val) {
+		valueMap.put(name, val);
+		bindValueList.add(val);
+		return this;
+	}
+	
+	public UpdateSql set(String name, Object val) {
+		if (upsert) {
+			valueMap.put(name, "?");
+			bindValueList.add(val);
+		}
+		setList.add(name + "=?");
+		bindValueList.add(val);
 		return this;
 	}
 
-	public UpdateSql set(String name, Object obj) {
-		// 先加到value
-		valueMap.put(name, obj);
-		String s = name + "=" + obj;
-		setList.add(s);
+	public UpdateSql setSql(String name, String sql) {
+		if (upsert) {
+			valueMap.put(name, sql);
+		}
+		setList.add(name + "=" + sql);
 		return this;
 	}
 	
 	public UpdateSql setJson(String name, Object obj) {
 		String json = "";
 		try {
-			json = new ObjectMapper().writeValueAsString(obj);
+			json = new ObjectMappingCustomer().writeValueAsString(obj);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// 先加到value
-		valueMap.put(name, "?");
-		String s = name + "=?";
-		setList.add(s);
-		bindValueList.add(json);
+		if (upsert) {
+			valueMap.put(name, "?");
+			bindValueList.add(json);
+		}
+		setList.add(name + "=?");
 		bindValueList.add(json);
 		return this;
 	}
 	
-	public UpdateSql set(String name, String insertValue, String setValue) {
-		valueMap.put(name, insertValue);
-		String s = name + "=" + setValue;
-		setList.add(s);
+	public UpdateSql set(String name, Object insertVal, Object setVal) {
+		if (upsert) {
+			valueMap.put(name, "?");
+			bindValueList.add(insertVal);
+		}
+		setList.add(name + "=?");
+		bindValueList.add(setVal);
+		return this;
+	}
+	
+	public UpdateSql setSql(String name, String insertSql, String setSql) {
+		if (upsert) {
+			valueMap.put(name, insertSql);
+		}
+		setList.add(name + "=" + setSql);
 		return this;
 	}
 
@@ -123,64 +157,44 @@ public class UpdateSql {
 		String columnString = StringUtils.collectionToCommaDelimitedString(valueMap.keySet());
 		String valueString = StringUtils.collectionToCommaDelimitedString(valueMap.values());
 		String setString = StringUtils.collectionToCommaDelimitedString(setList);
-		
-		String s = "insert into " + tableName + "(" + columnString + ") values(" + valueString
-				+ ") on duplicate key update " + setString;
-		//System.out.println("xxxxxxs:" + s);
+		String s = "";
+		if (upsert) {
+			s = "insert into " + tableName + "(" + columnString + ") values(" + valueString
+					+ ") on duplicate key update " + setString;
+		}
+		else {
+			columnString = StringUtils.collectionToDelimitedString(valueMap.keySet(), "and");
+			s = "update " + tableName + " set " + setString + " where " + columnString;
+			bindValueList.addAll(Arrays.asList(pkValue));
+		}
+		logger.debug("sql:{}", s);
 		return s;
 	}
 	
-	
 	public UpdateSql addToSet(String name, String value) {
-		valueMap.put(name, "'[\"" + value + "\"]'");
+		if (upsert) {
+			valueMap.put(name, "'[\"" + value + "\"]'");
+		}
 		String s =  name + "=if(JSON_CONTAINS(" + name + ", '\"" + value + "\"', '$') != 1, JSON_EXTRACT(JSON_ARRAY_APPEND(" + name + ", '$', '" + value + "'), '$'), JSON_EXTRACT(" + name + ", '$'))";
 		setList.add(s);
 		return this;
 	}
 	
 	public SqlResult execute(LogTemplate t) {
-		if (bindValueList.isEmpty()) {
-			return t.sql(this.toString());
-		}
-		else {
-			return t.sql(this.toString(), bindValueList);
-		}
+		logger.debug("bindValueList:{}", bindValueList);
+		return t.sql(this.toString(), bindValueList);
 	}
 	
-	
-	
 	public static void main(String[] args) {
-		// insert into map_uri_seq(uri_text) values('/test/test') on duplicate key update uri_times=uri_times+1
-		// 或使用insert into map_uri_seq(uri_tex) select '/test/test' from dual where not exists(select 1 from map_uri_seq where uri_text = '/test/test')
-//		
-//		UpdateSql u = new UpdateSql("stat_uri", "uri_seq", "(select uri_seq from map_uri_seq where uri_text = '/test/test')");
-//		u.set("lasted", "now()");
-//		u.inc("totalTime",100);
-//		u.max("maxTime", 100);
-//		u.inc("times", 1);
-//		u.set("avgTime", "totalTime/times");
-//		
-//		
-//		u.set("distribute", "'[1,0,0,0,0]'",  "JSON_SET(distribute, '$[0]', JSON_EXTRACT(distribute, '$[0]') + 1)");
-//		
-//		//u.addToSet("sql_set", "xxxxx");
-//		
-//		
-//		//u.max("maxTime", 100, "maxDetail", Map.of("mark", 1233));
-//		
-//		
-//		System.out.println("" + u);
-		
-		long t = System.nanoTime();
-		try {
-			// 每隔n秒看看有没有连接
-			TimeUnit.SECONDS.sleep(3);
-		} catch (Exception e) {
-			e.printStackTrace();
+		try (LogTemplate t = new LogTemplate()) {
+			UpdateSql u = new UpdateSql(false, "stat_uri", "uri_seq", 600);
+			u.inc("times", 1);
+			u.max("maxTime", 10);
+			u.inc("totalTime", 10);
+			u.setSql("avgTime", "totalTime/times");
+			u.set("lasted", new Date());
+			u.execute(t);
 		}
-		//System.nanoTime() - t < 10 * 1e9
-		System.out.println("xxx:" + (10 * 1e2));
-		System.out.println("xxx:" + (System.nanoTime() - t > 3 * 1e9));
-		
+		System.out.println("-------------end");
 	}
 }
