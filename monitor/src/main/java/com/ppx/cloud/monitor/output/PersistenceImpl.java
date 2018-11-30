@@ -1,13 +1,17 @@
 package com.ppx.cloud.monitor.output;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -19,9 +23,11 @@ import com.ppx.cloud.common.jdbc.nosql.MyUpdate;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.MD5Utils;
+import com.ppx.cloud.monitor.StartMonitor;
 import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.cache.SqlPojo;
 import com.ppx.cloud.monitor.cache.UriPojo;
+import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.persistence.AccessEntity;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 import com.ppx.cloud.monitor.pojo.DebugEntity;
@@ -33,32 +39,35 @@ import com.ppx.cloud.monitor.util.MonitorUtils;
  * @author mark
  * @date 2018年11月21日
  */
-@Service
 public class PersistenceImpl {
+	
+	private static Logger logger = LoggerFactory.getLogger(PersistenceImpl.class);
 
 	private static final String COL_START = "start";
 
-	private static final String COL_CONF = "conf";
+	
 
 	private static final String COL_GATHER = "gather";
-
-	private static final String TABLE_SERVICE = "service";
-
+	
 	private static final String COL_ACCESS = "access";
-
-	private static final String COL_STAT_URI = "stat_uri";
-
-	private static final String COL_STAT_SQL = "stat_sql";
-
-	private static final String COL_STAT_RESPONSE = "stat_response";
-
-	private static final String COL_STAT_WARNING = "stat_warning";
-
+	
 	private static final String COL_ERROR = "error";
 
 	private static final String COL_ERROR_DETAIL = "error_detail";
 
 	private static final String COL_DEBUG = "debug";
+	
+	private static final String TABLE_CONF = "conf";
+
+	private static final String TABLE_SERVICE = "service";
+
+	private static final String TABLE_STAT_URI = "stat_uri";
+
+	private static final String TABLE_STAT_SQL = "stat_sql";
+
+	private static final String TABLE_STAT_RESPONSE = "stat_response";
+
+	private static final String TABLE_STAT_WARNING = "stat_warning";
 
 	private LogTemplate t;
 
@@ -68,18 +77,30 @@ public class PersistenceImpl {
 		return impl;
 	}
 
-	public void insertStart(Map<String, Object> serviceInfo, Map<String, Object> config,
-			Map<String, Object> startInfo) {
-		// t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
-		
-		//updateSql
+	public void insertStart(Map<String, Object> serviceInfo,  Map<String, Object> startInfo) {
 		MyUpdate updateSql = MyUpdate.getInstance(true, TABLE_SERVICE, "service_id", ApplicationUtils.getServiceId());
 		updateSql.setJson("service_info", serviceInfo);
 		updateSql.execute(t);
 		
-		
-		t.addOrReplaceOne(COL_CONF, ApplicationUtils.getServiceId(), config);
 		t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
+		
+		
+		MyUpdate confUpdate = MyUpdate.getInstance(true, TABLE_CONF, "service_id", ApplicationUtils.getServiceId());
+        if (MonitorConfig.IS_DEV) {
+        	confUpdate.set("isDebug", true);
+        	confUpdate.set("isWarning", true);
+        }
+        else {
+        	confUpdate.set("isDebug", false);
+        	confUpdate.set("isWarning", false);
+        }
+        confUpdate.set("gatherInterval", MonitorConfig.GATHER_INTERVAL);
+        confUpdate.set("dumpThreadMaxTime", MonitorConfig.DUMP_MAX_TIME);
+        confUpdate.set("modified", new Date());
+        confUpdate.execute(t);
+		
+		
+		
 
 	}
 
@@ -87,7 +108,7 @@ public class PersistenceImpl {
 		t.add(COL_GATHER, gatherMap);
 		
 		//updateSql
-		MyUpdate updateSql = MyUpdate.getInstance(true, TABLE_SERVICE, "service_id", ApplicationUtils.getServiceId());
+		MyUpdate updateSql = MyUpdate.getInstance(false, TABLE_SERVICE, "service_id", ApplicationUtils.getServiceId());
 		updateSql.setJson("service_last_info", lastUpdate);
 		updateSql.execute(t);
 	}
@@ -125,15 +146,14 @@ public class PersistenceImpl {
 
 	public void insertStatUri(AccessLog a) {
 
-		MyUpdate update = MyUpdate.getInstanceSql(true, COL_STAT_URI, "uri_seq",
-				"(select uri_seq from map_uri_seq where uri_text = '" + a.getUri() + "')");
-
+		MyUpdate update = MyUpdate.getInstanceSql(true, TABLE_STAT_URI, "uri_seq", "(select uri_seq from map_uri_seq where uri_text = '" + a.getUri() + "')");
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
+		update.set("avgTime", "totalTime/times");
 		update.max("maxTime", spendTime);
-		update.setOnInsert("firsted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
-		update.set("lasted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
+		update.setOnInsert("firsted", a.getBeginTime());
+		update.set("lasted",a.getBeginTime());
 		distribute(update, spendTime);
 
 		// maxTime, 缓存uri最大的maxTime值
@@ -141,12 +161,10 @@ public class PersistenceImpl {
 		if (uriPojo == null || spendTime > uriPojo.getMaxTime()) {
 			Map<String, Object> maxMap = getUriMaxDetail(a);
 			update.max("maxTime", spendTime, "maxDetail", maxMap);
-
 			if (uriPojo != null) {
 				uriPojo.setMaxTime(spendTime);
 			}
 		}
-		update.set("avgTime", "totalTime/times");
 
 		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
 				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
@@ -173,7 +191,7 @@ public class PersistenceImpl {
 	public void insertStatSql(AccessLog a) {
 		if (a.getSqlList().size() != a.getSqlBeginTime().size()
 				|| a.getSqlList().size() != a.getSqlSpendTime().size()) {
-			System.err.println("----------------errro:monitor sql");
+			logger.error("insertStatSql:{}", a);
 			return;
 		}
 
@@ -186,13 +204,12 @@ public class PersistenceImpl {
 				sqlMd5 = MD5Utils.getMD5(sqlText);
 			}
 			// sql执行异常时，长度不一样
-			MyUpdate update = MyUpdate.getInstance(true, COL_STAT_SQL, "sql_md5", sqlMd5);
+			MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_SQL, "sql_md5", sqlMd5);
 			update.inc("times", 1);
 
 			// sql开始执行时间
-			long sqlBeginTime = a.getSqlBeginTime().get(i);
-			update.setOnInsert("firsted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
-			update.set("lasted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(sqlBeginTime));
+			update.setOnInsert("firsted", a.getBeginTime());
+			update.set("lasted", a.getSqlBeginTime().get(i));
 
 			// sql执行时间
 			int spendTime = a.getSqlSpendTime().get(i);
@@ -231,7 +248,7 @@ public class PersistenceImpl {
 		// 机器ID yyyyMMddHH小时 访问量 总时间
 		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
 
-		MyUpdate update = MyUpdate.getInstance(true, COL_STAT_RESPONSE, "service_id,hh", ApplicationUtils.getServiceId(), hh);
+		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_RESPONSE, "service_id,hh", ApplicationUtils.getServiceId(), hh);
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
@@ -263,11 +280,10 @@ public class PersistenceImpl {
 	}
 
 	public void insertWarning(AccessLog a, BitSet content) {
-		MyUpdate update = MyUpdate.getInstance(true, COL_STAT_WARNING, "uri", a.getUri());
-		update.set("lasted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
+		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_WARNING, "uri", a.getUri());
+		update.setJson("lasted", a.getBeginTime());
 		update.setSql("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
 		t.sql(update);
-
 	}
 
 //    public void upsertService(String serviceId, Update update) {
@@ -281,7 +297,7 @@ public class PersistenceImpl {
 //    }
 //    
     public DbDoc getConfig(String serviceId){
-    	return t.find(COL_CONF, serviceId);
+    	return t.find(TABLE_CONF, serviceId);
     }
     
 	public void insertGather(Map<String, Object> map) {

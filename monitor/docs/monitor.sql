@@ -5,6 +5,39 @@ create table service (
   PRIMARY KEY (service_id)
 );
 
+create table conf (
+	service_id 			 varchar(32) NOT NULL,
+    is_debug 			 tinyint NOT NULL,
+    is_warning 			 tinyint NOT NULL,
+    gather_interval 	 int NOT NULL, 
+    dump_max_time 	     int NOT NULL,
+    created 			 timestamp not null default current_timestamp,
+    modified  			 timestamp not null default current_timestamp,
+    PRIMARY KEY (service_id)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -20,7 +20,7 @@ public class AccessEntity {
     private String r;
     private String str;
     private String m;
-    private long b;
+    private Date b;
     private int s;
     private String ip;
     private ErrorBean e;
@@ -38,11 +38,11 @@ public class AccessEntity {
 		this._id = _id;
 	}
 
-	public long getB() {
+	public Date getB() {
         return b;
     }
 
-    public void setB(long b) {
+    public void setB(Date b) {
         this.b = b;
     }
 
@@ -116,10 +116,6 @@ public class AccessEntity {
 
     public void setKey(String key) {
         this.key = key;
-    }
-    
-    public Date getBeginTimeView() {
-        return new Date(b);
     }
 
     public String getM() {

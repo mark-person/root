@@ -18,6 +18,7 @@ package org.springframework.jdbc.core;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.tomcat.util.threads.TaskThread;
@@ -39,7 +40,7 @@ public abstract class BatchUpdateUtils {
 		
 		// dengxz
 		AccessLog accessLog = TaskThread.getAccessLog();
-		accessLog.addSqlBeginTime(System.currentTimeMillis());
+		accessLog.addSqlBeginTime(new Date());
         long nanoTime = System.nanoTime();
         
         if (batchValues.size() > 0) {

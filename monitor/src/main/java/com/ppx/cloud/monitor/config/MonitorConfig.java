@@ -25,7 +25,7 @@ public class MonitorConfig {
     public static boolean IS_DEV = false;
     
     // 需要排除导入导出等长时间的操作
-    public static long DUMP_THREAD_MAX_TIME = 5000;
+    public static long DUMP_MAX_TIME = 5000;
     
     // 采集间格5分钟 5 * 60 * 1000
     public static long GATHER_INTERVAL = 5 * 60 * 1000;

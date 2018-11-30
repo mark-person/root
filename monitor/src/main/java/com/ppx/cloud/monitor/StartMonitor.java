@@ -160,25 +160,7 @@ CREATE TABLE `map_uri_seq` (
         machineMap.put("type", "service");
         return machineMap;
     }
-    
-    public Map<String, Object> getConfig() {
-    	var confiMap = new LinkedHashMap<String, Object>();
-        if (MonitorConfig.IS_DEV) {
-        	confiMap.put("isDebug", true);
-        	confiMap.put("isWarning", true);
-        }
-        else {
-        	confiMap.put("isDebug", false);
-            confiMap.put("isWarning", false);
-        }
-        confiMap.put("gatherInterval", MonitorConfig.GATHER_INTERVAL);
-        confiMap.put("dumpThreadMaxTime", MonitorConfig.DUMP_THREAD_MAX_TIME);
-        confiMap.put("created", new Date());
-        
-        return confiMap;
-    }
-    
-    
+
     public Map<String, Object> getStartInfo() {
     	// 启动日志     
     	Properties p = System.getProperties();

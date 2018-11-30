@@ -14,7 +14,7 @@ public class ErrorEntity {
     private String _id;
     private String sid;
     
-    private long b;
+    private Date b;
     private String uri;
     private List<String> marker;
     private Integer c;
@@ -53,16 +53,12 @@ public class ErrorEntity {
         this.a = a;
     }
     
-    public long getB() {
+    public Date getB() {
         return b;
     }
 
-    public void setB(long b) {
+    public void setB(Date b) {
         this.b = b;
-    }
-
-    public Date getBeginTimeView() {
-        return new Date(b);
     }
     
     public String getMsg() {

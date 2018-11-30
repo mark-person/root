@@ -2,6 +2,7 @@ package com.ppx.cloud.monitor.pojo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ import com.ppx.cloud.monitor.util.MonitorUtils;
 public class AccessLog {
     // ------------
     private String ip;
-    private long beginTime;
+    private Date beginTime;
     private long beginNanoTime;
     private long spendNanoTime;
     private String method;
@@ -36,7 +37,7 @@ public class AccessLog {
     
     private List<String> sqlList = new ArrayList<String>(5);
     private Map<Integer, List<Object>> sqlArgMap = new HashMap<Integer, List<Object>>(5); 
-    private List<Long> sqlBeginTime = new ArrayList<Long>(5);
+    private List<Date> sqlBeginTime = new ArrayList<Date>(5);
     private List<Integer> sqlSpendTime = new ArrayList<Integer>(5);
     private List<Integer> sqlCount = new ArrayList<Integer>(5);
     
@@ -78,11 +79,11 @@ public class AccessLog {
     }
     
     
-    public void setBeginTime(long beginTime) {
+    public void setBeginTime(Date beginTime) {
         this.beginTime = beginTime;
     }
 
-    public long getBeginTime() {
+    public Date getBeginTime() {
         return beginTime;
     }
 
@@ -261,19 +262,19 @@ public class AccessLog {
         this.accountId = accountId;
     }
 
-    public List<Long> getSqlBeginTime() {
+    public List<Date> getSqlBeginTime() {
         return sqlBeginTime;
     }
 
-    public void setSqlBeginTime(List<Long> sqlBeginTime) {
+    public void setSqlBeginTime(List<Date> sqlBeginTime) {
         this.sqlBeginTime = sqlBeginTime;
     }
     
-    public void addSqlBeginTime(long sqlBeginTime) {
+    public void addSqlBeginTime(Date sqlBeginTime) {
         this.sqlBeginTime.add(sqlBeginTime);
     }
     
-    public void accessLog(Long sqlBeginTime) {
+    public void accessLog(Date sqlBeginTime) {
         this.sqlBeginTime.add(sqlBeginTime);
     }
 
@@ -326,7 +327,7 @@ public class AccessLog {
     // http请求的日志
     public static AccessLog getInstance(HttpServletRequest request) {
         AccessLog accessLog = new AccessLog();
-        accessLog.setBeginTime(System.currentTimeMillis());
+        accessLog.setBeginTime(new Date());
         accessLog.setBeginNanoTime(System.nanoTime());
         accessLog.setIp(ApplicationUtils.getIpAddress(request));
         accessLog.setMethod(request.getMethod());

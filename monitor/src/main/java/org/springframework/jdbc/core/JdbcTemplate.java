@@ -31,6 +31,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -444,7 +445,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
                     AccessLog accessLog = TaskThread.getAccessLog();
                     accessLog.addSql(sql);
                     long nanoTime = System.nanoTime();
-                    accessLog.addSqlBeginTime(System.currentTimeMillis());
+                    accessLog.addSqlBeginTime(new Date());
                     
                     rs = stmt.executeQuery(sql);
                     
@@ -532,7 +533,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
                 AccessLog accessLog = TaskThread.getAccessLog();
                 TaskThread.getAccessLog().addSql(sql);
                 long nanoTime = System.nanoTime();
-                accessLog.addSqlBeginTime(System.currentTimeMillis());
+                accessLog.addSqlBeginTime(new Date());
                 
                 int rows = stmt.executeUpdate(sql);
                 
@@ -711,7 +712,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
                     AccessLog accessLog = TaskThread.getAccessLog();
                     if (accessLog != null) {
                         long nanoTime = System.nanoTime();
-                        accessLog.addSqlBeginTime(System.currentTimeMillis());
+                        accessLog.addSqlBeginTime(new Date());
                         
                         rs = ps.executeQuery();
                         
@@ -918,7 +919,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 				int rows = -1;
                 AccessLog accessLog = TaskThread.getAccessLog();
                 if (accessLog != null) {
-                    accessLog.addSqlBeginTime(System.currentTimeMillis());
+                    accessLog.addSqlBeginTime(new Date());
                     long nanoTime = System.nanoTime();
                     
                     rows = ps.executeUpdate();
