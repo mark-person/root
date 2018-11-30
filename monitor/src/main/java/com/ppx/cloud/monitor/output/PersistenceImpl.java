@@ -364,6 +364,7 @@ public class PersistenceImpl {
 //        warningCombine.on("uri", Direction.DESC);
 //        warningOp.ensureIndex(warningCombine);
 //        warningOp.ensureIndex(new Index().on("lasted", Direction.DESC));
+		
 	}
 
 	private static void distribute(MyUpdate update, int t) {
