@@ -133,7 +133,7 @@ public class PersistenceImpl {
 		update.inc("totalTime", spendTime);
 		update.max("maxTime", spendTime);
 		update.setOnInsert("firsted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
-		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
+		update.set("lasted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
 		distribute(update, spendTime);
 
 		// maxTime, 缓存uri最大的maxTime值
@@ -264,9 +264,8 @@ public class PersistenceImpl {
 
 	public void insertWarning(AccessLog a, BitSet content) {
 		MyUpdate update = MyUpdate.getInstance(true, COL_STAT_WARNING, "uri", a.getUri());
-		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
+		update.set("lasted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
 		update.setSql("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
-
 		t.sql(update);
 
 	}
