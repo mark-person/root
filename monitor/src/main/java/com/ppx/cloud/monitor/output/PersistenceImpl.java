@@ -15,7 +15,7 @@ import com.mysql.cj.xdevapi.DbDoc;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
-import com.ppx.cloud.common.jdbc.nosql.UpdateSql;
+import com.ppx.cloud.common.jdbc.nosql.MyUpdate;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.MD5Utils;
@@ -73,7 +73,7 @@ public class PersistenceImpl {
 		// t.addOrReplaceOne(COL_SERVICE, ApplicationUtils.getServiceId(), serviceInfo);
 		
 		//updateSql
-		UpdateSql updateSql = new UpdateSql(true, TABLE_SERVICE, "service_id", "'" + ApplicationUtils.getServiceId() + "'");
+		MyUpdate updateSql = MyUpdate.getInstance(true, TABLE_SERVICE, "service_id", ApplicationUtils.getServiceId());
 		updateSql.setJson("service_info", serviceInfo);
 		updateSql.execute(t);
 		
@@ -87,7 +87,7 @@ public class PersistenceImpl {
 		t.add(COL_GATHER, gatherMap);
 		
 		//updateSql
-		UpdateSql updateSql = new UpdateSql(true, TABLE_SERVICE, "service_id", "'" + ApplicationUtils.getServiceId() + "'");
+		MyUpdate updateSql = MyUpdate.getInstance(true, TABLE_SERVICE, "service_id", ApplicationUtils.getServiceId());
 		updateSql.setJson("service_last_info", lastUpdate);
 		updateSql.execute(t);
 	}
@@ -125,15 +125,14 @@ public class PersistenceImpl {
 
 	public void insertStatUri(AccessLog a) {
 
-		UpdateSql update = new UpdateSql(true, COL_STAT_URI, "uri_seq",
+		MyUpdate update = MyUpdate.getInstanceSql(true, COL_STAT_URI, "uri_seq",
 				"(select uri_seq from map_uri_seq where uri_text = '" + a.getUri() + "')");
 
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
 		update.max("maxTime", spendTime);
-		update.setOnInsert("firsted",
-				"'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
+		update.setOnInsert("firsted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
 		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
 		distribute(update, spendTime);
 
@@ -187,12 +186,13 @@ public class PersistenceImpl {
 				sqlMd5 = MD5Utils.getMD5(sqlText);
 			}
 			// sql执行异常时，长度不一样
-			UpdateSql update = new UpdateSql(true, COL_STAT_SQL, "sql_md5", "'" + sqlMd5 + "'");
+			MyUpdate update = MyUpdate.getInstance(true, COL_STAT_SQL, "sql_md5", sqlMd5);
 			update.inc("times", 1);
 
 			// sql开始执行时间
 			long sqlBeginTime = a.getSqlBeginTime().get(i);
-			update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(sqlBeginTime) + "'");
+			update.setOnInsert("firsted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()));
+			update.set("lasted", new SimpleDateFormat(DateUtils.TIME_PATTERN).format(sqlBeginTime));
 
 			// sql执行时间
 			int spendTime = a.getSqlSpendTime().get(i);
@@ -231,8 +231,7 @@ public class PersistenceImpl {
 		// 机器ID yyyyMMddHH小时 访问量 总时间
 		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
 
-		UpdateSql update = new UpdateSql(true, COL_STAT_RESPONSE, "service_id,hh",
-				"'" + ApplicationUtils.getServiceId() + "','" + hh + "'");
+		MyUpdate update = MyUpdate.getInstance(true, COL_STAT_RESPONSE, "service_id,hh", ApplicationUtils.getServiceId(), hh);
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
@@ -264,7 +263,7 @@ public class PersistenceImpl {
 	}
 
 	public void insertWarning(AccessLog a, BitSet content) {
-		UpdateSql update = new UpdateSql(true, COL_STAT_WARNING, "uri", "'" + a.getUri() + "'");
+		MyUpdate update = MyUpdate.getInstance(true, COL_STAT_WARNING, "uri", a.getUri());
 		update.set("lasted", "'" + new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()) + "'");
 		update.setSql("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
 
@@ -368,7 +367,7 @@ public class PersistenceImpl {
 //        warningOp.ensureIndex(new Index().on("lasted", Direction.DESC));
 	}
 
-	private static void distribute(UpdateSql update, int t) {
+	private static void distribute(MyUpdate update, int t) {
 		if (t < 10) {
 			// update.inc("ms0_10", 1);
 			update.setSql("distribute", "'[1,0,0,0,0,0]'",

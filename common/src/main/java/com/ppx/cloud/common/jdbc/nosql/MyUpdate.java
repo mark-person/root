@@ -24,9 +24,9 @@ import com.ppx.cloud.common.config.ObjectMappingCustomer;
  * @author mark
  * @date 2018年11月29日
  */
-public class UpdateSql {
+public class MyUpdate {
 	
-	private static Logger logger = LoggerFactory.getLogger(UpdateSql.class);
+	private static Logger logger = LoggerFactory.getLogger(MyUpdate.class);
 
 	private boolean upsert;
 	
@@ -41,20 +41,31 @@ public class UpdateSql {
 	private Object[] pkValue;
 	
 	// 组合主键pkName用逗号分开
-	public UpdateSql(boolean upsert, String tableName, String pkName, Object... pkValue) {
-		this.upsert = upsert;
-		this.tableName = tableName;
-		this.pkValue = pkValue.clone();
+	public static MyUpdate getInstance(boolean upsert, String tableName, String pkName, Object... pkValue) {
+		MyUpdate update = new MyUpdate();
+		update.upsert = upsert;
+		update.tableName = tableName;
+		update.pkValue = pkValue.clone();
 		if (upsert) {
-			valueMap.put(pkName, "?");
-			bindValueList.addAll(Arrays.asList(pkValue));
+			update.valueMap.put(pkName, "?");
+			update.bindValueList.addAll(Arrays.asList(pkValue));
 		}
 		else {
-			valueMap.put(pkName.replaceAll(",", "=? and ") + "=?", "?");
+			update.valueMap.put(pkName.replaceAll(",", "=? and ") + "=?", "?");
 		}
+		return update;
 	}
 	
-	public UpdateSql inc(String name, int n) {
+	public static MyUpdate getInstanceSql(boolean upsert, String tableName, String pkName, String sql) {
+		MyUpdate update = new MyUpdate();
+		update.upsert = upsert;
+		update.tableName = tableName;
+		update.pkValue = new Object[]{tableName};
+		update.valueMap.put(pkName, sql);
+		return update;
+	}
+	
+	public MyUpdate inc(String name, int n) {
 		if (upsert) {
 			valueMap.put(name, n);
 		}
@@ -62,7 +73,7 @@ public class UpdateSql {
 		return this;
 	}
 
-	public UpdateSql max(String name, int n) {
+	public MyUpdate max(String name, int n) {
 		if (upsert) {
 			valueMap.put(name, n);
 		}
@@ -70,7 +81,7 @@ public class UpdateSql {
 		return this;
 	}
 	
-	public UpdateSql max(String name, int n, String setName, Object setValue) {
+	public MyUpdate max(String name, int n, String setName, Object setValue) {
 		String json = "";
 		try {
 			json = new ObjectMapper().writeValueAsString(setValue);
@@ -87,7 +98,7 @@ public class UpdateSql {
 		return this;
 	}
 
-	public UpdateSql min(String name, int n) {
+	public MyUpdate min(String name, int n) {
 		if (upsert) {
 			valueMap.put(name, n);
 		}
@@ -95,13 +106,13 @@ public class UpdateSql {
 		return this;
 	}
 
-	public UpdateSql setOnInsert(String name, Object val) {
+	public MyUpdate setOnInsert(String name, Object val) {
 		valueMap.put(name, val);
 		bindValueList.add(val);
 		return this;
 	}
 	
-	public UpdateSql set(String name, Object val) {
+	public MyUpdate set(String name, Object val) {
 		if (upsert) {
 			valueMap.put(name, "?");
 			bindValueList.add(val);
@@ -111,7 +122,7 @@ public class UpdateSql {
 		return this;
 	}
 
-	public UpdateSql setSql(String name, String sql) {
+	public MyUpdate setSql(String name, String sql) {
 		if (upsert) {
 			valueMap.put(name, sql);
 		}
@@ -119,7 +130,7 @@ public class UpdateSql {
 		return this;
 	}
 	
-	public UpdateSql setJson(String name, Object obj) {
+	public MyUpdate setJson(String name, Object obj) {
 		String json = "";
 		try {
 			json = new ObjectMappingCustomer().writeValueAsString(obj);
@@ -135,7 +146,7 @@ public class UpdateSql {
 		return this;
 	}
 	
-	public UpdateSql set(String name, Object insertVal, Object setVal) {
+	public MyUpdate set(String name, Object insertVal, Object setVal) {
 		if (upsert) {
 			valueMap.put(name, "?");
 			bindValueList.add(insertVal);
@@ -145,7 +156,7 @@ public class UpdateSql {
 		return this;
 	}
 	
-	public UpdateSql setSql(String name, String insertSql, String setSql) {
+	public MyUpdate setSql(String name, String insertSql, String setSql) {
 		if (upsert) {
 			valueMap.put(name, insertSql);
 		}
@@ -171,7 +182,7 @@ public class UpdateSql {
 		return s;
 	}
 	
-	public UpdateSql addToSet(String name, String value) {
+	public MyUpdate addToSet(String name, String value) {
 		if (upsert) {
 			valueMap.put(name, "'[\"" + value + "\"]'");
 		}
@@ -181,13 +192,14 @@ public class UpdateSql {
 	}
 	
 	public SqlResult execute(LogTemplate t) {
+		logger.debug("bindValueLength:{}", bindValueList.size());
 		logger.debug("bindValueList:{}", bindValueList);
 		return t.sql(this.toString(), bindValueList);
 	}
 	
 	public static void main(String[] args) {
 		try (LogTemplate t = new LogTemplate()) {
-			UpdateSql u = new UpdateSql(false, "stat_uri", "uri_seq", 600);
+			MyUpdate u = MyUpdate.getInstance(false, "stat_uri", "uri_seq", 600);
 			u.inc("times", 1);
 			u.max("maxTime", 10);
 			u.inc("totalTime", 10);
