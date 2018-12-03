@@ -48,17 +48,17 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
-    	logger.info("StartMonitor----------begin1");
-    	// 初始化OperatingSystemMXBean对象
-        OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
-        MonitorUtils.setOperatingSystemMXBean(operatingSystemMXBean);
-    	
-    	
-    	var serviceInfo = getServiceInfo();
-    	var startInfo = getStartInfo();
-    	try (LogTemplate t = new LogTemplate()) {
-    		PersistenceImpl.getInstance(t).insertStart(serviceInfo, startInfo);
-    	}
+//    	logger.info("StartMonitor----------begin1");
+//    	// 初始化OperatingSystemMXBean对象
+//        OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
+//        MonitorUtils.setOperatingSystemMXBean(operatingSystemMXBean);
+//    	
+//    	
+//    	var serviceInfo = getServiceInfo();
+//    	var startInfo = getStartInfo();
+//    	try (LogTemplate t = new LogTemplate()) {
+//    		PersistenceImpl.getInstance(t).insertStart(serviceInfo, startInfo);
+//    	}
     	
 
     	//PersistenceImpl.createFixedIndex();
@@ -107,12 +107,12 @@ CREATE TABLE `map_uri_seq` (
     	
     	
     	
-        
-        // 启动日志处理队列
-    	accessQueueConsumer.start();
-    	
-    	
-    	logger.info("StartMonitor----------end");
+//        
+//        // 启动日志处理队列
+//    	accessQueueConsumer.start();
+//    	
+//    	
+//    	logger.info("StartMonitor----------end");
     }
     
     

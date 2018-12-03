@@ -47,7 +47,7 @@ public class CommonInterceptor implements HandlerInterceptor {
          
         statusCode = statusCode == null ? 200 : statusCode;
         // 不支持uri带.的请求，权限不好控制且不好统计
-        statusCode = request.getRequestURI().indexOf(".") > 0 ? 404 : statusCode;
+        //statusCode = request.getRequestURI().indexOf(".") > 0 ? 404 : statusCode;
         
         
         if (errorException != null || statusCode != 200) {
