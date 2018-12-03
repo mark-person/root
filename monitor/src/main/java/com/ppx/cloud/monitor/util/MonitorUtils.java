@@ -86,11 +86,11 @@ public class MonitorUtils {
             e.printStackTrace();
         }
         
-        if (maxProcessingTime > MonitorConfig.DUMP_THREAD_MAX_TIME) {
+        if (maxProcessingTime > MonitorConfig.DUMP_MAX_TIME) {
             info.put("isOverTime", true);
         }
         // 超过指定时间或内存超出，则输出线程信息
-        if ((maxProcessingTime > MonitorConfig.DUMP_THREAD_MAX_TIME || isOverMem) && !"".equals(maxWorkerThreadName)) {
+        if ((maxProcessingTime > MonitorConfig.DUMP_MAX_TIME || isOverMem) && !"".equals(maxWorkerThreadName)) {
             Thread t = MonitorUtils.getThread(maxWorkerThreadName);
             if (t instanceof TaskThread) {
                 // 找出accessLog

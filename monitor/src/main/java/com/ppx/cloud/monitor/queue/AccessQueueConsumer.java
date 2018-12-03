@@ -99,7 +99,7 @@ public class AccessQueueConsumer {
 					MonitorConfig.IS_DEBUG = "true".equals((map.get("isDebug").toString()));
 					MonitorConfig.IS_WARNING = "true".equals((map.get("isWarning").toString()));;
 					MonitorConfig.GATHER_INTERVAL = Integer.parseInt(map.get("gatherInterval").toString());
-					MonitorConfig.DUMP_THREAD_MAX_TIME = Integer.parseInt(map.get("dumpThreadMaxTime").toString());
+					MonitorConfig.DUMP_MAX_TIME = Integer.parseInt(map.get("dumpMaxTime").toString());
 				}
 			}
 		}

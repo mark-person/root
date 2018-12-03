@@ -55,10 +55,9 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     	
     	
     	var serviceInfo = getServiceInfo();
-    	var config = getConfig();
     	var startInfo = getStartInfo();
     	try (LogTemplate t = new LogTemplate()) {
-    		PersistenceImpl.getInstance(t).insertStart(serviceInfo, config, startInfo);
+    		PersistenceImpl.getInstance(t).insertStart(serviceInfo, startInfo);
     	}
     	
 

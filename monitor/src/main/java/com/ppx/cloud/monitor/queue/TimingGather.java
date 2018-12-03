@@ -73,7 +73,7 @@ public class TimingGather {
         StringBuilder configStr = new StringBuilder("debug:").append(MonitorConfig.IS_DEBUG)
                 .append(",warning:").append(MonitorConfig.IS_WARNING)
                 .append(",interval:").append(MonitorConfig.GATHER_INTERVAL)
-                .append(",maxTime:").append(MonitorConfig.DUMP_THREAD_MAX_TIME);
+                .append(",maxTime:").append(MonitorConfig.DUMP_MAX_TIME);
         gatherMap.put("config", configStr.toString());
         
         
