@@ -20,7 +20,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.util.ApplicationUtils;
-import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
 import com.ppx.cloud.monitor.queue.AccessQueueConsumer;
 import com.ppx.cloud.monitor.util.MonitorUtils;
@@ -48,20 +47,23 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
-//    	logger.info("StartMonitor----------begin1");
-//    	// 初始化OperatingSystemMXBean对象
-//        OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
-//        MonitorUtils.setOperatingSystemMXBean(operatingSystemMXBean);
-//    	
-//    	
-//    	var serviceInfo = getServiceInfo();
-//    	var startInfo = getStartInfo();
-//    	try (LogTemplate t = new LogTemplate()) {
-//    		PersistenceImpl.getInstance(t).insertStart(serviceInfo, startInfo);
-//    	}
+    	logger.info("StartMonitor----------begin");
+    	
+    	// 初始化OperatingSystemMXBean对象
+        OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
+        MonitorUtils.setOperatingSystemMXBean(operatingSystemMXBean);
+    	
+    	
+    	var serviceInfo = getServiceInfo();
+    	var startInfo = getStartInfo();
+    	try (LogTemplate t = new LogTemplate()) {
+    		PersistenceImpl impl = PersistenceImpl.getInstance(t);
+    		impl.insertStart(serviceInfo, startInfo);
+    		impl.createFixedIndex();
+    	}
     	
 
-    	//PersistenceImpl.createFixedIndex();
+    	
     	
 /**
 TODO 直接使用统计表，并建索引，不需要下面两张表
@@ -107,12 +109,10 @@ CREATE TABLE `map_uri_seq` (
     	
     	
     	
-//        
-//        // 启动日志处理队列
-//    	accessQueueConsumer.start();
-//    	
-//    	
-//    	logger.info("StartMonitor----------end");
+        
+        // 启动日志处理队列
+    	accessQueueConsumer.start();
+    	logger.info("StartMonitor----------end");
     }
     
     

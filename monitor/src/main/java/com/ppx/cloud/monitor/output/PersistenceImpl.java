@@ -43,19 +43,17 @@ public class PersistenceImpl {
 	
 	private static Logger logger = LoggerFactory.getLogger(PersistenceImpl.class);
 
-	private static final String COL_START = "start";
-
+	private static final String COL_START = "col_start";
 	
-
-	private static final String COL_GATHER = "gather";
+	private static final String COL_GATHER = "col_gather";
 	
-	private static final String COL_ACCESS = "access";
+	private static final String COL_ACCESS = "col_access";
 	
-	private static final String COL_ERROR = "error";
+	private static final String COL_ERROR = "col_error";
 
-	private static final String COL_ERROR_DETAIL = "error_detail";
+	private static final String COL_ERROR_DETAIL = "col_error_detail";
 
-	private static final String COL_DEBUG = "debug";
+	private static final String COL_DEBUG = "col_debug";
 	
 	private static final String TABLE_CONF = "conf";
 
@@ -84,18 +82,17 @@ public class PersistenceImpl {
 		
 		t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
 		
-		
 		MyUpdate confUpdate = MyUpdate.getInstance(true, TABLE_CONF, "service_id", ApplicationUtils.getServiceId());
         if (MonitorConfig.IS_DEV) {
-        	confUpdate.set("isDebug", true);
-        	confUpdate.set("isWarning", true);
+        	confUpdate.set("is_debug", true);
+        	confUpdate.set("is_warning", true);
         }
         else {
-        	confUpdate.set("isDebug", false);
-        	confUpdate.set("isWarning", false);
+        	confUpdate.set("is_debug", false);
+        	confUpdate.set("is_warning", false);
         }
-        confUpdate.set("gatherInterval", MonitorConfig.GATHER_INTERVAL);
-        confUpdate.set("dumpThreadMaxTime", MonitorConfig.DUMP_MAX_TIME);
+        confUpdate.set("gather_interval", MonitorConfig.GATHER_INTERVAL);
+        confUpdate.set("dump_max_time", MonitorConfig.DUMP_MAX_TIME);
         confUpdate.set("modified", new Date());
         confUpdate.execute(t);
 		
@@ -150,7 +147,7 @@ public class PersistenceImpl {
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
-		update.set("avgTime", "totalTime/times");
+		update.setSql("avgTime", "totalTime/times");
 		update.max("maxTime", spendTime);
 		update.setOnInsert("firsted", a.getBeginTime());
 		update.set("lasted",a.getBeginTime());
@@ -166,8 +163,8 @@ public class PersistenceImpl {
 			}
 		}
 
-		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
-				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
+//		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
+//				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
 		update.execute(t);
 
 	}
@@ -219,7 +216,7 @@ public class PersistenceImpl {
 			update.max("maxSqlCount", a.getSqlCount().get(i));
 			// uri
 			update.addToSet("uri", a.getUri());
-			update.set("avgTime", "totalTime/times");
+			update.setSql("avgTime", "totalTime/times");
 
 			// maxTime, 缓存uri最大的maxTime值
 			SqlPojo sqlPojo = MonitorCache.getSqlPojo(a.getSqlList().get(i));
@@ -231,8 +228,8 @@ public class PersistenceImpl {
 					sqlPojo.setMaxTime(spendTime);
 				}
 			}
-			t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
-					Arrays.asList(sqlMd5, sqlText, sqlMd5));
+//			t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
+//					Arrays.asList(sqlMd5, sqlText, sqlMd5));
 			update.execute(t);
 
 		}
@@ -252,10 +249,9 @@ public class PersistenceImpl {
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
-		update.set("avgTime", "totalTime/times");
+		update.setSql("avgTime", "totalTime/times");
 		update.max("maxTime", spendTime);
-
-		t.sql(update);
+		update.execute(t);
 
 	}
 
@@ -283,7 +279,7 @@ public class PersistenceImpl {
 		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_WARNING, "uri", a.getUri());
 		update.setJson("lasted", a.getBeginTime());
 		update.setSql("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
-		t.sql(update);
+		update.execute(t);
 	}
 
 //    public void upsertService(String serviceId, Update update) {
@@ -326,10 +322,7 @@ public class PersistenceImpl {
 //    
 //    // 创建(不包括access_yyyy-MM-dd)
 	public void createFixedIndex() {
-		try (LogTemplate t = new LogTemplate()) {
-			// t.createCollection(COL_URI_STAT);
-			// t.createCollection(COL_STAT_SQL);
-		}
+		
 //        // error索引
 //        IndexOperations errorOp = mongoTemplate.indexOps(COL_ERROR);
 //        errorOp.ensureIndex(new Index().on("sId", Direction.DESC));

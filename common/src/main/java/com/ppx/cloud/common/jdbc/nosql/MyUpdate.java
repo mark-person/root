@@ -36,6 +36,8 @@ public class MyUpdate {
 
 	private List<String> setList = new ArrayList<String>();
 	
+	private List<Object> setValueList =  new ArrayList<Object>();
+	
 	private List<Object> bindValueList = new ArrayList<Object>(); 
 	
 	private Object[] pkValue;
@@ -47,12 +49,16 @@ public class MyUpdate {
 		update.tableName = tableName;
 		update.pkValue = pkValue.clone();
 		if (upsert) {
-			update.valueMap.put(pkName, "?");
+			String[] pk = pkName.split(",");
+			for (String s : pk) {
+				update.valueMap.put(s, "?");
+			}
 			update.bindValueList.addAll(Arrays.asList(pkValue));
 		}
 		else {
 			update.valueMap.put(pkName.replaceAll(",", "=? and ") + "=?", "?");
 		}
+		
 		return update;
 	}
 	
@@ -93,7 +99,7 @@ public class MyUpdate {
 		valueMap.put(setName, "?");
 		String s = setName + "=if(" + name + ">" + n + "," + setName + ",?)";
 		bindValueList.add(json);
-		bindValueList.add(json);
+		setValueList.add(json);
 		setList.add(s);
 		return this;
 	}
@@ -107,7 +113,7 @@ public class MyUpdate {
 	}
 
 	public MyUpdate setOnInsert(String name, Object val) {
-		valueMap.put(name, val);
+		valueMap.put(name, "?");
 		bindValueList.add(val);
 		return this;
 	}
@@ -115,7 +121,7 @@ public class MyUpdate {
 	public MyUpdate set(String name, Object val) {
 		if (upsert) {
 			valueMap.put(name, "?");
-			bindValueList.add(val);
+			setValueList.add(val);
 		}
 		setList.add(name + "=?");
 		bindValueList.add(val);
@@ -149,7 +155,7 @@ public class MyUpdate {
 	public MyUpdate set(String name, Object insertVal, Object setVal) {
 		if (upsert) {
 			valueMap.put(name, "?");
-			bindValueList.add(insertVal);
+			setValueList.add(insertVal);
 		}
 		setList.add(name + "=?");
 		bindValueList.add(setVal);
@@ -192,6 +198,7 @@ public class MyUpdate {
 	}
 	
 	public SqlResult execute(LogTemplate t) {
+		bindValueList.addAll(setValueList);
 		logger.debug("bindValueLength:{}", bindValueList.size());
 		logger.debug("bindValueList:{}", bindValueList);
 		return t.sql(this.toString(), bindValueList);
