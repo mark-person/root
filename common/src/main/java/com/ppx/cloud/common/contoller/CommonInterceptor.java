@@ -25,6 +25,10 @@ public class CommonInterceptor implements HandlerInterceptor {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+    	// 不支持uri带.的请求，权限不好控制且不好统计
+        if (request.getRequestURI().indexOf(".") > 0) {
+        	throw new PermissionUrlException("uri not supppot .");
+        }
         
     	// org.thymeleaf.exceptions.TemplateInputException
     	Exception errorException = (Exception) request.getAttribute("javax.servlet.error.exception");
@@ -37,38 +41,29 @@ public class CommonInterceptor implements HandlerInterceptor {
     		return true;
     	}
     	
-        // 判断是否为404或模板错误
+        // 判断是否为404
         Integer statusCode = (Integer)request.getAttribute("javax.servlet.error.status_code");
-        if (errorException != null) {
-        	System.out.println("....1111111.statusCode:" + statusCode + "||" + errorException.getMessage());
-        }
         
-       
-         
+        
+        
         statusCode = statusCode == null ? 200 : statusCode;
-        // 不支持uri带.的请求，权限不好控制且不好统计
-        if (request.getRequestURI().indexOf(".") > 0) {
-        	throw new PermissionUrlException("uri not supppot .");
-        }
-        
+       
         
         if (errorException != null || statusCode != 200) {
             // 当出现404的，把输入的json写入到日志(判断是json请求才写入)
-            if (request.getContentType() != null && request.getContentType().indexOf("application/json") >= 0) {
-                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
-                    byte[] buffer = new byte[1024];
-                    int len;
-                    while ((len = request.getInputStream().read(buffer)) > -1) {
-                        baos.write(buffer, 0, len);
-                    }
-                    baos.flush();
-
-                }
-            }
+//            if (request.getContentType() != null && request.getContentType().indexOf("application/json") >= 0) {
+//                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+//                    byte[] buffer = new byte[1024];
+//                    int len;
+//                    while ((len = request.getInputStream().read(buffer)) > -1) {
+//                        baos.write(buffer, 0, len);
+//                    }
+//                    baos.flush();
+//                    System.out.println("..........json:" + baos);
+//                }
+//            }
             
             String requestUri = (String) request.getAttribute("javax.servlet.forward.request_uri");
-
-
 
             String type = "Not Found";
             Exception exception = (Exception) request.getAttribute("javax.servlet.error.exception");
@@ -80,8 +75,6 @@ public class CommonInterceptor implements HandlerInterceptor {
             }
             
             returnWebResponse(request, response, statusCode, type + ":" + requestUri);
-
-
             return false;
         }
         

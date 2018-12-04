@@ -1,6 +1,5 @@
 package com.ppx.cloud.monitor.output;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -12,10 +11,10 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.mysql.cj.xdevapi.DbDoc;
+import com.mysql.cj.xdevapi.Row;
+import com.mysql.cj.xdevapi.SqlResult;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
@@ -23,7 +22,6 @@ import com.ppx.cloud.common.jdbc.nosql.MyUpdate;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.MD5Utils;
-import com.ppx.cloud.monitor.StartMonitor;
 import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.cache.SqlPojo;
 import com.ppx.cloud.monitor.cache.UriPojo;
@@ -84,12 +82,12 @@ public class PersistenceImpl {
 		
 		MyUpdate confUpdate = MyUpdate.getInstance(true, TABLE_CONF, "service_id", ApplicationUtils.getServiceId());
         if (MonitorConfig.IS_DEV) {
-        	confUpdate.set("is_debug", true);
-        	confUpdate.set("is_warning", true);
+        	confUpdate.set("is_debug", 1);
+        	confUpdate.set("is_warning", 1);
         }
         else {
-        	confUpdate.set("is_debug", false);
-        	confUpdate.set("is_warning", false);
+        	confUpdate.set("is_debug", 0);
+        	confUpdate.set("is_warning", 0);
         }
         confUpdate.set("gather_interval", MonitorConfig.GATHER_INTERVAL);
         confUpdate.set("dump_max_time", MonitorConfig.DUMP_MAX_TIME);
@@ -163,8 +161,8 @@ public class PersistenceImpl {
 			}
 		}
 
-//		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
-//				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
+		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
+				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
 		update.execute(t);
 
 	}
@@ -228,8 +226,8 @@ public class PersistenceImpl {
 					sqlPojo.setMaxTime(spendTime);
 				}
 			}
-//			t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
-//					Arrays.asList(sqlMd5, sqlText, sqlMd5));
+			t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
+					Arrays.asList(sqlMd5, sqlText, sqlMd5));
 			update.execute(t);
 
 		}
@@ -292,8 +290,9 @@ public class PersistenceImpl {
 //        mongoTemplate.upsert(Query.query(criteria), update, COL_CONIFG);
 //    }
 //    
-    public DbDoc getConfig(String serviceId){
-    	return t.find(TABLE_CONF, serviceId);
+    public Row getConfig(String serviceId){
+    	SqlResult sr = t.sql("select * from conf where service_id = ?", Arrays.asList(serviceId));
+    	return sr.fetchOne();
     }
     
 	public void insertGather(Map<String, Object> map) {

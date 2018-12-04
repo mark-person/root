@@ -1,7 +1,6 @@
 package com.ppx.cloud.monitor.queue;
 
 import java.util.BitSet;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.mysql.cj.xdevapi.Row;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.config.MonitorConfig;
@@ -93,22 +93,18 @@ public class AccessQueueConsumer {
 		if (currentNanoTime - lastGetConfNanoTime >= MonitorConfig.SYNC_CONF_INTERVAL * 1e6) {
 			lastGetConfNanoTime = currentNanoTime;
 			try (LogTemplate t = new LogTemplate()) {
-				Map<?, ?> map = PersistenceImpl.getInstance(t).getConfig(ApplicationUtils.getServiceId());
-				 
-				if (map != null) {
-					MonitorConfig.IS_DEBUG = "true".equals((map.get("isDebug").toString()));
-					MonitorConfig.IS_WARNING = "true".equals((map.get("isWarning").toString()));;
-					MonitorConfig.GATHER_INTERVAL = Integer.parseInt(map.get("gatherInterval").toString());
-					MonitorConfig.DUMP_MAX_TIME = Integer.parseInt(map.get("dumpMaxTime").toString());
+				Row row = PersistenceImpl.getInstance(t).getConfig(ApplicationUtils.getServiceId());
+				if (row != null) {
+					MonitorConfig.IS_DEBUG = (row.getInt("is_debug") == 1);
+					MonitorConfig.IS_WARNING = (row.getInt("is_warning") == 1);
+					MonitorConfig.GATHER_INTERVAL = row.getInt("gather_interval");
+					MonitorConfig.DUMP_MAX_TIME = row.getInt("dump_max_time");
 				}
 			}
 		}
-
 	}
 
 	private void logToDb(AccessLog a) {
-		MonitorConfig.IS_DEBUG = false;
-		MonitorConfig.IS_WARNING = false;
 
 		long t1 = System.currentTimeMillis();
 
@@ -198,7 +194,7 @@ public class AccessQueueConsumer {
 			}
 		}
 
-		System.out.println("tttttttttttt:" + (System.currentTimeMillis() - t1));
+		// System.out.println("tttttttttttt:" + (System.currentTimeMillis() - t1));
 	}
 
 }

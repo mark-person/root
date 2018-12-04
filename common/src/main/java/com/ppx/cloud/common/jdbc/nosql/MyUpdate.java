@@ -184,7 +184,7 @@ public class MyUpdate {
 			s = "update " + tableName + " set " + setString + " where " + columnString;
 			bindValueList.addAll(Arrays.asList(pkValue));
 		}
-		logger.debug("sql:{}", s);
+		//logger.debug("sql:{}", s);
 		return s;
 	}
 	
@@ -199,8 +199,8 @@ public class MyUpdate {
 	
 	public SqlResult execute(LogTemplate t) {
 		bindValueList.addAll(setValueList);
-		logger.debug("bindValueLength:{}", bindValueList.size());
-		logger.debug("bindValueList:{}", bindValueList);
+		//logger.debug("bindValueLength:{}", bindValueList.size());
+		//logger.debug("bindValueList:{}", bindValueList);
 		return t.sql(this.toString(), bindValueList);
 	}
 	
