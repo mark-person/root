@@ -18,41 +18,6 @@ create table conf (
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 create table map_uri_seq (
   uri_seq int(11) NOT NULL AUTO_INCREMENT,
   uri_text varchar(250) NOT NULL
@@ -95,8 +60,7 @@ create table stat_sql (
 );
 
 create table stat_response (
-    /** TODO 改成uri_seq*/
-	uri varchar(250) not null,
+	uri_seq varchar(250) not null,
 	times int not null default 1,
     totalTime int not null default 1,
     maxTime int not null,
