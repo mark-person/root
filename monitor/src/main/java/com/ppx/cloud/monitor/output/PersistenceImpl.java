@@ -37,34 +37,11 @@ import com.ppx.cloud.monitor.util.MonitorUtils;
  * @author mark
  * @date 2018年11月21日
  */
-public class PersistenceImpl {
+public class PersistenceImpl extends PersistenceSupport {
 	
 	private static Logger logger = LoggerFactory.getLogger(PersistenceImpl.class);
 
-	private static final String COL_START = "col_start";
 	
-	private static final String COL_GATHER = "col_gather";
-	
-	private static final String COL_ACCESS = "col_access";
-	
-	private static final String COL_ERROR = "col_error";
-
-	private static final String COL_ERROR_DETAIL = "col_error_detail";
-
-	private static final String COL_DEBUG = "col_debug";
-	
-	private static final String TABLE_CONF = "conf";
-
-	private static final String TABLE_SERVICE = "service";
-
-	private static final String TABLE_STAT_URI = "stat_uri";
-
-	private static final String TABLE_STAT_SQL = "stat_sql";
-
-	private static final String TABLE_STAT_RESPONSE = "stat_response";
-
-	private static final String TABLE_STAT_WARNING = "stat_warning";
-
 	private LogTemplate t;
 
 	public static PersistenceImpl getInstance(LogTemplate t) {

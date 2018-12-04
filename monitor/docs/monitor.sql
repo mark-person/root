@@ -20,7 +20,7 @@ create table conf (
 
 create table map_uri_seq (
   uri_seq int(11) NOT NULL AUTO_INCREMENT,
-  uri_text varchar(250) NOT NULL
+  uri_text varchar(250) NOT NULL,
   PRIMARY KEY (uri_seq)
 );
 
@@ -60,7 +60,8 @@ create table stat_sql (
 );
 
 create table stat_response (
-	uri_seq varchar(250) not null,
+	service_id 	 varchar(32) NOT NULL,
+	hh 			 varchar(10) NOT NULL,
 	times int not null default 1,
     totalTime int not null default 1,
     maxTime int not null,
@@ -73,7 +74,7 @@ create table stat_warning (
 	firsted timestamp not null default current_timestamp,
     lasted timestamp not null default current_timestamp,
     content int
-)
+);
 
 
 
