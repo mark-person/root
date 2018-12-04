@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.exception.custom.NotFoundException;
+import com.ppx.cloud.common.exception.security.PermissionUrlException;
 
 
 /**
@@ -47,7 +47,9 @@ public class CommonInterceptor implements HandlerInterceptor {
          
         statusCode = statusCode == null ? 200 : statusCode;
         // 不支持uri带.的请求，权限不好控制且不好统计
-        //statusCode = request.getRequestURI().indexOf(".") > 0 ? 404 : statusCode;
+        if (request.getRequestURI().indexOf(".") > 0) {
+        	throw new PermissionUrlException("uri not supppot .");
+        }
         
         
         if (errorException != null || statusCode != 200) {
