@@ -154,8 +154,6 @@ CREATE TABLE `map_uri_seq` (
         // java虚拟机可用的处理器个数
         machineMap.put("availableProcessors", Runtime.getRuntime().availableProcessors());
         machineMap.put("modified", new Date());
-        machineMap.put("order", -1); // 排序
-        machineMap.put("display", 1); // 显示/隐藏
         machineMap.put("type", "service");
         return machineMap;
     }

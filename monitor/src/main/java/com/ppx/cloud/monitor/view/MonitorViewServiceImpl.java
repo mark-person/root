@@ -27,15 +27,16 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		
 		try (LogTemplate t = new LogTemplate()) {
 			var cSql = new StringBuilder("select count(*) from service");
-			var qSql = new StringBuilder("select * from service");
+			var qSql = new StringBuilder("select * from service order by service_prio desc");
 			List<Row> list = queryPage(t, page, cSql, qSql, null);
 						
 			for (Row row : list) {
 				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				map.put("service_id", row.getString("service_id"));
-				row.getDbDoc("service_info").forEach((k, v) -> {
+				map.put("serviceId", row.getString("service_id"));
+				map.put("serviceDisplay", row.getString("service_display"));
+				row.getDbDoc("serviceInfo").forEach((k, v) -> {
 					if (v instanceof JsonString) {
-						var s = v.toString().replaceFirst("\"", "");
+						var s = v.toString().replaceAll("(^\"|\"$)", "");
 						map.put(k, s);
 					}
 					else {

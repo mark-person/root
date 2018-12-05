@@ -2,6 +2,8 @@ create table service (
   service_id varchar(32) NOT NULL,
   service_info json,
   service_last_info json,
+  service_prio tinyint NOT NULL default -1,
+  service_display tinyint NOT NULL default 1,
   PRIMARY KEY (service_id)
 );
 
