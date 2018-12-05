@@ -1,13 +1,4 @@
 
-template.helper('transfer', function(all) {
-	return JSON.stringify(all);
-})
-
-function viewDetail(obj) {
-	var json = $(obj).attr("data-content");
-	$("#viewDetailJson").text(formatJson(json));
-	$("#viewDetail").modal("show");
-}
 
 
 
@@ -52,6 +43,16 @@ function formatJson(txt,compress){
     var isLast=true,indent=0;   
     notify('',data,isLast,indent,false);   
     return draw.join('');   
+}
+
+template.helper('transfer', function(all) {
+	return JSON.stringify(all);
+})
+
+function viewDetail(obj) {
+	var json = $(obj).attr("data-content");
+	$("#viewDetailJson").text(formatJson(json));
+	$("#viewDetail").modal("show");
 }
 
 

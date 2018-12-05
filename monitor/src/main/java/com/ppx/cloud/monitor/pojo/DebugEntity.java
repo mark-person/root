@@ -121,15 +121,15 @@ public class DebugEntity {
     }
 
     public String getSqlb() {
-        if (sqlb != null) {
-           String[] b = sqlb.split(",");
-           List<String> list = new ArrayList<String>();
-           for (String time : b) {
-               String t = new SimpleDateFormat("HH:mm:ss SSS").format(new Date(Long.parseLong(time)));
-               list.add(t);
-           }
-           return StringUtils.collectionToCommaDelimitedString(list);
-        }
+//        if (sqlb != null) {
+//           String[] b = sqlb.split(",");
+//           List<String> list = new ArrayList<String>();
+//           for (String time : b) {
+//               String t = new SimpleDateFormat("HH:mm:ss SSS").format(new Date(Long.parseLong(time)));
+//               list.add(t);
+//           }
+//           return StringUtils.collectionToCommaDelimitedString(list);
+//        }
         return sqlb;
     }
 

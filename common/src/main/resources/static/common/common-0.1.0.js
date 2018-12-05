@@ -109,26 +109,12 @@ var Page = function(obj) {
 	
 	this.refreshPage =  function(data) {
 		if (!data) return;
-		
 		var pageTable = this.pageDiv.find("table");
-		pageTable.find(">tbody").find(">tr:gt(1)").remove();
-		var templateHtml = pageTable.find(">tbody").find(">tr:eq(1)").html().replace(/&amp;/g, "&");
-		
 		var templateId = this.pageDiv.attr("id") + "Template";
 		this.pageDiv.find("script").attr("id", templateId);
-		
-		$("#" + templateId).text("{{each arrayList as v i}}<tr>" + templateHtml + "</tr>{{/each}}");
-		pageTable.find(">tbody").append(template(templateId, data));
-		
-		// 图片src使用data-src，否则一开始就有图片请求404
-		pageTable.find("img:gt(0)").each(function(i, o){
-			$(this).attr("src", $(this).attr("data-src"));
-		})
-		
+		pageTable.find("tbody").html(template(templateId, data))
 		this.pageDiv.find(".pagination").show();
 		this.refreshFooter(data.page);
-		
-		
 	}
 	
 	this.refreshFooter = function(p) {

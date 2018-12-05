@@ -28,7 +28,8 @@ $(function() {
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
 	<table th:fragment="list">
-		<tr class="thead-light">
+		<thead class="thead-light">
+		<tr>
 			<th class="w-id">服务</th>
 			<th class="w-id">项目</th>
 			<th class="w-id">版本</th>
@@ -38,12 +39,16 @@ $(function() {
 			<th class="w-id">bean个数</th>
 			<th class="w-id">操作</th>
 		</tr>
-		<tr style="display:none">
+		</thead>
+		<tbody></tbody>
+	</table>
+	<table>
+		<tr th:fragment="template">
 			<td>{{v.sid}}</td>
 			<td>{{v.artifactId}}</td>
 			<td>{{v.version}}</td>
 			<td>{{v.startTime}}</td>
-			<td>{{v.jvmSpendTime}}M</td>
+			<td>{{v.jvmSpendTime}}</td>
 			<td>{{v.handlerMethodsSize}}</td>
 			<td>{{v.beanDefinitionCount}}</td>
 			<td>

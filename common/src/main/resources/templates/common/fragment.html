@@ -51,7 +51,7 @@
 		<div th:include="::query" class="input-group-sm form-inline" style="flex-wrap: nowrap"></div>
 	</div>
 	<table class="table table-bordered table-hover table-sm" style="margin-bottom:0.5rem" th:include="::list"></table>
-	<script id="pageTemplate" type="text/html"></script>
+	<script type="text/html">{{each arrayList as v i}}<tr th:replace="::template"></tr>{{/each}}</script>
 	<ul class="pagination float-left pagination-sm" style="display: none;"></ul>
   	<ul class="pagination pagination-sm" style="display: none;">
   		<li class="page-item input-group-sm">

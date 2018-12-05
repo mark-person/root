@@ -25,7 +25,8 @@ $(function() {
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
 	<table th:fragment="list">
-		<tr class="thead-light">
+		<thead class="thead-light">
+		<tr>
 			<th class="w-id">序号</th>
 			<th class="w-id sorting-desc" data-order-name="t.test_id">ID</th>
 			<th class="w-title">SQL_ID</th>
@@ -35,7 +36,11 @@ $(function() {
 			<th class="w-time">function</th>
 			<th class="w-action">操作</th>
 		</tr>
-		<tr style="display:none">
+		</thead>
+		<tbody></tbody>
+	</table>
+	<table>
+		<tr th:fragment="template">
 			<td>{{i+1}}</td>
 			<td>{{v.testId}}</td>
 			<td>{{v.testName}}</td>
@@ -50,6 +55,7 @@ $(function() {
 		</tr>
 	</table>
 </div>
+
 
 <div th:fragment="add" th:replace="common/fragment::modal('add', '新增', '')">
 	<div class="form-group form-inline">
