@@ -149,7 +149,7 @@ CREATE TABLE `map_uri_seq` (
         machineMap.put("totalPhysicalMemory", MonitorUtils.getTotalPhysicalMemorySize());
         machineMap.put("freePhysicalMemory", MonitorUtils.getFreePhysicalMemorySize());
         machineMap.put("totalSpace", MonitorUtils.getTotalSpace());
-        machineMap.put("maxActive", env.getProperty("spring.datasource.hikari.maximum-pool-size"));
+        machineMap.put("maxActive", Integer.parseInt(env.getProperty("spring.datasource.hikari.maximum-pool-size")));
         machineMap.put("maxMemory", Runtime.getRuntime().maxMemory() / 1024 / 1024);
         // java虚拟机可用的处理器个数
         machineMap.put("availableProcessors", Runtime.getRuntime().availableProcessors());

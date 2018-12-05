@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.common.util.ApplicationUtils;
 
 
@@ -35,13 +35,13 @@ public class MonitorViewController {
 	
     public ModelAndView service() {
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("listJson", listAllService());
+		mv.addObject("list", listAllService(new Page()));
 		mv.addObject("title", TITLE);
 		return mv;
 	}
 	
-	public Map<?, ?> listAllService() {	
-		List<Map> list = impl.listAllService();
+	public Map<?, ?> listAllService(Page page) {	
+		List<Map<String, Object>> list = impl.listAllService(page);
 		return ControllerReturn.success(list);
 	}
 	
