@@ -1,0 +1,18 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<script th:fragment="monitor" type="text/javascript" th:src="@{/static/monitor/echarts-gauge-3.7.2.min.js}"></script>
+<script th:fragment="monitor" type="text/javascript" th:src="@{/static/monitor/formatter.js}"></script>
+
+<div th:fragment="viewDetail" class="modal fade" id="viewDetail" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg">
+	<div class="modal-content">
+		<div class="modal-header"><h5 class="modal-title">详情</h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+		<div class="modal-body">
+         	<div class="form-group" style="width:100%;height:450px"><pre id="viewDetailJson" style="height:450px"></pre></div>
+		</div>
+	</div>
+	</div>
+</div>
+</html>
+
+

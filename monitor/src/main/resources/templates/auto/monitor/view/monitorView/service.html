@@ -3,14 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <link th:replace="common/fragment::common"/>
+<link th:replace="monitor/monitorFragment::monitor"/>
 
 
 <script type="text/javascript" th:inline="javascript">
-var controllerPath = contextPath + "auto/test/";
+var controllerPath = contextPath + "auto/monitorView/";
 var EXIST_MSG = "XXX已经存在";
 $(function() {
-	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
+	$("#pageDiv").page({url:controllerPath + "listAllService", data:[[${list}]]});
 });
+
+
+function toTop(serviceId) {	
+	var a = [serviceId];
+	$("[name=serviceId]").each(function(){
+		if (serviceId != $(this).text()) {
+			a.push($(this).text());
+		}
+	});
+	toOrder(a);
+}
+
+function toUp(n) {
+	var a = [];
+	$("[name=serviceId]").each(function(){		
+		a.push($(this).text());		
+	});
+	var upServiceId = a[n];
+	var targetUpServiceId = a[n - 1];
+	// 交换
+	a[n] = targetUpServiceId;
+	a[n - 1] = upServiceId;
+	toOrder(a);
+}
+
+function toDown(n) {
+	var a = [];
+	$("[name=serviceId]").each(function(){		
+		a.push($(this).text());		
+	});
+	var downServiceId = a[n];
+	var targetDownServiceId = a[n + 1];
+	// 交换
+	a[n] = targetDownServiceId;
+	a[n + 1] = downServiceId;
+	toOrder(a);
+}
+
+function toOrder(a) {
+	$('#loading').modal('show');
+	$.post([[@{/monitorConf/orderService}]], "serviceIds=" + a, function(d){
+		refreshPage(d);
+		$('#loading').modal('hide');
+	});
+}
+
+function display(serviceId, display) {
+	showLoading();
+	$.post([[@{/monitorConf/display}]], "serviceId=" + serviceId + "&display=" + display, function(data){
+		refreshPage(data);
+		hideLoading();
+	});
+}
 </script>
 </head>
 
@@ -26,27 +80,41 @@ $(function() {
 	</div>
 	<table th:fragment="list">
 		<tr class="thead-light">
-			<th class="w-id">serviceId</th>
-			<th class="w-title">类型</th>
-			<th class="w-id">核数</th>
-			<th class="w-id">内存</th>
-			<th class="w-id">可用内存</th>
-			<th class="w-id">数据库最大连接</th>
+			<th class="w-id">服务</th>
+			<th class="w-id">项目</th>
+			<th class="w-id">版本</th>
+			<th class="w-id">操作系统</th>
+			<th class="w-id">CPU核数</th>
+			<th class="w-id">物理内存</th>
+			<th class="w-id">最大堆内存</th>
+			<th class="w-id">DB最大连接数</th>
+			<th class="w-id">更新时间</th>
+			<th class="w-id">创建时间</th>
 			<th class="w-id">显示/隐藏</th>
-			<th class="w-action">操作</th>
+			<th class="w-id">排序</th>
+			<th class="w-id">操作</th>
 		</tr>
 		<tr style="display:none">
 			<td>{{v.serviceId}}</td>
-			<td>{{v.type}}</td>
+			<td>{{v.artifactId}}</td>
+			<td>{{v.version}}</td>
+			<td>{{v.osName}}</td>
 			<td>{{v.availableProcessors}}</td>
 			<td>{{v.totalPhysicalMemory}}M</td>
-			<td>{{v.freePhysicalMemory}}M</td>
+			<td>{{v.maxMemory}}M</td>
 			<td>{{v.maxActive}}</td>
-			<td>{{v.serviceDisplay}}</td>
+			<td>{{v.modified}}</td>
+			<td>{{v.created}}</td>
 			<td>
-				<a href="#" onclick="remove('{{v.testId}}')">[删除]</a>
-				<a href="#" onclick="edit('{{v.testId}}')">[修改]</a>
+				{{if v.serviceDisplay == 1}}显示{{else}}隐藏{{/if}}
+				<a class="glyphicon glyphicon-retweet" title="转换" href="#" onclick="display('{{v._id}}', {{if v.serviceDisplay == 1}}0{{else}}1{{/if}})"></a>
 			</td>
+			<td>
+				{{if arrayList.length != 1 && true}} 
+				xxxxxxxxxxxxxx
+				{{/if}}					
+			</td>
+			<td><a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a></td>
 		</tr>
 	</table>
 </div>
@@ -56,4 +124,8 @@ $(function() {
 </div>
 </body>
 </html>
+
+
+
+
 

@@ -120,6 +120,10 @@ public class LogTemplate implements AutoCloseable {
 		return schema.createCollection(collectionName, true);
 	}
 	
+	public Collection getCollection(String collectionName) {
+		return schema.getCollection(collectionName);
+	}
+	
 	public DbDoc find(String collectionName, String id) {
 		Collection c = schema.createCollection(collectionName, true);
 		return c.getOne(id);

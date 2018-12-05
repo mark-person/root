@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:replace="common/fragment::common"/>
+<link th:replace="monitor/monitorFragment::monitor"/>
+
+<script type="text/javascript" th:inline="javascript">
+var controllerPath = contextPath + "auto/monitorView/";
+var EXIST_MSG = "XXX已经存在";
+$(function() {
+	$("#pageDiv").page({url:controllerPath + "listStart", data:[[${list}]]});
+});
+
+
+
+</script>
+</head>
+
+<body>
+<div class="container">
+
+<div id="pageDiv" th:include="common/fragment::page('基本信息')">
+	<div th:fragment="query">
+		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
+		<label>名称：</label>
+		<input type="text" class="form-control" name="testName">
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
+	</div>
+	<table th:fragment="list">
+		<tr class="thead-light">
+			<th class="w-id">服务</th>
+			<th class="w-id">项目</th>
+			<th class="w-id">版本</th>
+			<th class="w-id">启动时间</th>
+			<th class="w-id">启动用时ms</th>
+			<th class="w-id">服务个数</th>
+			<th class="w-id">bean个数</th>
+			<th class="w-id">操作</th>
+		</tr>
+		<tr style="display:none">
+			<td>{{v.sid}}</td>
+			<td>{{v.artifactId}}</td>
+			<td>{{v.version}}</td>
+			<td>{{v.startTime}}</td>
+			<td>{{v.jvmSpendTime}}M</td>
+			<td>{{v.handlerMethodsSize}}</td>
+			<td>{{v.beanDefinitionCount}}</td>
+			<td>
+				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<div th:replace="monitor/monitorFragment::viewDetail"></div>
+
+</div>
+</body>
+</html>
+

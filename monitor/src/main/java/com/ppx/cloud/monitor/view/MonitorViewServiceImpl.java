@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.mysql.cj.xdevapi.Collection;
 import com.mysql.cj.xdevapi.JsonString;
 import com.mysql.cj.xdevapi.Row;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
@@ -29,12 +30,11 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			var cSql = new StringBuilder("select count(*) from service");
 			var qSql = new StringBuilder("select * from service order by service_prio desc");
 			List<Row> list = queryPage(t, page, cSql, qSql, null);
-						
 			for (Row row : list) {
 				Map<String, Object> map = new LinkedHashMap<String, Object>();
 				map.put("serviceId", row.getString("service_id"));
 				map.put("serviceDisplay", row.getString("service_display"));
-				row.getDbDoc("serviceInfo").forEach((k, v) -> {
+				row.getDbDoc("service_info").forEach((k, v) -> {
 					if (v instanceof JsonString) {
 						var s = v.toString().replaceAll("(^\"|\"$)", "");
 						map.put(k, s);
@@ -45,10 +45,31 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 				});
 				returnList.add(map);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		
+		return returnList;
+	}
+	
+	public List<Map<String, Object>> listStart(Page page) {
+		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
+		try (LogTemplate t = new LogTemplate()) {
+			var cSql = new StringBuilder("select count(*) from col_start");
+			var qSql = new StringBuilder("select doc from col_start order by json_extract(doc, '$.startTime') desc");
+			List<Row> list = queryPage(t, page, cSql, qSql, null);
+			for (Row row : list) {
+				Map<String, Object> map = new LinkedHashMap<String, Object>();
+				row.getDbDoc("doc").forEach((k, v) -> {
+					if (v instanceof JsonString) {
+						var s = v.toString().replaceAll("(^\"|\"$)", "");
+						map.put(k, s);
+					}
+					else {
+						map.put(k, v.toString());
+					}
+				});
+				returnList.add(map);
+			}
+		}
 		return returnList;
 	}
 

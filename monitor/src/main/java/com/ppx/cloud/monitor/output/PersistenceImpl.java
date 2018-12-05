@@ -55,7 +55,7 @@ public class PersistenceImpl extends PersistenceSupport {
 		updateSql.setJson("service_info", serviceInfo);
 		updateSql.execute(t);
 		
-		t.addOrReplaceOne(COL_START, ApplicationUtils.getServiceId(), startInfo);
+		t.add(COL_START, startInfo);
 		
 		MyUpdate confUpdate = MyUpdate.getInstance(true, TABLE_CONF, "service_id", ApplicationUtils.getServiceId());
         if (MonitorConfig.IS_DEV) {

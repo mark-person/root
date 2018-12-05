@@ -29,7 +29,7 @@
 <link   th:fragment="common" th:replace="::base"></link>
 <link   th:fragment="common" th:href="@{/static/cdn/font-awesome/css/font-awesome.min-4.7.0.css}" rel="stylesheet">
 <script th:fragment="common" th:src="@{/static/cdn/jquery.validate.min-1.17.0.js}" type="text/javascript" ></script>
-<script th:fragment="common" th:src="@{/static/cdn/template-3.0.1.js}"  type="text/javascript" ></script>
+<script th:fragment="common" th:src="@{/static/cdn/template-3.0.0.js}"  type="text/javascript" ></script>
 
 <script th:fragment="common" th:src="@{/static/data/WdatePicker.js}"  type="text/javascript" ></script>
 <link   th:fragment="common" th:href="@{/static/common/common-0.1.0.css?v01}" rel="stylesheet" />
@@ -71,7 +71,7 @@
 <!-- size:modal-sm 无 modal-lg -->
 <div th:class="'modal-dialog '+${size}">
 	<div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title" th:text="${title}"></h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+		<div class="modal-header"><h5 class="modal-title" th:text="${title}"></h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>
 	<div class="modal-body" style="height:auto;">
 	<form th:id="${fragment}+'Form'" th:include="::${fragment}"></form>
 	</div>
@@ -88,7 +88,7 @@
 <!--size:modal-sm 无 modal-lg -->
 <div class="modal-dialog">
 	<div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title" th:text="${title}"></h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+  		<div class="modal-header"><h5 class="modal-title" th:text="${title}"></h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>
 	<div class="modal-body" style="height:auto;">
 		<script th:id="${fragment}+'Template'" type="text/html">
 		<form th:id="${fragment}+'Form'" th:include="::${fragment}"></form>

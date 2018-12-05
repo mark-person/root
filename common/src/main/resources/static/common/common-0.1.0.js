@@ -112,7 +112,7 @@ var Page = function(obj) {
 		
 		var pageTable = this.pageDiv.find("table");
 		pageTable.find(">tbody").find(">tr:gt(1)").remove();
-		var templateHtml = pageTable.find(">tbody").find(">tr:eq(1)").html();
+		var templateHtml = pageTable.find(">tbody").find(">tr:eq(1)").html().replace(/&amp;/g, "&");
 		
 		var templateId = this.pageDiv.attr("id") + "Template";
 		this.pageDiv.find("script").attr("id", templateId);

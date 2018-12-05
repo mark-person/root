@@ -42,8 +42,21 @@ public class MonitorViewController {
 	
 	public Map<?, ?> listAllService(Page page) {	
 		List<Map<String, Object>> list = impl.listAllService(page);
-		return ControllerReturn.success(list);
+		return ControllerReturn.success(list, page);
 	}
+	
+	public ModelAndView start() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("list", listStart(new Page()));
+		mv.addObject("title", TITLE);
+		return mv;
+	}
+	
+	public Map<?, ?> listStart(Page page) {
+		List<Map<String, Object>> list = impl.listStart(page);
+		return ControllerReturn.success(list, page);
+	}
+	
 	
 	
 }
