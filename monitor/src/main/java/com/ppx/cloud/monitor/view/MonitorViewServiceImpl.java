@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.mysql.cj.xdevapi.Collection;
 import com.mysql.cj.xdevapi.JsonString;
 import com.mysql.cj.xdevapi.Row;
+import com.ppx.cloud.common.jdbc.MyCriteria;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.monitor.output.PersistenceSupport;
@@ -50,12 +51,16 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		return returnList;
 	}
 	
-	public List<Map<String, Object>> listStart(Page page) {
+	public List<Map<String, Object>> listStart(Page page, String sid) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
-			var cSql = new StringBuilder("select count(*) from col_start");
-			var qSql = new StringBuilder("select doc from col_start order by json_extract(doc, '$.startTime') desc");
-			List<Row> list = queryPage(t, page, cSql, qSql, null);
+			
+			MyCriteria c = new MyCriteria("where");
+			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
+			
+			var cSql = new StringBuilder("select count(*) from col_start").append(c);
+			var qSql = new StringBuilder("select doc from col_start").append(c).append(" order by json_extract(doc, '$.startTime') desc");
+			List<Row> list = queryPage(t, page, cSql, qSql, c.getParaList());
 			for (Row row : list) {
 				Map<String, Object> map = new LinkedHashMap<String, Object>();
 				row.getDbDoc("doc").forEach((k, v) -> {

@@ -8,7 +8,6 @@
 
 <script type="text/javascript" th:inline="javascript">
 var controllerPath = contextPath + "auto/monitorView/";
-var EXIST_MSG = "XXX已经存在";
 $(function() {
 	$("#pageDiv").page({url:controllerPath + "listAllService", data:[[${list}]]});
 });
@@ -71,10 +70,11 @@ function display(serviceId, display) {
 <body>
 <div class="container">
 
-<div id="pageDiv" th:include="common/fragment::page('基本信息')">
+<div th:replace="monitor/monitorFragment::nav('service')"></div>
+
+<div id="pageDiv" th:include="common/fragment::page('')">
 	<div th:fragment="query">
-		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
-		<label>名称：</label>
+		<label>服务：</label>
 		<input type="text" class="form-control" name="testName">
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
@@ -124,6 +124,7 @@ function display(serviceId, display) {
 	</table>
 </div>
 
+<div th:replace="monitor/monitorFragment::viewDetail"></div>
 
 
 </div>

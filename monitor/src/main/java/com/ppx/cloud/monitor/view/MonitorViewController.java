@@ -47,13 +47,13 @@ public class MonitorViewController {
 	
 	public ModelAndView start() {
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("list", listStart(new Page()));
+		mv.addObject("list", listStart(new Page(), null));
 		mv.addObject("title", TITLE);
 		return mv;
 	}
 	
-	public Map<?, ?> listStart(Page page) {
-		List<Map<String, Object>> list = impl.listStart(page);
+	public Map<?, ?> listStart(Page page, String sid) {
+		List<Map<String, Object>> list = impl.listStart(page, sid);
 		return ControllerReturn.success(list, page);
 	}
 	
