@@ -51,23 +51,23 @@ public class PersistenceImpl extends PersistenceSupport {
 	}
 
 	public void insertStart(Map<String, Object> serviceInfo,  Map<String, Object> startInfo) {
-		MyUpdate updateSql = MyUpdate.getInstance(true, TABLE_SERVICE, "service_id", ApplicationUtils.getServiceId());
-		updateSql.setJson("service_info", serviceInfo);
+		MyUpdate updateSql = MyUpdate.getInstance(true, TABLE_SERVICE, "serviceId", ApplicationUtils.getServiceId());
+		updateSql.setJson("serviceInfo", serviceInfo);
 		updateSql.execute(t);
 		
 		t.add(COL_START, startInfo);
 		
-		MyUpdate confUpdate = MyUpdate.getInstance(true, TABLE_CONF, "service_id", ApplicationUtils.getServiceId());
+		MyUpdate confUpdate = MyUpdate.getInstance(true, TABLE_CONF, "serviceId", ApplicationUtils.getServiceId());
         if (MonitorConfig.IS_DEV) {
-        	confUpdate.set("is_debug", 1);
-        	confUpdate.set("is_warning", 1);
+        	confUpdate.set("isDebug", 1);
+        	confUpdate.set("isWarning", 1);
         }
         else {
-        	confUpdate.set("is_debug", 0);
-        	confUpdate.set("is_warning", 0);
+        	confUpdate.set("isDebug", 0);
+        	confUpdate.set("isWarning", 0);
         }
-        confUpdate.set("gather_interval", MonitorConfig.GATHER_INTERVAL);
-        confUpdate.set("dump_max_time", MonitorConfig.DUMP_MAX_TIME);
+        confUpdate.set("gatherInterval", MonitorConfig.GATHER_INTERVAL);
+        confUpdate.set("dumpMaxTime", MonitorConfig.DUMP_MAX_TIME);
         confUpdate.set("modified", new Date());
         confUpdate.execute(t);
 		
@@ -80,8 +80,8 @@ public class PersistenceImpl extends PersistenceSupport {
 		t.add(COL_GATHER, gatherMap);
 		
 		//updateSql
-		MyUpdate updateSql = MyUpdate.getInstance(false, TABLE_SERVICE, "service_id", ApplicationUtils.getServiceId());
-		updateSql.setJson("service_last_info", lastUpdate);
+		MyUpdate updateSql = MyUpdate.getInstance(false, TABLE_SERVICE, "serviceId", ApplicationUtils.getServiceId());
+		updateSql.setJson("serviceLastInfo", lastUpdate);
 		updateSql.execute(t);
 	}
 
@@ -118,7 +118,7 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	public void insertStatUri(AccessLog a) {
 
-		MyUpdate update = MyUpdate.getInstanceSql(true, TABLE_STAT_URI, "uri_seq", "(select uri_seq from map_uri_seq where uri_text = '" + a.getUri() + "')");
+		MyUpdate update = MyUpdate.getInstanceSql(true, TABLE_STAT_URI, "uri_seq", "(select uriSeq from map_uri_seq where uriText = '" + a.getUri() + "')");
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
@@ -138,8 +138,8 @@ public class PersistenceImpl extends PersistenceSupport {
 			}
 		}
 
-		t.sql("insert into map_uri_seq(uri_text) select '" + a.getUri()
-				+ "' from dual where not exists(select 1 from map_uri_seq where uri_text = '" + a.getUri() + "')");
+		t.sql("insert into map_uri_seq(uriText) select '" + a.getUri()
+				+ "' from dual where not exists(select 1 from map_uri_seq where uriText = '" + a.getUri() + "')");
 		update.execute(t);
 
 	}
@@ -176,7 +176,7 @@ public class PersistenceImpl extends PersistenceSupport {
 				sqlMd5 = MD5Utils.getMD5(sqlText);
 			}
 			// sql执行异常时，长度不一样
-			MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_SQL, "sql_md5", sqlMd5);
+			MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_SQL, "sqlMd5", sqlMd5);
 			update.inc("times", 1);
 
 			// sql开始执行时间
@@ -203,7 +203,7 @@ public class PersistenceImpl extends PersistenceSupport {
 					sqlPojo.setMaxTime(spendTime);
 				}
 			}
-			t.sql("insert into map_sql_md5(sql_md5, sql_text) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sql_md5 = ?)",
+			t.sql("insert into map_sql_md5(sqlMd5, sqlText) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sqlMd5 = ?)",
 					Arrays.asList(sqlMd5, sqlText, sqlMd5));
 			update.execute(t);
 
@@ -220,7 +220,7 @@ public class PersistenceImpl extends PersistenceSupport {
 		// 机器ID yyyyMMddHH小时 访问量 总时间
 		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
 
-		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_RESPONSE, "service_id,hh", ApplicationUtils.getServiceId(), hh);
+		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_RESPONSE, "serviceId,hh", ApplicationUtils.getServiceId(), hh);
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);
@@ -268,7 +268,7 @@ public class PersistenceImpl extends PersistenceSupport {
 //    }
 //    
     public Row getConfig(String serviceId){
-    	SqlResult sr = t.sql("select * from conf where service_id = ?", Arrays.asList(serviceId));
+    	SqlResult sr = t.sql("select * from conf where serviceId = ?", Arrays.asList(serviceId));
     	return sr.fetchOne();
     }
     

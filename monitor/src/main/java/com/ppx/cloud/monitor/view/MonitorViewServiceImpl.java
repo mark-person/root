@@ -37,9 +37,9 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			List<Row> list = queryPage(t, page, cSql, qSql, null);
 			for (Row row : list) {
 				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				map.put("serviceId", row.getString("service_id"));
-				map.put("serviceDisplay", row.getString("service_display"));
-				row.getDbDoc("service_info").forEach((k, v) -> {
+				map.put("serviceId", row.getString("serviceId"));
+				map.put("serviceDisplay", row.getString("serviceDisplay"));
+				row.getDbDoc("serviceInfo").forEach((k, v) -> {
 					if (v instanceof JsonString) {
 						map.put(k, ((JsonString)v).getString());
 					}
