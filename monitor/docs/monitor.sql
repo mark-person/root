@@ -101,7 +101,16 @@ PARTITION BY LIST(store_id) (
     PARTITION c VALUES IN (3,9,10),
     PARTITION d VALUES IN (4,11,12)
 );
-
+ CREATE TABLE `access5` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `accessDate` date NOT NULL,
+  `accessTime` time NOT NULL,
+  `val` int not null,
+  `title` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`,`accessDate`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 
+ PARTITION BY HASH (dayofmonth(`accessDate`))
+PARTITIONS 4
 
 
 
