@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.common.util.ApplicationUtils;
+import com.ppx.cloud.common.util.DateUtils;
 
 
 @Controller
@@ -57,6 +58,20 @@ public class MonitorViewController {
 		return ControllerReturn.success(list, page);
 	}
 	
+	
+	public ModelAndView access() {
+		ModelAndView mv = new ModelAndView();
+		String today = DateUtils.shortToday();
+		mv.addObject("list", listAccess(new Page(), today, null));
+		mv.addObject("title", TITLE);
+		
+		return mv;
+	}
+	
+	public Map<?, ?> listAccess(Page page, String date, String sid) {
+		List<Map<String, Object>> list = impl.listAccess(page, date, sid);
+		return ControllerReturn.success(list, page);
+	}
 	
 	
 }

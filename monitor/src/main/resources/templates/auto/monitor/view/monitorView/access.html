@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:replace="common/fragment::common"/>
+<link th:replace="monitor/monitorFragment::monitor"/>
+
+<script type="text/javascript" th:inline="javascript">
+var controllerPath = contextPath + "auto/monitorView/";
+$(function() {
+	$("#pageDiv").page({url:controllerPath + "listAccess", data:[[${list}]]});
+});
+
+
+
+</script>
+</head>
+
+<body>
+<div class="container">
+
+
+<div th:replace="monitor/monitorFragment::nav('access')"></div>
+
+<div id="pageDiv" th:include="common/fragment::page('')">
+	<div th:fragment="query">
+		<label>服务:</label>
+		<select class="form-control input-sm" name="sid">
+			<option value="">全部</option>
+			<option th:value="${item._id}" th:text="${item._id}" th:each="item:${listMachine}"></option>
+		</select>
+		<label>日期:</label>
+		<input type="text" class="form-control input-sm w-date" style="width:90px" name="date" th:value="${date}" onclick="WdatePicker()">
+	    <input type="text" class="form-control input-sm w-date" style="width:90px" name="beginTime" placeholder="开始时分秒" onclick="WdatePicker({dateFmt:'HH:mm:ss'})">
+	    	-
+	    <input type="text" class="form-control input-sm w-date" style="width:90px" name="endTime" placeholder="结束时分秒" onclick="WdatePicker({dateFmt:'HH:mm:ss'})">	
+		<label>URI:</label><input type="text" class="form-control input-sm" name="uri" placeholder="全匹配URI">
+		<label>标记:</label><input type="text" class="form-control input-sm" name="marker" style="width:90px">
+		
+		
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
+	</div>
+	<table th:fragment="list">
+		<thead class="thead-light">
+		<tr>
+			<th class="w-id">服务</th>
+			<th class="w-id">访问时间</th>
+			<th class="w-id">URI</th>
+			<th class="w-id">queryString</th>
+			<th class="w-id">用时ms</th>
+			<th class="w-id">IP</th>
+			<th class="w-id">已用堆</th>
+			<th class="w-id">账号ID</th>
+			<th class="w-id">标记</th>
+			<th class="w-id">操作</th>
+		</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<table>
+		<tr th:fragment="template">
+			<td>{{v.sid}}</td>
+			<td>{{v.b}}</td>
+			<td>{{v.uri}}</td>
+			<td>{{v.str}}</td>
+			<td>{{v.s}}</td>
+			<td>{{v.ip}}</td>
+			<td>{{v.mem}}</td>
+			<td>{{v.aid}}</td>
+			<td class="w-id">{{if v.marker != null}}{{v.marker.join(",")}}{{/if}}</td>
+			<td>
+				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<div th:replace="monitor/monitorFragment::viewDetail"></div>
+
+</div>
+</body>
+</html>
+

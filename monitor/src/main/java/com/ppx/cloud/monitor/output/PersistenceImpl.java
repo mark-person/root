@@ -86,7 +86,7 @@ public class PersistenceImpl extends PersistenceSupport {
 	}
 
 	public String insertAccess(AccessEntity entity) {
-		String dateStr = new SimpleDateFormat(DateUtils.DATE_PATTERN).format(entity.getB());
+		String dateStr = new SimpleDateFormat(DateUtils.SHORT_DATE_PATTERN).format(entity.getB());
 
 		List<String> list = t.add(COL_ACCESS + dateStr, entity).getGeneratedIds();
 		return list.get(0);

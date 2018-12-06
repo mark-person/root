@@ -37,8 +37,7 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 				map.put("serviceDisplay", row.getString("service_display"));
 				row.getDbDoc("service_info").forEach((k, v) -> {
 					if (v instanceof JsonString) {
-						var s = v.toString().replaceAll("(^\"|\"$)", "");
-						map.put(k, s);
+						map.put(k, ((JsonString)v).getString());
 					}
 					else {
 						map.put(k, v.toString());
@@ -65,8 +64,7 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 				Map<String, Object> map = new LinkedHashMap<String, Object>();
 				row.getDbDoc("doc").forEach((k, v) -> {
 					if (v instanceof JsonString) {
-						var s = v.toString().replaceAll("(^\"|\"$)", "");
-						map.put(k, s);
+						map.put(k, ((JsonString)v).getString());
 					}
 					else {
 						map.put(k, v.toString());
@@ -78,6 +76,32 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		return returnList;
 	}
 
+	
+	public List<Map<String, Object>> listAccess(Page page, String date, String sid) {
+		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
+		try (LogTemplate t = new LogTemplate()) {
+			
+			MyCriteria c = new MyCriteria("where");
+			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
+			
+			var cSql = new StringBuilder("select count(*) from col_access" + date).append(c);
+			var qSql = new StringBuilder("select doc from col_access" + date).append(c).append(" order by json_extract(doc, '$.b') desc");
+			List<Row> list = queryPage(t, page, cSql, qSql, c.getParaList());
+			for (Row row : list) {
+				Map<String, Object> map = new LinkedHashMap<String, Object>();
+				row.getDbDoc("doc").forEach((k, v) -> {
+					if (v instanceof JsonString) {
+						map.put(k, ((JsonString)v).getString());
+					}
+					else {
+						map.put(k, v.toString());
+					}
+				});
+				returnList.add(map);
+			}
+		}
+		return returnList;
+	}
 	
 
 }

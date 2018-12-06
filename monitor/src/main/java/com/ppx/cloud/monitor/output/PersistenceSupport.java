@@ -45,7 +45,6 @@ public class PersistenceSupport {
 	protected List<Row> queryPage(LogTemplate t, Page page, StringBuilder cSql, StringBuilder qSql,
 			List<Object> paraList) {
 		paraList = paraList == null ? new ArrayList<Object>() : paraList;
-		
 		int totalRows = (int)t.sql(cSql.toString(), paraList).count();
 		page.setTotalRows(totalRows);
 		if (totalRows == 0) {
