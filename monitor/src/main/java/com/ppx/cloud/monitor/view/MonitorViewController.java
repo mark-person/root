@@ -52,12 +52,10 @@ public class MonitorViewController {
 		mv.addObject("title", TITLE);
 		return mv;
 	}
-	
 	public Map<?, ?> listStart(Page page, String sid) {
 		List<Map<String, Object>> list = impl.listStart(page, sid);
 		return ControllerReturn.success(list, page);
 	}
-	
 	
 	public ModelAndView access() {
 		ModelAndView mv = new ModelAndView();
@@ -67,9 +65,32 @@ public class MonitorViewController {
 		
 		return mv;
 	}
-	
 	public Map<?, ?> listAccess(Page page, String date, String sid) {
 		List<Map<String, Object>> list = impl.listAccess(page, date, sid);
+		return ControllerReturn.success(list, page);
+	}
+	
+	public ModelAndView error() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("list", listError(new Page(), null));
+		mv.addObject("title", TITLE);
+		
+		return mv;
+	}
+	public Map<?, ?> listError(Page page, String sid) {
+		List<Map<String, Object>> list = impl.listError(page, sid);
+		return ControllerReturn.success(list, page);
+	}
+	
+	public ModelAndView gather() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("list", listGather(new Page(), null));
+		mv.addObject("title", TITLE);
+		
+		return mv;
+	}
+	public Map<?, ?> listGather(Page page, String sid) {
+		List<Map<String, Object>> list = impl.listGather(page, sid);
 		return ControllerReturn.success(list, page);
 	}
 	

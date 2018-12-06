@@ -8,7 +8,7 @@
 <script type="text/javascript" th:inline="javascript">
 var controllerPath = contextPath + "auto/monitorView/";
 $(function() {
-	$("#pageDiv").page({url:controllerPath + "listError", data:[[${list}]]});
+	$("#pageDiv").page({url:controllerPath + "listGather", data:[[${list}]]});
 });
 
 
@@ -20,7 +20,7 @@ $(function() {
 <div class="container">
 
 
-<div th:replace="monitor/monitorFragment::nav('error')"></div>
+<div th:replace="monitor/monitorFragment::nav('gather')"></div>
 
 <div id="pageDiv" th:include="common/fragment::page('')">
 	<div th:fragment="query">
@@ -32,11 +32,14 @@ $(function() {
 		<thead class="thead-light">
 		<tr>
 			<th class="w-id">服务</th>
-			<th class="w-id">访问时间</th>
-			<th class="w-id">URI</th>
-			<th class="w-id">queryString</th>
-			<th class="w-id">异常代码</th>
-			<th class="w-id">异常message</th>
+			<th class="w-id">采集时间</th>
+			<th class="w-id">最大请求时间</th>
+			<th class="w-id">并发数</th>
+			<th class="w-id">DB连接数</th>
+			<th class="w-id">已用堆内存</th>
+			<th class="w-id">堆内存占比</th>
+			<th class="w-id">进程CPU使用率</th>
+			<th class="w-id">over(cpu,mem,time)</th>
 			<th class="w-id">操作</th>
 		</tr>
 		</thead>
@@ -45,9 +48,10 @@ $(function() {
 	<table>
 		<tr th:fragment="template">
 			<td>{{v.sid}}</td>
-			<td>{{v.b}}</td>
+			<td>{{v.created}}</td>
+			<td>{{v.requestInfo.maxProcessingTime}}</td>
 			<td>{{v}}</td>
-			<td>{{v.c}}</td>
+			<td></td>
 			<td></td>
 			<td></td>
 			<td>
