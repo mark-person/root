@@ -12,7 +12,6 @@ $(function() {
 });
 
 
-
 </script>
 </head>
 
@@ -50,10 +49,12 @@ $(function() {
 			<td>{{v.sid}}</td>
 			<td>{{v.created}}</td>
 			<td>{{v.requestInfo.maxProcessingTime}}</td>
-			<td>{{v}}</td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>{{v.requestInfo.concurrentN}}</td>
+			<td>{{v.dsActive}}</td>
+			<td>{{v.uMem}}M</td>
+			<td>{{(v.uMem*100/v.mMem).toFixed(2)}}%</td>
+			<td>{{(v.pCpuLoad*100).toFixed(2)}}%</td>
+			<td>{{v.isOver}}</td>
 			<td>
 				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>
 			</td>

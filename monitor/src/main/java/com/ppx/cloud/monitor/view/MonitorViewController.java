@@ -95,4 +95,16 @@ public class MonitorViewController {
 	}
 	
 	
+	public ModelAndView statUri() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("list", listStatUri(new Page(), null));
+		mv.addObject("title", TITLE);
+		
+		return mv;
+	}
+	public Map<?, ?> listStatUri(Page page, String uri) {
+		List<Map<String, Object>> list = impl.listStatUri(page, uri);
+		return ControllerReturn.success(list, page);
+	}
+	
 }

@@ -6,10 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.mysql.cj.xdevapi.Column;
+import com.mysql.cj.xdevapi.DbDoc;
 import com.mysql.cj.xdevapi.DbDocImpl;
 import com.mysql.cj.xdevapi.JsonString;
 import com.mysql.cj.xdevapi.Row;
+import com.mysql.cj.xdevapi.Type;
 import com.ppx.cloud.common.jdbc.MyCriteria;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.page.Page;
@@ -167,5 +171,30 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		return returnList;
 	}
 	
+	
+	
+	
+	
+	
+	public List<Map<String, Object>> listStatUri(Page page, String uri) {
+		
+		List<Map<String, Object>> r = new ArrayList<Map<String, Object>>();
+		
+		
+		MyCriteria c = new MyCriteria("where");
+		c.addAnd("uri = ?", uri);
+		
+		try (LogTemplate t = new LogTemplate()) {
+			
+			
+			var cSql = new StringBuilder("select count(*) from stat_uri u").append(c);
+			var qSql = new StringBuilder("select u.*, m.uri_text from stat_uri u "
+					+ "left join map_uri_seq m on m.uri_seq = u.uri_seq").append(c).append(" order by u.lasted desc");
+			r = queryTablePage(t, page, cSql, qSql, null);
+			
+		}
+		
+		return r;
+	}
 
 }
