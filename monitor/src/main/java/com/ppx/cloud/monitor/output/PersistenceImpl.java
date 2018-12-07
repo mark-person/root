@@ -119,14 +119,14 @@ public class PersistenceImpl extends PersistenceSupport {
 	public void insertStatUri(AccessLog a) {
 
 		MyUpdate update = MyUpdate.getInstanceSql(true, TABLE_STAT_URI, "uriSeq", "(select uriSeq from map_uri_seq where uriText = '" + a.getUri() + "')");
-		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
+		int spendTime = (int) a.getSpendTime();
 		update.inc("times", 1);
-		update.inc("totalTime", spendTime);
+		update.inc("totalTime", a.getSpendTime());
 		update.setSql("avgTime", "totalTime/times");
-		update.max("maxTime", spendTime);
+		update.max("maxTime", a.getSpendTime());
 		update.setOnInsert("firsted", a.getBeginTime());
 		update.set("lasted",a.getBeginTime());
-		distribute(update, spendTime);
+		distribute(update, a.getSpendTime());
 
 		// maxTime, 缓存uri最大的maxTime值
 		UriPojo uriPojo = MonitorCache.getUri(a.getUri());
@@ -221,11 +221,10 @@ public class PersistenceImpl extends PersistenceSupport {
 		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
 
 		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_RESPONSE, "serviceId,hh", ApplicationUtils.getServiceId(), hh);
-		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
-		update.inc("totalTime", spendTime);
+		update.inc("totalTime", a.getSpendTime());
 		update.setSql("avgTime", "totalTime/times");
-		update.max("maxTime", spendTime);
+		update.max("maxTime", a.getSpendTime());
 		update.execute(t);
 
 	}

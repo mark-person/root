@@ -29,22 +29,8 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		
 		try (LogTemplate t = new LogTemplate()) {
 			var cSql = new StringBuilder("select count(*) from service");
-			var qSql = new StringBuilder("select * from service order by service_prio desc");
-			List<Row> list = queryPage(t, page, cSql, qSql, null);
-			for (Row row : list) {
-				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				map.put("serviceId", row.getString("serviceId"));
-				map.put("serviceDisplay", row.getString("serviceDisplay"));
-				row.getDbDoc("serviceInfo").forEach((k, v) -> {
-					if (v instanceof JsonString) {
-						map.put(k, ((JsonString)v).getString());
-					}
-					else {
-						map.put(k, v.toString());
-					}
-				});
-				returnList.add(map);
-			}
+			var qSql = new StringBuilder("select * from service order by servicePrio desc");
+			returnList = queryTablePage(t, page, cSql, qSql, null);
 		}
 		
 		return returnList;
@@ -53,25 +39,12 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	public List<Map<String, Object>> listStart(Page page, String sid) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
-			
 			MyCriteria c = new MyCriteria("where");
 			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
 			
 			var cSql = new StringBuilder("select count(*) from col_start").append(c);
 			var qSql = new StringBuilder("select doc from col_start").append(c).append(" order by json_extract(doc, '$.startTime') desc");
-			List<Row> list = queryPage(t, page, cSql, qSql, c.getParaList());
-			for (Row row : list) {
-				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				row.getDbDoc("doc").forEach((k, v) -> {
-					if (v instanceof JsonString) {
-						map.put(k, ((JsonString)v).getString());
-					}
-					else {
-						map.put(k, v.toString());
-					}
-				});
-				returnList.add(map);
-			}
+			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
@@ -86,19 +59,7 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			
 			var cSql = new StringBuilder("select count(*) from col_access" + date).append(c);
 			var qSql = new StringBuilder("select doc from col_access" + date).append(c).append(" order by json_extract(doc, '$.b') desc");
-			List<Row> list = queryPage(t, page, cSql, qSql, c.getParaList());
-			for (Row row : list) {
-				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				row.getDbDoc("doc").forEach((k, v) -> {
-					if (v instanceof JsonString) {
-						map.put(k, ((JsonString)v).getString());
-					}
-					else {
-						map.put(k, v.toString());
-					}
-				});
-				returnList.add(map);
-			}
+			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
@@ -112,19 +73,7 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			
 			var cSql = new StringBuilder("select count(*) from col_error").append(c);
 			var qSql = new StringBuilder("select doc from col_error").append(c).append(" order by json_extract(doc, '$.b') desc");
-			List<Row> list = queryPage(t, page, cSql, qSql, c.getParaList());
-			for (Row row : list) {
-				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				row.getDbDoc("doc").forEach((k, v) -> {
-					if (v instanceof JsonString) {
-						map.put(k, ((JsonString)v).getString());
-					}
-					else {
-						map.put(k, v.toString());
-					}
-				});
-				returnList.add(map);
-			}
+			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
@@ -138,38 +87,10 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			
 			var cSql = new StringBuilder("select count(*) from col_gather").append(c);
 			var qSql = new StringBuilder("select doc from col_gather").append(c).append(" order by json_extract(doc, '$.created') desc");
-			List<Row> list = queryPage(t, page, cSql, qSql, c.getParaList());
-			for (Row row : list) {
-				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				row.getDbDoc("doc").forEach((k, v) -> {
-					if (v instanceof DbDocImpl) {
-						Map<String, Object> mapmap = new LinkedHashMap<String, Object>();
-						((DbDocImpl)v).forEach((kk, vv) -> {
-							if (v instanceof JsonString) {
-								mapmap.put(kk, ((JsonString)vv).getString());
-							}
-							else {
-								mapmap.put(kk, vv.toString());
-							}
-						});
-						map.put(k, mapmap);
-					}
-					else if (v instanceof JsonString) {
-						map.put(k, ((JsonString)v).getString());
-					}
-					else {
-						map.put(k, v.toString());
-					}
-				});
-				returnList.add(map);
-			}
+			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
-	
-	
-	
-	
 	
 	
 	public List<Map<String, Object>> listStatUri(Page page, String uri) {
@@ -236,15 +157,6 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public List<Map<String, Object>> listDebug(Page page, String sid) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
@@ -254,41 +166,10 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			
 			var cSql = new StringBuilder("select count(*) from col_debug").append(c);
 			var qSql = new StringBuilder("select doc from col_debug").append(c).append(" order by json_extract(doc, '$.b') desc");
-			List<Row> list = queryPage(t, page, cSql, qSql, c.getParaList());
-			for (Row row : list) {
-				Map<String, Object> map = new LinkedHashMap<String, Object>();
-				row.getDbDoc("doc").forEach((k, v) -> {
-					if (v instanceof DbDocImpl) {
-						Map<String, Object> mapmap = new LinkedHashMap<String, Object>();
-						((DbDocImpl)v).forEach((kk, vv) -> {
-							if (v instanceof JsonString) {
-								mapmap.put(kk, ((JsonString)vv).getString());
-							}
-							else {
-								mapmap.put(kk, vv.toString());
-							}
-						});
-						map.put(k, mapmap);
-					}
-					else if (v instanceof JsonString) {
-						map.put(k, ((JsonString)v).getString());
-					}
-					else {
-						map.put(k, v.toString());
-					}
-				});
-				returnList.add(map);
-			}
+			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	

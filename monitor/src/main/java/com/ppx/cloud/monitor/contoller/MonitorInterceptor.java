@@ -33,7 +33,7 @@ public class MonitorInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
     	AccessLog accessLog = TaskThread.getAccessLog();
-        accessLog.setSpendNanoTime((System.nanoTime() - accessLog.getBeginNanoTime()));
+        accessLog.setSpendTime((int)((System.nanoTime() - accessLog.getBeginNanoTime()) / 1e6));
         AccessQueue.offer(accessLog);
     }
   

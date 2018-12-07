@@ -95,10 +95,10 @@ public class AccessQueueConsumer {
 			try (LogTemplate t = new LogTemplate()) {
 				Row row = PersistenceImpl.getInstance(t).getConfig(ApplicationUtils.getServiceId());
 				if (row != null) {
-					MonitorConfig.IS_DEBUG = (row.getInt("is_debug") == 1);
-					MonitorConfig.IS_WARNING = (row.getInt("is_warning") == 1);
-					MonitorConfig.GATHER_INTERVAL = row.getInt("gather_interval");
-					MonitorConfig.DUMP_MAX_TIME = row.getInt("dump_max_time");
+					MonitorConfig.IS_DEBUG = (row.getInt("isDebug") == 1);
+					MonitorConfig.IS_WARNING = (row.getInt("isWarning") == 1);
+					MonitorConfig.GATHER_INTERVAL = row.getInt("gatherInterval");
+					MonitorConfig.DUMP_MAX_TIME = row.getInt("dumpMaxTime");
 				}
 			}
 		}

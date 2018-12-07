@@ -28,7 +28,7 @@ public class AccessLog {
     private String ip;
     private Date beginTime;
     private long beginNanoTime;
-    private long spendNanoTime;
+    private int spendTime;
     private String method;
     private String uri;
     private String queryString;
@@ -87,12 +87,12 @@ public class AccessLog {
         return beginTime;
     }
 
-    public long getSpendNanoTime() {
-        return spendNanoTime;
+    public int getSpendTime() {
+        return spendTime;
     }
 
-    public void setSpendNanoTime(long spendNanoTime) {
-        this.spendNanoTime = spendNanoTime;
+    public void setSpendTime(int spendTime) {
+        this.spendTime = spendTime;
     }
 
     public String getMethod() {

@@ -90,7 +90,6 @@ function display(serviceId, display) {
 			<th class="w-id">最大堆内存</th>
 			<th class="w-id">DB最大连接数</th>
 			<th class="w-id">更新时间</th>
-			<th class="w-id">创建时间</th>
 			<th class="w-id">显示/隐藏</th>
 			<th class="w-id">排序</th>
 			<th class="w-id">操作</th>
@@ -101,15 +100,14 @@ function display(serviceId, display) {
 	<table>
 		<tr th:fragment="template">
 			<td>{{v.serviceId}}</td>
-			<td>{{v.artifactId}}</td>
-			<td>{{v.version}}</td>
-			<td>{{v.osName}}</td>
-			<td>{{v.availableProcessors}}</td>
-			<td>{{v.totalPhysicalMemory}}M</td>
-			<td>{{v.maxMemory}}M</td>
-			<td>{{v.maxActive}}</td>
-			<td>{{v.modified}}</td>
-			<td>{{v.created}}</td>
+			<td>{{v.serviceInfo.artifactId}}</td>
+			<td>{{v.serviceInfo.version}}</td>
+			<td>{{v.serviceInfo.osName}}</td>
+			<td>{{v.serviceInfo.availableProcessors}}</td>
+			<td>{{v.serviceInfo.totalPhysicalMemory}}M</td>
+			<td>{{v.serviceInfo.maxMemory}}M</td>
+			<td>{{v.serviceInfo.maxActive}}</td>
+			<td>{{v.serviceInfo.modified}}</td>
 			<td>
 				{{if v.serviceDisplay == 1}}显示{{else}}隐藏{{/if}}
 				<a class="glyphicon glyphicon-retweet" title="转换" href="#" onclick="display('{{v._id}}', {{if v.serviceDisplay == 1}}0{{else}}1{{/if}})"></a>

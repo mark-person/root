@@ -112,5 +112,42 @@ PARTITION BY LIST(store_id) (
  PARTITION BY HASH (dayofmonth(`accessDate`))
 PARTITIONS 4
 
+create table access (
+	accessId int(10) not null auto_increment,
+	accessDate date not null,
+	accessTime time not null,
+	
+)
+
+
+
+# 索引条件
+服务
+日期-时间
+URI
+标记
+
+ip,uri,marker(另创建一张表)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

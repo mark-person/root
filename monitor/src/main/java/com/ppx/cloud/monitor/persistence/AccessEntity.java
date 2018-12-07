@@ -157,7 +157,7 @@ public class AccessEntity {
         AccessEntity entity = new AccessEntity();
         entity.setSid(ApplicationUtils.getServiceId());
         entity.setB(a.getBeginTime());
-        entity.setS((int)(a.getSpendNanoTime() / 1e6));
+        entity.setS(a.getSpendTime());
         entity.setIp(a.getIp());
         entity.setUri(a.getUri());
         entity.setM(a.getMethod());

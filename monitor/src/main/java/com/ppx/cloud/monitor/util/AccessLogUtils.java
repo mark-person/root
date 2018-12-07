@@ -36,7 +36,7 @@ public class AccessLogUtils {
 		
 		
 		StringBuilder accessSb = new StringBuilder(a.getIp()).append("[").append(beginTime).append("]")
-				.append(a.getSpendNanoTime() / 1000000).append(" ").append(a.getMethod()).append(" ")
+				.append(a.getSpendTime()).append(" ").append(a.getMethod()).append(" ")
 				.append(uri);
 		if (!StringUtils.isEmpty(a.getQueryString())) {
 			accessSb.append("?").append(a.getQueryString());
