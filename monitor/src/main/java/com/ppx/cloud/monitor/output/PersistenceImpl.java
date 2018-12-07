@@ -1,6 +1,7 @@
 package com.ppx.cloud.monitor.output;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.thymeleaf.expression.Maps;
 
 import com.mysql.cj.xdevapi.Row;
 import com.mysql.cj.xdevapi.SqlResult;
@@ -70,10 +72,6 @@ public class PersistenceImpl extends PersistenceSupport {
         confUpdate.set("dumpMaxTime", MonitorConfig.DUMP_MAX_TIME);
         confUpdate.set("modified", new Date());
         confUpdate.execute(t);
-		
-		
-		
-
 	}
 
 	public void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
@@ -85,11 +83,22 @@ public class PersistenceImpl extends PersistenceSupport {
 		updateSql.execute(t);
 	}
 
-	public String insertAccess(AccessEntity entity) {
-		String dateStr = new SimpleDateFormat(DateUtils.SHORT_DATE_PATTERN).format(entity.getB());
-
-		List<String> list = t.add(COL_ACCESS + dateStr, entity).getGeneratedIds();
-		return list.get(0);
+	// 返回accessId
+	public int insertAccess(AccessLog a) {
+		String[] timeStr = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()).split(" ");
+		 
+		
+		long useMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
+        
+		var info = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "uid", -1);
+		
+		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getSpendTime(), info);
+		String sql = "insert into access(accessDate, accessTime, serviceId, spendTime, info) values(?, ?, ?, ?, ?)";
+		t.sql(sql, bindValue);
+		
+		int accessId = getLastInsertId(t);
+		
+		return accessId;
 	}
 
 	private Map<String, Object> getUriMaxDetail(AccessLog a) {

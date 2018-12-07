@@ -59,8 +59,8 @@ public class MonitorViewController {
 	
 	public ModelAndView access() {
 		ModelAndView mv = new ModelAndView();
-		String today = DateUtils.shortToday();
-		mv.addObject("list", listAccess(new Page(), today, null));
+		//String today = DateUtils.shortToday();
+		//mv.addObject("list", listAccess(new Page(), today, null));
 		
 		return mv;
 	}

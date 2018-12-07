@@ -1,3 +1,16 @@
+
+create table access (
+	accessId int not null auto_increment,
+	accessDate date not null,
+	accessTime time not null,
+	serviceId varchar(32) not null,
+	spendTime int not null,
+	info json,
+	primary key (accessId, accessDate)
+)
+partition by hash (dayofmonth(accessDate)) partitions 10
+
+
 create table service (
   serviceId varchar(32) NOT NULL,
   serviceInfo json,
@@ -113,11 +126,15 @@ PARTITION BY LIST(store_id) (
 PARTITIONS 4
 
 create table access (
-	accessId int(10) not null auto_increment,
+	accessId int not null auto_increment,
 	accessDate date not null,
 	accessTime time not null,
-	
+	serviceId varchar(32) not null,
+	spendTime int not null,
+	info json,
+	primary key (accessId, accessDate)
 )
+partition by hash (dayofmonth(accessDate)) partitions 10
 
 
 
@@ -128,6 +145,8 @@ URI
 标记
 
 ip,uri,marker(另创建一张表)
+
+
 
 
 

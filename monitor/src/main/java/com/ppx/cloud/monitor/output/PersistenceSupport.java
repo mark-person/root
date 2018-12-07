@@ -46,7 +46,9 @@ public class PersistenceSupport {
 	protected static final String TABLE_STAT_WARNING = "stat_warning";
 
 	
-	
+	protected int getLastInsertId(LogTemplate t) {
+		return t.sql("select LAST_INSERT_ID()").fetchOne().getInt(0);
+    }
 	
 	
 	

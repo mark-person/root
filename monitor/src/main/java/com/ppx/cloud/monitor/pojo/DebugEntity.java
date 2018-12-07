@@ -15,7 +15,7 @@ import com.ppx.cloud.monitor.persistence.AccessEntity;
 public class DebugEntity {
     // 缩写:serverId beginTime
     @JsonIgnore
-    private String _id;
+    private int accessId;
     private String sid;
     private Date b;
     private String uri;
@@ -42,20 +42,15 @@ public class DebugEntity {
     public void setSid(String sid) {
         this.sid = sid;
     }
+    public int getAccessId() {
+		return accessId;
+	}
 
-    public String get_id() {
-        return _id;
-    }
+	public void setAccessId(int accessId) {
+		this.accessId = accessId;
+	}
 
-    public void set_id(String _id) {
-        this._id = _id;
-    }
-    
-    public String getHexId() {
-        return _id;
-    }
-
-    public AccessEntity getA() {
+	public AccessEntity getA() {
         return a;
     }
 
@@ -161,10 +156,10 @@ public class DebugEntity {
         this.marker = marker;
     }
 
-    public static DebugEntity getInstance(AccessLog a, String _id) {
+    public static DebugEntity getInstance(AccessLog a, int accessId) {
         DebugEntity debug = new DebugEntity();
         
-        debug.set_id(_id);
+        debug.setAccessId(accessId);
         debug.setB(a.getBeginTime());
         debug.setSid(ApplicationUtils.getServiceId());
         debug.setUri(a.getUri());

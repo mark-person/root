@@ -113,7 +113,7 @@ public class AccessQueueConsumer {
 		// 访问日志、 访问日志索引、uri统计、sql统计、响应统计
 		try (LogTemplate t = new LogTemplate()) {
 			PersistenceImpl impl = PersistenceImpl.getInstance(t);
-			String _id = impl.insertAccess(accessEntity);
+			int accessId = impl.insertAccess(a);
 			impl.createAccessIndex(accessEntity);
 			impl.insertStatUri(a);
 			impl.insertStatSql(a);
@@ -121,7 +121,7 @@ public class AccessQueueConsumer {
 			DebugEntity debugEntity = null;
 			if (MonitorConfig.IS_DEBUG) {
 				// debug日志
-				debugEntity = DebugEntity.getInstance(a, _id);
+				debugEntity = DebugEntity.getInstance(a, accessId);
 				impl.insertDebug(debugEntity);
 			}
 
@@ -130,7 +130,7 @@ public class AccessQueueConsumer {
 				impl.insertResponse(a);
 			} else {
 				// 异常处理
-				debugEntity = debugEntity == null ? DebugEntity.getInstance(a, _id) : debugEntity;
+				debugEntity = debugEntity == null ? DebugEntity.getInstance(a, accessId) : debugEntity;
 				ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
 				impl.insertError(e, a.getThrowable(), debugEntity);
 			}

@@ -9,13 +9,9 @@ public class DateUtils {
 	
 	public final static String DATE_PATTERN = "yyyy-MM-dd";
 
-	public final static String SHORT_DATE_PATTERN = "yyyyMMdd";
 	
 	public static String today() {
 		return new SimpleDateFormat(DATE_PATTERN).format(new Date());
 	}
 	
-	public static String shortToday() {
-		return new SimpleDateFormat(SHORT_DATE_PATTERN).format(new Date());
-	}
 }
