@@ -6,14 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import com.mysql.cj.xdevapi.Column;
-import com.mysql.cj.xdevapi.DbDoc;
 import com.mysql.cj.xdevapi.DbDocImpl;
 import com.mysql.cj.xdevapi.JsonString;
 import com.mysql.cj.xdevapi.Row;
-import com.mysql.cj.xdevapi.Type;
 import com.ppx.cloud.common.jdbc.MyCriteria;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.page.Page;
@@ -179,22 +175,127 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	public List<Map<String, Object>> listStatUri(Page page, String uri) {
 		
 		List<Map<String, Object>> r = new ArrayList<Map<String, Object>>();
-		
-		
 		MyCriteria c = new MyCriteria("where");
 		c.addAnd("uri = ?", uri);
 		
 		try (LogTemplate t = new LogTemplate()) {
-			
-			
 			var cSql = new StringBuilder("select count(*) from stat_uri u").append(c);
-			var qSql = new StringBuilder("select u.*, m.uri_text from stat_uri u "
-					+ "left join map_uri_seq m on m.uri_seq = u.uri_seq").append(c).append(" order by u.lasted desc");
-			r = queryTablePage(t, page, cSql, qSql, null);
-			
+			var qSql = new StringBuilder("select u.*, m.uriText from stat_uri u "
+					+ "left join map_uri_seq m on m.uriSeq = u.uriSeq").append(c).append(" order by u.lasted desc");
+			r = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		
 		return r;
 	}
+	
+	public List<Map<String, Object>> listStatSql(Page page, String sql) {
+		
+		List<Map<String, Object>> r = new ArrayList<Map<String, Object>>();
+		MyCriteria c = new MyCriteria("where");
+		c.addAnd("sqlMd5 = ?", sql);
+		
+		try (LogTemplate t = new LogTemplate()) {
+			var cSql = new StringBuilder("select count(*) from stat_sql s").append(c);
+			var qSql = new StringBuilder("select s.*, m.sqlText from stat_sql s "
+					+ "left join map_sql_md5 m on m.sqlMd5 = s.sqlMd5").append(c).append(" order by s.lasted desc");
+			r = queryTablePage(t, page, cSql, qSql, c.getParaList());
+		}
+		
+		return r;
+	}
+	
+	public List<Map<String, Object>> listStatResponse(Page page, String serviceId) {
+		
+		List<Map<String, Object>> r = new ArrayList<Map<String, Object>>();
+		MyCriteria c = new MyCriteria("where");
+		c.addAnd("serviceId = ?", serviceId);
+		
+		try (LogTemplate t = new LogTemplate()) {
+			var cSql = new StringBuilder("select count(*) from stat_response r").append(c);
+			var qSql = new StringBuilder("select r.* from stat_response r").append(c).append(" order by r.hh desc");
+			r = queryTablePage(t, page, cSql, qSql, c.getParaList());
+		}
+		
+		return r;
+	}
+	
+	public List<Map<String, Object>> listStatWarning(Page page, String serviceId) {
+		
+		List<Map<String, Object>> r = new ArrayList<Map<String, Object>>();
+		MyCriteria c = new MyCriteria("where");
+		c.addAnd("serviceId = ?", serviceId);
+		
+		try (LogTemplate t = new LogTemplate()) {
+			var cSql = new StringBuilder("select count(*) from stat_warning w").append(c);
+			var qSql = new StringBuilder("select w.* from stat_warning w").append(c).append(" order by w.lasted desc");
+			r = queryTablePage(t, page, cSql, qSql, c.getParaList());
+		}
+		
+		return r;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public List<Map<String, Object>> listDebug(Page page, String sid) {
+		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
+		try (LogTemplate t = new LogTemplate()) {
+			
+			MyCriteria c = new MyCriteria("where");
+			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
+			
+			var cSql = new StringBuilder("select count(*) from col_debug").append(c);
+			var qSql = new StringBuilder("select doc from col_debug").append(c).append(" order by json_extract(doc, '$.b') desc");
+			List<Row> list = queryPage(t, page, cSql, qSql, c.getParaList());
+			for (Row row : list) {
+				Map<String, Object> map = new LinkedHashMap<String, Object>();
+				row.getDbDoc("doc").forEach((k, v) -> {
+					if (v instanceof DbDocImpl) {
+						Map<String, Object> mapmap = new LinkedHashMap<String, Object>();
+						((DbDocImpl)v).forEach((kk, vv) -> {
+							if (v instanceof JsonString) {
+								mapmap.put(kk, ((JsonString)vv).getString());
+							}
+							else {
+								mapmap.put(kk, vv.toString());
+							}
+						});
+						map.put(k, mapmap);
+					}
+					else if (v instanceof JsonString) {
+						map.put(k, ((JsonString)v).getString());
+					}
+					else {
+						map.put(k, v.toString());
+					}
+				});
+				returnList.add(map);
+			}
+		}
+		return returnList;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

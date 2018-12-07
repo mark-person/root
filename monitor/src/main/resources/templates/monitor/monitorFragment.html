@@ -14,9 +14,12 @@
     <li class="nav-item"><a class="nav-link" id="access"  th:href="@{/auto/monitorView/access}">访问日志</a></li>
     <li class="nav-item"><a class="nav-link" id="error"  th:href="@{/auto/monitorView/error}">error</a></li>
     <li class="nav-item"><a class="nav-link" id="gather"  th:href="@{/auto/monitorView/gather}">gather</a></li>
+      <li class="nav-item"><a class="nav-link" id="statUri"  th:href="@{/auto/monitorView/statUri}">statUri</a></li>
+       <li class="nav-item"><a class="nav-link" id="statResponse"  th:href="@{/auto/monitorView/statResponse}">statSql</a></li>
+        <li class="nav-item"><a class="nav-link" id="statWarning"  th:href="@{/auto/monitorView/statWarning}">statWarning</a></li>
       -->
       
-      <li class="nav-item"><a class="nav-link" id="statUri"  th:href="@{/auto/monitorView/statUri}">statUri</a></li>
+      <li class="nav-item"><a class="nav-link" id="debug"  th:href="@{/auto/monitorView/debug}">debug</a></li>
     
 </ul>
 <script type="text/javascript" th:inline="javascript">$("#" + [[${id}]]).addClass("active");</script>

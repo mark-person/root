@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:replace="common/fragment::common"/>
+<link th:replace="monitor/monitorFragment::monitor"/>
+
+<script type="text/javascript" th:inline="javascript">
+var controllerPath = contextPath + "auto/monitorView/";
+$(function() {
+	$("#pageDiv").page({url:controllerPath + "listStatSql", data:[[${list}]]});
+});
+
+
+function formatSql(obj) {
+	var output = sqlFormatter.format($(obj).prev().text());
+	$("#viewFormatSql").text(output);
+	$("#viewFormat").modal("show");
+}
+</script>
+</head>
+
+<body>
+<div class="container">
+
+<div th:replace="monitor/monitorFragment::nav('statSql')"></div>
+
+<div id="pageDiv" th:include="common/fragment::page('')">
+	<div th:fragment="query">
+		<label>服务：</label>
+		<input type="text" class="form-control" name="sid">
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
+	</div>
+	<table th:fragment="list">
+		<thead class="thead-light">
+		<tr>
+			<th class="w-id">SQL</th>
+			<th class="w-id">平均响应ms</th>
+			<th class="w-id">次数</th>
+			<th class="w-id">总时间ms</th>
+			<th class="w-id">最慢用时ms</th>
+			<th class="w-id">最初访问时间</th>
+			<th class="w-id">最后访问时间</th>
+			<th class="w-id">[~10,~100,~1s,~3s,~10s,~]</th>
+			<th class="w-id">最大结果集</th>
+			<th class="w-id">操作</th>
+		</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<table>
+		<tr th:fragment="template">
+			<td>{{v.sqlText}}</td>
+			<td>{{v.avgTime}}</td>
+			<td>{{v.times}}</td>
+			<td>{{v.totalTime}}</td>
+			<td>{{v.maxTime}}</td>
+			<td>{{v.firsted}}</td>
+			<td>{{v.lasted}}</td>
+			<td>{{v.distribute}}</td>
+			<td>{{v.maxSqlCount}}</td>
+			<td>
+				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<div th:replace="monitor/monitorFragment::viewDetail"></div>
+
+
+
+<div class="modal fade" id="viewFormat" tabindex="-1" role="dialog" >
+   <div class="modal-dialog" style="width:600px;"> 
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">格式化sql</h4>
+         </div>
+         <div class="modal-body" style="height:auto">
+         	<div class="form-group" style="width:100%;height:450px">      	
+         		<pre  id="viewFormatSql"  style="height:450px"></pre>
+         	</div>
+         </div>
+      </div>
+   </div>
+</div>
+
+</div>
+</body>
+</html>
+

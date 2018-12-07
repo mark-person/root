@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 
 import com.mysql.cj.xdevapi.Column;
 import com.mysql.cj.xdevapi.DbDoc;
+import com.mysql.cj.xdevapi.JsonNumber;
 import com.mysql.cj.xdevapi.JsonString;
 import com.mysql.cj.xdevapi.Row;
 import com.mysql.cj.xdevapi.SqlResult;
@@ -106,51 +107,51 @@ public class PersistenceSupport {
 		
 		List<Row> list = sr.fetchAll();
 		
-		
-		
-		
-		
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		List<Column> colList = sr.getColumns();
-		for (Column col : colList) {
-			System.out.println("out:" + col.getColumnName() + "||" + col.getType());
-		}
 		
 		for (Row row : list) {
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
-			for (Column col : colList) {
-				if (col.getType() == Type.INT) {
-					map.put(col.getColumnName(), row.getInt(col.getColumnName()));
-				}
-				else if (col.getType() == Type.TIMESTAMP) {
-					map.put(col.getColumnName(), row.getTimestamp(col.getColumnName()));
-				}
-				else if (col.getType() == Type.JSON) {
-					var r = row.getString(col.getColumnName());
-					if (!StringUtils.isEmpty(r) && r.startsWith("[")) {
-						map.put(col.getColumnName(), r);
-					}
-					else {
-						var v = row.getDbDoc(col.getColumnName());
-						Map<String, Object> mapmap = new LinkedHashMap<String, Object>();
-						((DbDoc)v).forEach((kk, vv) -> {
-							if (v instanceof JsonString) {
-								mapmap.put(kk, ((JsonString)vv).getString());
-							}
-							else {
-								mapmap.put(kk, vv.toString());
-							}
-						});
-						map.put(col.getColumnName(), mapmap);
-					}
-				}
-			}
-			
-			returnList.add(map);
+			returnList.add(getRowMap(row, colList));
 		}
 		return returnList;
 	}
 	
-	
-	
+	private Map<String, Object> getRowMap(Row row, List<Column> colList) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		for (Column col : colList) {
+			if (col.getType() == Type.INT) {
+				map.put(col.getColumnName(), row.getInt(col.getColumnName()));
+			}
+			else if (col.getType() == Type.TIMESTAMP) {
+				map.put(col.getColumnName(), row.getTimestamp(col.getColumnName()));
+			}
+			else if (col.getType() == Type.JSON) {
+				var r = row.getString(col.getColumnName());
+				// DbDoc不支持[]的json
+				if (!StringUtils.isEmpty(r) && r.startsWith("[")) {
+					map.put(col.getColumnName(), r);
+				}
+				else {
+					DbDoc doc = row.getDbDoc(col.getColumnName());
+					Map<String, Object> m = new LinkedHashMap<String, Object>();
+					doc.forEach((k, v) -> {
+						if (v instanceof JsonString) {
+							m.put(k, ((JsonString)v).getString());
+						}
+						else if (v instanceof JsonNumber) {
+							m.put(k, ((JsonNumber)v).getBigDecimal());
+						}
+						else {
+							m.put(k, v.toString());
+						}
+					});
+					map.put(col.getColumnName(), m);
+				}
+			}
+			else {
+				map.put(col.getColumnName(), row.getString(col.getColumnName()));
+			}
+		}
+		return map;
+	}
 }

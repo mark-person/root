@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:replace="common/fragment::common"/>
+<link th:replace="monitor/monitorFragment::monitor"/>
+
+<script type="text/javascript" th:inline="javascript">
+var controllerPath = contextPath + "auto/monitorView/";
+$(function() {
+	$("#pageDiv").page({url:controllerPath + "listStatWarning", data:[[${list}]]});
+});
+
+template.helper('toBinary', function(v) {
+	return v.toString(2);
+})
+ 
+
+</script>
+</head>
+
+<body>
+<div class="container">
+
+<div th:replace="monitor/monitorFragment::nav('statWarning')"></div>
+
+<div id="pageDiv" th:include="common/fragment::page('')">
+	<div th:fragment="query">
+		<label>服务：</label>
+		<input type="text" class="form-control" name="sid">
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
+		1:未关闭连接;2:for update不加事务;3:sql没有加上where;4:事务个数大于1;5:多个操作SQL没有事务6:sql注入风险7:
+	</div>
+	<table th:fragment="list">
+		<thead class="thead-light">
+		<tr>
+			<th class="w-id">URI</th>
+			<th class="w-id">最初访问时间</th>
+			<th class="w-id">最后访问时间</th>
+			<th class="w-id">警告内容</th>
+		</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<table>
+		<tr th:fragment="template">
+			<td>{{v.uri}}</td>
+			<td>{{v.firsted}}</td>
+			<td>{{v.lasted}}</td>
+			<td>{{toBinary(v.content)}}</td>
+		</tr>
+	</table>
+</div>
+
+
+
+
+
+</div>
+</body>
+</html>
+

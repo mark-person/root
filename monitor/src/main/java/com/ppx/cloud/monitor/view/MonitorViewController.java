@@ -61,7 +61,6 @@ public class MonitorViewController {
 		ModelAndView mv = new ModelAndView();
 		String today = DateUtils.shortToday();
 		mv.addObject("list", listAccess(new Page(), today, null));
-		mv.addObject("title", TITLE);
 		
 		return mv;
 	}
@@ -73,7 +72,6 @@ public class MonitorViewController {
 	public ModelAndView error() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", listError(new Page(), null));
-		mv.addObject("title", TITLE);
 		
 		return mv;
 	}
@@ -85,7 +83,6 @@ public class MonitorViewController {
 	public ModelAndView gather() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", listGather(new Page(), null));
-		mv.addObject("title", TITLE);
 		
 		return mv;
 	}
@@ -95,10 +92,8 @@ public class MonitorViewController {
 	}
 	
 	
-	public ModelAndView statUri() {
-		ModelAndView mv = new ModelAndView();
+	public ModelAndView statUri(ModelAndView mv) {
 		mv.addObject("list", listStatUri(new Page(), null));
-		mv.addObject("title", TITLE);
 		
 		return mv;
 	}
@@ -106,5 +101,40 @@ public class MonitorViewController {
 		List<Map<String, Object>> list = impl.listStatUri(page, uri);
 		return ControllerReturn.success(list, page);
 	}
+
+	public ModelAndView statSql(ModelAndView mv) {
+		mv.addObject("list", listStatSql(new Page(), null));
+		return mv;
+	}
+	public Map<?, ?> listStatSql(Page page, String sql) {
+		List<Map<String, Object>> list = impl.listStatSql(page, sql);
+		return ControllerReturn.success(list, page);
+	}
 	
+	public ModelAndView statResponse(ModelAndView mv) {
+		mv.addObject("list", listStatResponse(new Page(), null));
+		return mv;
+	}
+	public Map<?, ?> listStatResponse(Page page, String serviceId) {
+		List<Map<String, Object>> list = impl.listStatResponse(page, serviceId);
+		return ControllerReturn.success(list, page);
+	}
+	
+	public ModelAndView statWarning(ModelAndView mv) {
+		mv.addObject("list", listStatWarning(new Page(), null));
+		return mv;
+	}
+	public Map<?, ?> listStatWarning(Page page, String serviceId) {
+		List<Map<String, Object>> list = impl.listStatWarning(page, serviceId);
+		return ControllerReturn.success(list, page);
+	}
+	
+	public ModelAndView debug(ModelAndView mv) {
+		mv.addObject("list", listDebug(new Page(), null));
+		return mv;
+	}
+	public Map<?, ?> listDebug(Page page, String serviceId) {
+		List<Map<String, Object>> list = impl.listDebug(page, serviceId);
+		return ControllerReturn.success(list, page);
+	}
 }

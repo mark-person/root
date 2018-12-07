@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:replace="common/fragment::common"/>
+<link th:replace="monitor/monitorFragment::monitor"/>
+
+<script type="text/javascript" th:inline="javascript">
+var controllerPath = contextPath + "auto/monitorView/";
+$(function() {
+	$("#pageDiv").page({url:controllerPath + "listStatResponse", data:[[${list}]]});
+});
+
+
+function formatSql(obj) {
+	var output = sqlFormatter.format($(obj).prev().text());
+	$("#viewFormatSql").text(output);
+	$("#viewFormat").modal("show");
+}
+</script>
+</head>
+
+<body>
+<div class="container">
+
+<div th:replace="monitor/monitorFragment::nav('statResponse')"></div>
+
+<div id="pageDiv" th:include="common/fragment::page('')">
+	<div th:fragment="query">
+		<label>服务：</label>
+		<input type="text" class="form-control" name="sid">
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
+	</div>
+	<table th:fragment="list">
+		<thead class="thead-light">
+		<tr>
+			<th class="w-id">服务</th>
+			<th class="w-id">小时yyyyMMddHH</th>
+			<th class="w-id">平均响应时间ms</th>
+			<th class="w-id">次数</th>
+			<th class="w-id">操作</th>
+		</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<table>
+		<tr th:fragment="template">
+			<td>{{v.serviceId}}</td>
+			<td>{{v.hh}}</td>
+			<td>{{v.avgTime}}</td>
+			<td>{{v.times}}</td>
+			<td>{{v.totalTime}}</td>
+		</tr>
+	</table>
+</div>
+
+
+
+
+
+</div>
+</body>
+</html>
+

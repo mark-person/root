@@ -118,7 +118,7 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	public void insertStatUri(AccessLog a) {
 
-		MyUpdate update = MyUpdate.getInstanceSql(true, TABLE_STAT_URI, "uri_seq", "(select uriSeq from map_uri_seq where uriText = '" + a.getUri() + "')");
+		MyUpdate update = MyUpdate.getInstanceSql(true, TABLE_STAT_URI, "uriSeq", "(select uriSeq from map_uri_seq where uriText = '" + a.getUri() + "')");
 		int spendTime = (int) (a.getSpendNanoTime() / 1e6);
 		update.inc("times", 1);
 		update.inc("totalTime", spendTime);

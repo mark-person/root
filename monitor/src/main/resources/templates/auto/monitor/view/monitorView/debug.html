@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:replace="common/fragment::common"/>
+<link th:replace="monitor/monitorFragment::monitor"/>
+
+<script type="text/javascript" th:inline="javascript">
+var controllerPath = contextPath + "auto/monitorView/";
+$(function() {
+	$("#pageDiv").page({url:controllerPath + "listDebug", data:[[${list}]]});
+});
+
+ 
+
+</script>
+</head>
+
+<body>
+<div class="container">
+
+<div th:replace="monitor/monitorFragment::nav('debugs')"></div>
+
+<div id="pageDiv" th:include="common/fragment::page('')">
+	<div th:fragment="query">
+		<label>服务：</label>
+		<input type="text" class="form-control" name="sid">
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
+	</div>
+	<table th:fragment="list">
+		<thead class="thead-light">
+		<tr>
+			<th class="w-id">服务</th>
+			<th class="w-id">访问时间</th>
+			<th class="w-id">URI</th>
+			<th class="w-id">queryString</th>
+			<th class="w-id">花费时间ms</th>
+			<th class="w-id">IP</th>
+			<th class="w-id">异常</th>
+			<th class="w-id">marker</th>
+			<th class="w-id">操作</th>
+		</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<table>
+		<tr th:fragment="template">
+			<td>{{v.b}}</td>
+			<td>{{v.firsted}}</td>
+			<td>{{v.lasted}}</td>
+			<td></td>
+		</tr>
+	</table>
+</div>
+
+
+
+
+
+</div>
+</body>
+</html>
+
