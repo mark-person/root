@@ -53,12 +53,13 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
         OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
         MonitorUtils.setOperatingSystemMXBean(operatingSystemMXBean);
     	
+        Date startTime = new Date(ManagementFactory.getRuntimeMXBean().getStartTime());
     	
     	var serviceInfo = getServiceInfo();
     	var startInfo = getStartInfo();
     	try (LogTemplate t = new LogTemplate()) {
     		PersistenceImpl impl = PersistenceImpl.getInstance(t);
-    		impl.insertStart(serviceInfo, startInfo);
+    		impl.insertStart(serviceInfo, startInfo, startTime);
     		impl.createFixedIndex();
     	}
     	
@@ -162,9 +163,7 @@ CREATE TABLE `map_uri_seq` (
     	// 启动日志     
     	Properties p = System.getProperties();
         Map<String, Object> startMap = new LinkedHashMap<String, Object>();
-        startMap.put("sid", ApplicationUtils.getServiceId());
         startMap.put("profiles", env.getProperty("spring.profiles.active"));
-        startMap.put("startTime", new Date(ManagementFactory.getRuntimeMXBean().getStartTime()));
         startMap.put("artifactId", env.getProperty("info.app.artifactId"));
         startMap.put("version", env.getProperty("info.app.version"));
         startMap.put("springDatasourceUrl", env.getProperty("spring.datasource.url"));

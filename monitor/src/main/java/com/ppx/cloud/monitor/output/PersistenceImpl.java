@@ -1,7 +1,6 @@
 package com.ppx.cloud.monitor.output;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Date;
@@ -13,7 +12,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import org.thymeleaf.expression.Maps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mysql.cj.xdevapi.Row;
@@ -54,22 +52,22 @@ public class PersistenceImpl extends PersistenceSupport {
 		return impl;
 	}
 
-	public void insertStart(Map<String, Object> serviceInfo,  Map<String, Object> startInfo) {
+	public void insertStart(Map<String, Object> serviceInfo,  Map<String, Object> startInfo, Date startTime) {
+		// 服务
 		MyUpdate updateSql = MyUpdate.getInstance(true, TABLE_SERVICE, "serviceId", ApplicationUtils.getServiceId());
 		updateSql.setJson("serviceInfo", serviceInfo);
 		updateSql.execute(t);
 		
-		t.add(COL_START, startInfo);
+		// 启动
+		String info = toJson(startInfo);
+		String startupSql = "insert into startup(startupTime, serviceId, info) values(?, ?, ?)";
+		List<Object> bindValue = Arrays.asList(startTime, ApplicationUtils.getServiceId(), info);
+		t.sql(startupSql, bindValue);
 		
+		// 配置
 		MyUpdate confUpdate = MyUpdate.getInstance(true, TABLE_CONF, "serviceId", ApplicationUtils.getServiceId());
-        if (MonitorConfig.IS_DEV) {
-        	confUpdate.set("isDebug", 1);
-        	confUpdate.set("isWarning", 1);
-        }
-        else {
-        	confUpdate.set("isDebug", 0);
-        	confUpdate.set("isWarning", 0);
-        }
+        confUpdate.set("isDebug", MonitorConfig.IS_DEV ? 1 : 0);
+    	confUpdate.set("isWarning", MonitorConfig.IS_DEV ? 1 : 0);
         confUpdate.set("gatherInterval", MonitorConfig.GATHER_INTERVAL);
         confUpdate.set("dumpMaxTime", MonitorConfig.DUMP_MAX_TIME);
         confUpdate.set("modified", new Date());
@@ -79,7 +77,7 @@ public class PersistenceImpl extends PersistenceSupport {
 	public void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
 		t.add(COL_GATHER, gatherMap);
 		
-		//updateSql
+		// updateSql
 		MyUpdate updateSql = MyUpdate.getInstance(false, TABLE_SERVICE, "serviceId", ApplicationUtils.getServiceId());
 		updateSql.setJson("serviceLastInfo", lastUpdate);
 		updateSql.execute(t);
@@ -88,26 +86,15 @@ public class PersistenceImpl extends PersistenceSupport {
 	// 返回accessId
 	public int insertAccess(AccessLog a) {
 		String[] timeStr = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()).split(" ");
-		
 		long useMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
         
-		var map = Map.of("ip", a.getIp(), "q", a.getQueryString() == null ? "" : a.getQueryString(), "mem", useMemory, "uid", -1);
-		
-		String info = "";
-		try {
-			info = new ObjectMappingCustomer().writeValueAsString(map);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "uid", -1);
+		String info = toJson(map);
 		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUri(), a.getSpendTime(), info);
 		String sql = "insert into access(accessDate, accessTime, serviceId, uri, spendTime, info) values(?, ?, ?, ?, ?)";
 		t.sql(sql, bindValue);
 		
 		int accessId = getLastInsertId(t);
-		
 		return accessId;
 	}
 
@@ -398,5 +385,31 @@ public class PersistenceImpl extends PersistenceSupport {
 					"JSON_SET(distribute, '$[5]', JSON_EXTRACT(distribute, '$[5]') + 1)");
 		}
 	}
+	
+	private String toJson(Object obj) {
+		String r = "";
+		try {
+			r = new ObjectMappingCustomer().writeValueAsString(obj);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+		return r;
+	}
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

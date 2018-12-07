@@ -122,7 +122,7 @@ public class AccessLog {
     }
 
     public String getQueryString() {
-        return queryString;
+    	return (queryString == null) ? "" : queryString;
     }
 
     public void setQueryString(String queryString) {
