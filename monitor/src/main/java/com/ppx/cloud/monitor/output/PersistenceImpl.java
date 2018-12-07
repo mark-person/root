@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.thymeleaf.expression.Maps;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mysql.cj.xdevapi.Row;
 import com.mysql.cj.xdevapi.SqlResult;
+import com.ppx.cloud.common.config.ObjectMappingCustomer;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
@@ -86,14 +88,22 @@ public class PersistenceImpl extends PersistenceSupport {
 	// 返回accessId
 	public int insertAccess(AccessLog a) {
 		String[] timeStr = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()).split(" ");
-		 
 		
 		long useMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
         
-		var info = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "uid", -1);
+		var map = Map.of("ip", a.getIp(), "q", a.getQueryString() == null ? "" : a.getQueryString(), "mem", useMemory, "uid", -1);
 		
-		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getSpendTime(), info);
-		String sql = "insert into access(accessDate, accessTime, serviceId, spendTime, info) values(?, ?, ?, ?, ?)";
+		String info = "";
+		try {
+			info = new ObjectMappingCustomer().writeValueAsString(map);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUri(), a.getSpendTime(), info);
+		String sql = "insert into access(accessDate, accessTime, serviceId, uri, spendTime, info) values(?, ?, ?, ?, ?)";
 		t.sql(sql, bindValue);
 		
 		int accessId = getLastInsertId(t);

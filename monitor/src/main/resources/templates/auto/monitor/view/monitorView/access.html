@@ -59,15 +59,15 @@ $(function() {
 	</table>
 	<table>
 		<tr th:fragment="template">
-			<td>{{v.sid}}</td>
-			<td>{{v.b}}</td>
+			<td>{{v.serviceId}}</td>
+			<td>{{v.accessDate}}</td>
 			<td>{{v.uri}}</td>
-			<td>{{v.str}}</td>
-			<td>{{v.s}}</td>
-			<td>{{v.ip}}</td>
-			<td>{{v.mem}}</td>
-			<td>{{v.aid}}</td>
-			<td class="w-id">{{if v.marker != null}}{{v.marker.join(",")}}{{/if}}</td>
+			<td>{{v.info.q}}</td>
+			<td>{{v.spendTime}}</td>
+			<td>{{v.info.ip}}</td>
+			<td>{{v.info.mem}}</td>
+			<td>{{v.info.uid}}</td>
+			<td class="w-id"></td>
 			<td>
 				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>
 			</td>

@@ -37,7 +37,6 @@ public class MonitorViewController {
     public ModelAndView service() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", listAllService(new Page()));
-		mv.addObject("title", TITLE);
 		return mv;
 	}
 	
@@ -49,7 +48,6 @@ public class MonitorViewController {
 	public ModelAndView start() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", listStart(new Page(), null));
-		mv.addObject("title", TITLE);
 		return mv;
 	}
 	public Map<?, ?> listStart(Page page, String sid) {
@@ -59,8 +57,8 @@ public class MonitorViewController {
 	
 	public ModelAndView access() {
 		ModelAndView mv = new ModelAndView();
-		//String today = DateUtils.shortToday();
-		//mv.addObject("list", listAccess(new Page(), today, null));
+		String today = DateUtils.today();
+		mv.addObject("list", listAccess(new Page(), today, null));
 		
 		return mv;
 	}

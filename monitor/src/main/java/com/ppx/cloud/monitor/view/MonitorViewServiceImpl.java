@@ -50,16 +50,17 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	}
 
 	
-	public List<Map<String, Object>> listAccess(Page page, String date, String sid) {
+	public List<Map<String, Object>> listAccess(Page page, String date, String serviceId) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			
 			MyCriteria c = new MyCriteria("where");
-			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
+			c.addAnd("accessDate = ?", date);
+			c.addAnd("serviceId = ?", serviceId);
 			
-			var cSql = new StringBuilder("select count(*) from col_access" + date).append(c);
-			var qSql = new StringBuilder("select doc from col_access" + date).append(c).append(" order by json_extract(doc, '$.b') desc");
-			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
+			var cSql = new StringBuilder("select count(*) from access").append(c);
+			var qSql = new StringBuilder("select * from access").append(c).append(" order by accessTime desc");
+			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}

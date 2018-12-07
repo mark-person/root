@@ -134,17 +134,19 @@ public class PersistenceSupport {
 				else {
 					DbDoc doc = row.getDbDoc(col.getColumnName());
 					Map<String, Object> m = new LinkedHashMap<String, Object>();
-					doc.forEach((k, v) -> {
-						if (v instanceof JsonString) {
-							m.put(k, ((JsonString)v).getString());
-						}
-						else if (v instanceof JsonNumber) {
-							m.put(k, ((JsonNumber)v).getBigDecimal());
-						}
-						else {
-							m.put(k, v.toString());
-						}
-					});
+					if (doc != null) {
+						doc.forEach((k, v) -> {
+							if (v instanceof JsonString) {
+								m.put(k, ((JsonString)v).getString());
+							}
+							else if (v instanceof JsonNumber) {
+								m.put(k, ((JsonNumber)v).getBigDecimal());
+							}
+							else {
+								m.put(k, v.toString());
+							}
+						});
+					}
 					map.put(col.getColumnName(), m);
 				}
 			}
