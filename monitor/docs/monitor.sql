@@ -14,7 +14,7 @@ partition by hash (dayofmonth(accessDate)) partitions 10
 create table access_log (
 	access_id int not null primary key,
     marker varchar(16),
-    log varchar(1000)
+    log varchar(1024)
 )
 
 create table access_log (
@@ -33,37 +33,37 @@ create table startup (
 )
 
 create table service (
-	serviceId		varchar(32) NOT NULL,
+	serviceId		varchar(32) not NULL,
 	serviceInfo 	json,
 	serviceLastInfo json,
-	servicePrio 	tinyint NOT NULL default -1,
-	serviceDisplay 	tinyint NOT NULL default 1,
-	PRIMARY KEY (serviceId)
+	servicePrio 	tinyint not NULL default -1,
+	serviceDisplay 	tinyint not NULL default 1,
+	primary key (serviceId)
 );
 
 create table conf (
-	serviceId 			 varchar(32) NOT NULL,
-    isDebug 			 tinyint NOT NULL,
-    isWarning 			 tinyint NOT NULL,
-    gatherInterval 	 	 int NOT NULL, 
-    dumpMaxTime 	     int NOT NULL,
+	serviceId 			 varchar(32) not NULL,
+    isDebug 			 tinyint not NULL,
+    isWarning 			 tinyint not NULL,
+    gatherInterval 	 	 int not NULL, 
+    dumpMaxTime 	     int not NULL,
     created 			 timestamp not null default current_timestamp,
     modified  			 timestamp not null default current_timestamp,
-    PRIMARY KEY (service_id)
+    primary key (service_id)
 );
 
 create table map_uri_seq (
-  uriSeq int(11) NOT NULL AUTO_INCREMENT,
-  uriText varchar(250) NOT NULL,
-  PRIMARY KEY (uri_seq)
+  uriSeq int(11) not NULL AUTO_INCREMENT,
+  uriText varchar(250) not NULL,
+  primary key (uri_seq)
 );
 
-ALTER TABLE  `map_uri_seq` 
-ADD UNIQUE INDEX `idx_map_uri_text` (`uriText` ASC) VISIBLE;
+alter table  map_uri_seq 
+add unique index idx_map_uri_text (uriText ASC) VISIBLE;
 
 create table map_sql_md5 (
-  sqlMd5 varchar(32) NOT NULL,
-  sqlText varchar(2048) DEFAULT NULL,
+  sqlMd5 varchar(32) not NULL,
+  sqlText varchar(2048) default NULL,
   PRIMARY KEY (sqlMd5)
 );
 
@@ -94,8 +94,8 @@ create table stat_sql (
 );
 
 create table stat_response (
-	serviceId 	 varchar(32) NOT NULL,
-	hh 			 varchar(10) NOT NULL,
+	serviceId 	 varchar(32) not NULL,
+	hh 			 varchar(10) not NULL,
 	times int not null default 1,
     totalTime int not null default 1,
     maxTime int not null,
@@ -112,8 +112,6 @@ create table stat_warning (
 
 
 
-
-ip,uri,marker(另创建一张表)
 
 
 

@@ -113,8 +113,8 @@ public class PersistenceImpl extends PersistenceSupport {
 			
 			String logSql = "insert into access_log(access_id, marker, log) values(?, ?, ?)";
 			logMap.forEach((k, v) -> {
-				if (v.length() > 1000) {
-					v = v.substring(0, 1000 - 3) + "...";
+				if (v.length() > 1024) {
+					v = v.substring(0, 1024 - 3) + "...";
 				}
 				List<Object> logBindValue = Arrays.asList(accessId, k, v);
 				t.sql(logSql, logBindValue);
