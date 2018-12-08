@@ -442,9 +442,9 @@ public final class Logger implements org.slf4j.Logger, LocationAwareLogger, Appe
          */
         AccessLog accessLog = TaskThread.getAccessLog();
         if (accessLog != null) {
-            if (marker != null) {
-                accessLog.addMarker(marker.getName());
-            }
+//            if (marker != null) {
+//                accessLog.addMarker(marker.getName());
+//            }
             
             if (t != null) {
                 accessLog.setThrowable(t); 
@@ -452,11 +452,14 @@ public final class Logger implements org.slf4j.Logger, LocationAwareLogger, Appe
             else {
                 String classMsg = le.getCallerData()[0].toString();
                 classMsg = classMsg.substring(classMsg.indexOf("("));
-                if (MonitorConfig.IS_DEBUG) {
-                    accessLog.addLog(getHHMmSsSss() + le.toString() + classMsg);
-                }
-                else if (level.toInt() >= Level.INFO_INT) {
-                    accessLog.addLog(getHHMmSsSss() + le.toString() + classMsg);
+                if (MonitorConfig.IS_DEBUG || level.toInt() >= Level.INFO_INT) {
+                	// 加上" "方便控制台直接点击找到对应的class
+                    if (marker == null) {
+                    	accessLog.addLog(getHHMmSsSss() + le.toString() + " " + classMsg);
+                    }
+                    else {
+                    	accessLog.addLog("" + marker.getName() + "<<m>>" + getHHMmSsSss() + le.toString() + " " + classMsg);
+                    }
                 }
             }
         }

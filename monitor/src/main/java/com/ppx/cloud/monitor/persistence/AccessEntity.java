@@ -164,7 +164,6 @@ public class AccessEntity {
         entity.setStr(a.getQueryString());
         entity.setAid(a.getAccountId());
         entity.setKey(a.getCacheKey());
-        entity.setMarker(a.getMarker());
         entity.setR(a.getReferer());
         
         long useMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());

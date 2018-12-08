@@ -11,6 +11,19 @@ create table access (
 )
 partition by hash (dayofmonth(accessDate)) partitions 10
 
+create table access_log (
+	access_id int not null primary key,
+    marker varchar(16),
+    log varchar(1000)
+)
+
+create table access_log (
+	access_id int not null,
+    marker varchar(16),
+    log json,
+    primary key(access_id, marker)
+)
+
 create table startup (
 	startupId		int not null auto_increment,
 	startupTime		datetime not null,
@@ -18,7 +31,6 @@ create table startup (
 	info			json,
 	primary key (startupId)
 )
-
 
 create table service (
 	serviceId		varchar(32) NOT NULL,

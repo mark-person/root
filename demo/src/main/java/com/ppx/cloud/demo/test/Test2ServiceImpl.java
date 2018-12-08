@@ -9,6 +9,7 @@ import java.util.HashMap;
 import org.slf4j.MarkerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
 @Service
 public class Test2ServiceImpl extends MyDaoSupport {
 	
-	// private Logger logger = LoggerFactory.getLogger(Test2ServiceImpl.class);
+	private Logger logger = LoggerFactory.getLogger(Test2ServiceImpl.class);
 	// logger.debug(MarkerFactory.getMarker("123"), "xxxxx");
 
 	public void test() {
@@ -78,5 +79,7 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		//getJdbcTemplate().queryForList("select * from test limit ?", 3);
 	
 		
+		logger.info("myInfo 001");
+		logger.info(MarkerFactory.getMarker("marker001"), "myInfo 002");
 	}
 }

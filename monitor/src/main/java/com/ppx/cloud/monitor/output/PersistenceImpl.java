@@ -1,6 +1,7 @@
 package com.ppx.cloud.monitor.output;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Date;
@@ -91,10 +92,35 @@ public class PersistenceImpl extends PersistenceSupport {
 		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "uid", -1);
 		String info = toJson(map);
 		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUri(), a.getSpendTime(), info);
-		String sql = "insert into access(accessDate, accessTime, serviceId, uri, spendTime, info) values(?, ?, ?, ?, ?)";
+		String sql = "insert into access(accessDate, accessTime, serviceId, uri, spendTime, info) values(?, ?, ?, ?, ?, ?)";
 		t.sql(sql, bindValue);
 		
 		int accessId = getLastInsertId(t);
+		
+		if (!a.getLog().isEmpty()) {
+			var logMap = new LinkedHashMap<String, String>();
+			a.getLog().forEach(s -> {
+				// marker<<m>>log
+				String[] ss = s.split("<<m>>");
+				String marker = "0";
+				String log = s;
+				if (ss.length == 2) {
+					marker = ss[0];
+					log = ss[1];
+				}
+				logMap.put(marker, (logMap.get(marker) == null ? "" : logMap.get(marker)) + log);
+			});
+			
+			String logSql = "insert into access_log(access_id, marker, log) values(?, ?, ?)";
+			logMap.forEach((k, v) -> {
+				if (v.length() > 1000) {
+					v = v.substring(0, 1000 - 3) + "...";
+				}
+				List<Object> logBindValue = Arrays.asList(accessId, k, v);
+				t.sql(logSql, logBindValue);
+			});
+		}
+		
 		return accessId;
 	}
 
@@ -257,7 +283,7 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	public void insertWarning(AccessLog a, BitSet content) {
 		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_WARNING, "uri", a.getUri());
-		update.setJson("lasted", a.getBeginTime());
+		update.set("lasted", a.getBeginTime());
 		update.setSql("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
 		update.execute(t);
 	}

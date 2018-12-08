@@ -114,7 +114,6 @@ public class ErrorEntity {
         error.set_id(_id);
         error.setB(a.getBeginTime());
         error.setUri(a.getUri());
-        error.setMarker(a.getMarker());
         error.setMsg(a.getThrowable().getMessage());
         error.setSid(ApplicationUtils.getServiceId());
         return error;

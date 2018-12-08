@@ -46,9 +46,7 @@ public class AccessLog {
     private int releaseConnTimes = 0;
     
     private String cacheKey;
-    // org.slf4j.Marker 用来搜索
-    private List<String> marker;
-    // logger.debug和logger.info日志， logger.error存入throwable
+    // logger.debug和logger.info日志， logger.error存入throwable (包含marker)
     private List<String> log;
     
     // 输入参数(LogConfig.isDebug控制)
@@ -299,21 +297,6 @@ public class AccessLog {
             this.log = new ArrayList<String>(5);
         }
         this.log.add(msg);
-    }
-
-    public List<String> getMarker() {
-        return marker;
-    }
-
-    public void setMarker(List<String> marker) {
-        this.marker = marker;
-    }
-    
-    public void addMarker(String msg) {
-        if (this.marker == null) {
-            this.marker = new ArrayList<String>(2);
-        }
-        this.marker.add(msg);
     }
     
     public String getReferer() {

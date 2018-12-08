@@ -163,7 +163,6 @@ public class DebugEntity {
         debug.setB(a.getBeginTime());
         debug.setSid(ApplicationUtils.getServiceId());
         debug.setUri(a.getUri());
-        debug.setMarker(a.getMarker());
 
         // SQL部分
         debug.setSql(a.getSqlList().isEmpty() ? null : a.getSqlList());
