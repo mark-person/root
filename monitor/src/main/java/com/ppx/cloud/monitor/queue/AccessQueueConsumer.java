@@ -114,7 +114,6 @@ public class AccessQueueConsumer {
 		try (LogTemplate t = new LogTemplate()) {
 			PersistenceImpl impl = PersistenceImpl.getInstance(t);
 			int accessId = impl.insertAccess(a);
-			impl.createAccessIndex(accessEntity);
 			impl.insertStatUri(a);
 			impl.insertStatSql(a);
 

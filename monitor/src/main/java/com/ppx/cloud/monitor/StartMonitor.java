@@ -60,7 +60,6 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     	try (LogTemplate t = new LogTemplate()) {
     		PersistenceImpl impl = PersistenceImpl.getInstance(t);
     		impl.insertStart(serviceInfo, startInfo, startTime);
-    		impl.createFixedIndex();
     	}
     	
 

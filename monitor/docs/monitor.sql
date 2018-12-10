@@ -78,6 +78,7 @@ create table debug (
 	serviceId 	varchar(32) not null,
 	debugTime	datetime not null,
 	uriSeq 		int not null,
+	info		json
 	primary key (accessId)
 );
 
