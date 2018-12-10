@@ -64,25 +64,17 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     	}
     	
 
-    	
-    
-    	
-    	String cacheSqlMd5 = "select sqlMd5 from stat_sql order by times desc limit 1000";
-    	
-    	String cacheUrl = "select u.uriSeq, s.uriText,  u.maxTime from stat_uri u join map_uri_seq s on u.uriSeq = s.uriSeq order by u.times desc limit 1000";
-
     	try (LogTemplate t = new LogTemplate()) {
-			String md5Sql = "select sqlMd5 from stat_sql order by times desc limit 1000";
+			String md5Sql = "select sqlMd5, maxTime from stat_sql order by times desc limit 1000";
     		SqlResult md5Result = t.sql(md5Sql);
     		md5Result.forEach(r -> {
-    			
-    			//MonitorCache.addSqlMd5(r.getString("sql_md5"));
+    			MonitorCache.putSqlMaxTime(r.getString("sqlMd5"), r.getInt("maxTime"));
     		});
 		
-    		String uriSql = "select u.uriSeq, s.uriText,from stat_uri u join map_uri_seq s on u.uriSeq = s.uriSeq order by u.times desc limit 1000";
+    		String uriSql = "select u.uriSeq, s.uriText, u.maxTime from stat_uri u join map_uri_seq s on u.uriSeq = s.uriSeq order by u.times desc limit 1000";
     		SqlResult uriResult = t.sql(uriSql);
     		uriResult.forEach(r -> {
-    			MonitorCache.addSeqUri(r.getInt("uriSeq"), r.getString("uriText"));
+    			MonitorCache.putUri(r.getString("uriText"), r.getInt("uriSeq"), r.getInt("maxTime"));
     		});
     	}
     	

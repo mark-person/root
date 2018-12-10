@@ -137,10 +137,12 @@ public class AccessLog {
     
     public void addSql(String sql) {
     	String sqlMd5 = MD5Utils.getMD5(sql);
-    	if (MonitorCache.getSqlPojo(sqlMd5) != null) {
-    		 sqlList.add(sqlMd5);
+    	
+    	// 存过在缓存时，存入sqlMd5，否则保存原SQL
+    	if (MonitorCache.getSqlMaxTime(sqlMd5) != null) {
+    		sqlList.add(sqlMd5);
     		 if (MonitorConfig.IS_DEV) {
-    			 MonitorCache.addMd5Sql(sqlMd5, sql); 
+    			 MonitorCache.addMd5SqlDev(sqlMd5, sql); 
     		 }
     	}
     	else {

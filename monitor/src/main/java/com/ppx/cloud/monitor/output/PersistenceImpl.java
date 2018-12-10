@@ -1,11 +1,9 @@
 package com.ppx.cloud.monitor.output;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +24,8 @@ import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
-import com.ppx.cloud.monitor.cache.SqlPojo;
 import com.ppx.cloud.monitor.cache.UriPojo;
 import com.ppx.cloud.monitor.config.MonitorConfig;
-import com.ppx.cloud.monitor.persistence.AccessEntity;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 import com.ppx.cloud.monitor.pojo.DebugEntity;
 import com.ppx.cloud.monitor.pojo.ErrorEntity;
@@ -94,12 +90,12 @@ public class PersistenceImpl extends PersistenceSupport {
 		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "uid", -1);
 		String info = toJson(map);
 		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUri(), a.getSpendTime(), info);
-		String sql = "insert into access(accessDate, accessTime, serviceId, uri, spendTime, info) values(?, ?, ?, ?, ?, ?)";
+		String sql = "insert into access(accessDate, accessTime, serviceId, uriSeq, spendTime, info) values(?, ?, ?, ?, ?, ?)";
 		t.sql(sql, bindValue);
 		
 		int accessId = getLastInsertId(t);
 		
-		if (!a.getLog().isEmpty()) {
+		if (a.getLog() != null) {
 			var logMap = new LinkedHashMap<String, String>();
 			a.getLog().forEach(s -> {
 				// marker<<m>>log
@@ -113,7 +109,7 @@ public class PersistenceImpl extends PersistenceSupport {
 				logMap.put(marker, (logMap.get(marker) == null ? "" : logMap.get(marker)) + log);
 			});
 			
-			String logSql = "insert into access_log(access_id, marker, log) values(?, ?, ?)";
+			String logSql = "insert into access_log(accessId, marker, log) values(?, ?, ?)";
 			logMap.forEach((k, v) -> {
 				if (v.length() > 1024) {
 					v = v.substring(0, 1024 - 3) + "...";
@@ -206,8 +202,11 @@ public class PersistenceImpl extends PersistenceSupport {
 
 			String sqlText = a.getSqlList().get(i);
 			String sqlMd5 = sqlText;
-			if (sqlText.length() != 32) {
+			if (sqlText.length() != 32 || sqlText.indexOf(" ") > 0) {
+				// 非缓存md5的值
 				sqlMd5 = MD5Utils.getMD5(sqlText);
+				t.sql("insert into map_sql_md5(sqlMd5, sqlText) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sqlMd5 = ?)",
+						Arrays.asList(sqlMd5, sqlText, sqlMd5));
 			}
 			// sql执行异常时，长度不一样
 			MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_SQL, "sqlMd5", sqlMd5);
@@ -228,19 +227,13 @@ public class PersistenceImpl extends PersistenceSupport {
 			update.setSql("avgTime", "totalTime/times");
 
 			// maxTime, 缓存uri最大的maxTime值
-			SqlPojo sqlPojo = MonitorCache.getSqlPojo(a.getSqlList().get(i));
-			if (sqlPojo == null || spendTime > sqlPojo.getMaxTime()) {
+			Integer maxTime = MonitorCache.getSqlMaxTime(a.getSqlList().get(i));
+			if (maxTime == null || spendTime > maxTime) {
 				Map<String, Object> maxMap = getSqlMaxDetail(a, i);
 				update.max("maxTime", spendTime, "maxDetail", maxMap);
-
-				if (sqlPojo != null) {
-					sqlPojo.setMaxTime(spendTime);
-				}
+				MonitorCache.putSqlMaxTime(a.getSqlList().get(i), spendTime);
 			}
-			t.sql("insert into map_sql_md5(sqlMd5, sqlText) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sqlMd5 = ?)",
-					Arrays.asList(sqlMd5, sqlText, sqlMd5));
 			update.execute(t);
-
 		}
 
 	}

@@ -28,11 +28,12 @@ public class AccessLogUtils {
 		String beginTime = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime());
 
 		String uri = a.getUri();
-		Pattern pattern = Pattern.compile("[0-9]*");
-		if (pattern.matcher(uri).matches()) {
-			uri = MonitorCache.getSeqUri(Integer.parseInt(uri));
-			uri = uri == null ? a.getUri() : uri;
-		}
+		// 开发环境URI转换
+//		Pattern pattern = Pattern.compile("[0-9]*");
+//		if (pattern.matcher(uri).matches()) {
+//			uri = MonitorCache.getSeqUri(Integer.parseInt(uri));
+//			uri = uri == null ? a.getUri() : uri;
+//		}
 		
 		
 		StringBuilder accessSb = new StringBuilder(a.getIp()).append("[").append(beginTime).append("]")
@@ -55,13 +56,15 @@ public class AccessLogUtils {
 			infoList.add("cache:" + a.getCacheKey());
 		}
 
+		
 		if (a.getSqlList().size() > 0) {
-			for (int i = 0; i < a.getSqlList().size(); i++) {
-				String v = a.getSqlList().get(i);
-				v = MonitorCache.getMd5Sql(v);
-				v = v == null ? a.getSqlList().get(i) : v;
-				a.getSqlList().set(i, v);
-			}
+			// 开发环境SQL转换
+//			for (int i = 0; i < a.getSqlList().size(); i++) {
+//				String v = a.getSqlList().get(i);
+//				v = MonitorCache.getMd5Sql(v);
+//				v = v == null ? a.getSqlList().get(i) : v;
+//				a.getSqlList().set(i, v);
+//			}
 
 			String sql = StringUtils.collectionToDelimitedString(a.getSqlList(), "\r\n        ");
 			infoList.add("sqlText:" + sql);

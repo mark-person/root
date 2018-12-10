@@ -4,7 +4,7 @@ create table access (
 	accessDate 	date not null,
 	accessTime	time not null,
 	serviceId 	varchar(32) not null,
-	uri 		varchar(128) not null,
+	uriSeq		int not null,
 	spendTime 	int not null,
 	info 		json,
 	primary key (accessId, accessDate)

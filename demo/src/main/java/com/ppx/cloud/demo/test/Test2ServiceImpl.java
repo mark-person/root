@@ -50,7 +50,7 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		para.put("test_name", "name");
 		para.put("xxxx", 2222);
 		
-		int c = nameTemplate.queryForObject("select count(*) from test where test_name like :test_name '%'", para, Integer.class);
+		int c = nameTemplate.queryForObject("select count(*) a from test where test_name like :test_name '%'", para, Integer.class);
 		
 		int cc = nameTemplate.queryForObject("select count(*) from test where test_name like :test_name '%'", para, Integer.class);
 		
@@ -79,7 +79,7 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		//getJdbcTemplate().queryForList("select * from test limit ?", 3);
 	
 		
-		logger.info("myInfo 001");
-		logger.info(MarkerFactory.getMarker("marker001"), "myInfo 002");
+		//logger.info("myInfo 001");
+		//logger.info(MarkerFactory.getMarker("marker001"), "myInfo 002");
 	}
 }
