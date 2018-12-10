@@ -85,7 +85,7 @@ public class PersistenceImpl extends PersistenceSupport {
 	public int insertAccess(AccessLog a) {
 		
 		if (a.getUriSeq() == null) {
-			t.sql("insert into map_uri_seq(uriText) values('" + a.getUri() + "')");
+			t.sql("insert ignore into map_uri_seq(uriText) values('" + a.getUri() + "')");
 			
 			String seqSql = "select uriSeq from map_uri_seq where uriText = '\" + a.getUri() + \"'";
 			int uriSeq = t.sql(seqSql).fetchOne().getInt("uriSeq");
@@ -97,7 +97,7 @@ public class PersistenceImpl extends PersistenceSupport {
         
 		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "uid", -1);
 		String info = toJson(map);
-		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUri(), a.getSpendTime(), info);
+		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUriSeq(), a.getSpendTime(), info);
 		String sql = "insert into access(accessDate, accessTime, serviceId, uriSeq, spendTime, info) values(?, ?, ?, ?, ?, ?)";
 		t.sql(sql, bindValue);
 		
@@ -211,8 +211,7 @@ public class PersistenceImpl extends PersistenceSupport {
 			if (sqlText.length() != 32 || sqlText.indexOf(" ") > 0) {
 				// 非缓存md5的值
 				sqlMd5 = MD5Utils.getMD5(sqlText);
-				t.sql("insert into map_sql_md5(sqlMd5, sqlText) select ?, ? from dual where not exists(select 1 from map_sql_md5 where sqlMd5 = ?)",
-						Arrays.asList(sqlMd5, sqlText, sqlMd5));
+				t.sql("insert ignore into map_sql_md5(sqlMd5, sqlText) values(?, ?)", Arrays.asList(sqlMd5, sqlText));
 			}
 			// sql执行异常时，长度不一样
 			MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_SQL, "sqlMd5", sqlMd5);
