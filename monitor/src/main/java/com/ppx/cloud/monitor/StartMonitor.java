@@ -18,8 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import com.mysql.cj.xdevapi.SqlResult;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
-import com.ppx.cloud.common.util.ApplicationUtils;
+import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
 import com.ppx.cloud.monitor.queue.AccessQueueConsumer;
 import com.ppx.cloud.monitor.util.MonitorUtils;
@@ -64,47 +65,27 @@ public class StartMonitor implements ApplicationListener<ContextRefreshedEvent> 
     	
 
     	
+    
     	
-/**
-TODO 直接使用统计表，并建索引，不需要下面两张表
-CREATE TABLE `map_sql_md5` (
-  `sql_md5` varchar(32) NOT NULL,
-  `sql_text` varchar(2048) DEFAULT NULL,
-  `sql_count` int(11) DEFAULT NULL,
-  PRIMARY KEY (`sql_md5`),
-  KEY `idx_sql_count` (`sql_count`)
-)
+    	String cacheSqlMd5 = "select sqlMd5 from stat_sql order by times desc limit 1000";
+    	
+    	String cacheUrl = "select u.uriSeq, s.uriText,  u.maxTime from stat_uri u join map_uri_seq s on u.uriSeq = s.uriSeq order by u.times desc limit 1000";
 
-加上索引 
-
-CREATE TABLE `map_uri_seq` (
-  `uri_seq` int(11) NOT NULL,
-  `uri_text` varchar(250) NOT NULL,
-  `uri_count` int(11) DEFAULT NULL,
-  PRIMARY KEY (`uri_seq`)
-)
-*/
+    	try (LogTemplate t = new LogTemplate()) {
+			String md5Sql = "select sqlMd5 from stat_sql order by times desc limit 1000";
+    		SqlResult md5Result = t.sql(md5Sql);
+    		md5Result.forEach(r -> {
+    			
+    			//MonitorCache.addSqlMd5(r.getString("sql_md5"));
+    		});
+		
+    		String uriSql = "select u.uriSeq, s.uriText,from stat_uri u join map_uri_seq s on u.uriSeq = s.uriSeq order by u.times desc limit 1000";
+    		SqlResult uriResult = t.sql(uriSql);
+    		uriResult.forEach(r -> {
+    			MonitorCache.addSeqUri(r.getInt("uriSeq"), r.getString("uriText"));
+    		});
+    	}
     	
-    	
-//    	try (LogTemplate t = new LogTemplate()) {
-//    		
-//    		if (t.existsTable("map_sql_md5")) {
-//    			String md5Sql = "select sql_md5 from (select sql_md5 from map_sql_md5 order by sql_count desc) t limit 2";
-//        		SqlResult md5Result = t.sql(md5Sql);
-//        		md5Result.forEach(r -> {
-//        			MonitorCache.addSqlMd5(r.getString("sql_md5"));
-//        		});
-//    		}
-//    		
-//    		if (t.existsTable("map_uri_seq")) {
-//	    		String uriSql = "select uri_seq, uri_text from (select uri_seq, uri_text from map_uri_seq order by uri_count desc) t limit 2";
-//	    		SqlResult uriResult = t.sql(uriSql);
-//	    		uriResult.forEach(r -> {
-//	    			MonitorCache .addUriSeq(r.getString("uri_text"), r.getInt("uri_seq"));
-//	    		});
-//    		}
-//    	}
-//    	
     	
     	
     	
