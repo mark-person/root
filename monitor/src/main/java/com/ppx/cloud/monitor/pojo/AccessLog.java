@@ -111,8 +111,16 @@ public class AccessLog {
             throw new PermissionUrlException();
         }
         
-        this.uriSeq = MonitorCache.getUriSeq(uri);
-        this.uri = this.uriSeq == null ? uri : null;
+        // 监控页面的查看不输出
+        if (uri.indexOf("/monitorView/") > 0) {
+        	this.uriSeq = -1;
+        	this.uri = null;
+        }
+        else {
+        	this.uriSeq = MonitorCache.getUriSeq(uri);
+            this.uri = this.uriSeq == null ? uri : null;
+        }
+        
     }
     
     public Integer getUriSeq() {

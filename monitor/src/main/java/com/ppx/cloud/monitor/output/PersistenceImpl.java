@@ -87,7 +87,7 @@ public class PersistenceImpl extends PersistenceSupport {
 		if (a.getUriSeq() == null) {
 			t.sql("insert ignore into map_uri_seq(uriText) values('" + a.getUri() + "')");
 			
-			String seqSql = "select uriSeq from map_uri_seq where uriText = '\" + a.getUri() + \"'";
+			String seqSql = "select uriSeq from map_uri_seq where uriText = '" + a.getUri() + "'";
 			int uriSeq = t.sql(seqSql).fetchOne().getInt("uriSeq");
 			a.setUriSeq(uriSeq);
 		}
