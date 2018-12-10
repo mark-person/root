@@ -49,11 +49,66 @@ create table conf (
 create table gather (
 	serviceId 			varchar(32) not null,
 	gatherTime 			datetime not null,
-	isOver				tinyint,
-	maxProcessingTime 	int not null,
+	isOver				tinyint not null default 0,
+	maxProcessingTime 	int not null default 0,
+	concurrentN			int not null default 0,
 	info				json,
 	primary key (serviceId, gatherTime)
 );
+
+
+create table error (
+	accessId 	int not null,
+	serviceId 	varchar(32) not null,
+	errorTime 	datetime not null,
+	uriSeq 		int not null,
+	errorCode 	int not null default -1,
+	errorMsg	varchar(1024),
+	primary key (accessId)
+);
+
+create table error_detail (
+	accessId 	int not null,
+	errorDetail json,
+	primary key (accessId)
+);
+
+create table debug (
+	accessId 	int not null,
+	serviceId 	varchar(32) not null,
+	debugTime	datetime not null,
+	uriSeq 		int not null,
+	primary key (accessId)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

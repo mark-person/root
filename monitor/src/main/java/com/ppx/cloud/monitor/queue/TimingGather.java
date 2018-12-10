@@ -92,7 +92,7 @@ public class TimingGather {
         }
         int isOver = isOverBs.cardinality() > 0 ? (int)isOverBs.toLongArray()[0] : 0;
         Long maxProcessingTime = (Long)requestInfo.get("maxProcessingTime");
-        
+        int concurrentN = (int)requestInfo.get("concurrentN");
         
         
         // 更新服务，加上更新时间, 最新 堆使用内存  响应时间由响应时间里更新  数据库连接 硬盘 CPU
@@ -104,7 +104,7 @@ public class TimingGather {
         lastUpdate.put("modified", new Date());
         lastUpdate.put("lastConcurrentN", requestInfo.get("concurrentN"));
         try (LogTemplate t = new LogTemplate()) {
-        	PersistenceImpl.getInstance(t).insertGather(gatherTime, isOver, maxProcessingTime, gatherMap, lastUpdate);
+        	PersistenceImpl.getInstance(t).insertGather(gatherTime, isOver, maxProcessingTime, concurrentN, gatherMap, lastUpdate);
         }
 	}
 }
