@@ -111,14 +111,8 @@ public class AccessLog {
             throw new PermissionUrlException();
         }
         
-        UriPojo uriPojo = MonitorCache.getUri(uri);
-        if (uriPojo != null) {
-        	uriSeq = uriPojo.getUriSeq();
-        	this.uri = null;
-        }
-        else {
-        	this.uri = uri;
-        }
+        this.uriSeq = MonitorCache.getUriSeq(uri);
+        this.uri = this.uriSeq == null ? uri : null;
     }
     
     public Integer getUriSeq() {

@@ -43,7 +43,7 @@ create table conf (
     dumpMaxTime 	     int not null,
     created 			 timestamp not null default current_timestamp,
     modified  			 timestamp not null default current_timestamp,
-    primary key (service_id)
+    primary key (serviceId)
 );
 
 create table gather (
@@ -55,7 +55,6 @@ create table gather (
 	info				json,
 	primary key (serviceId, gatherTime)
 );
-
 
 create table error (
 	accessId 	int not null,
@@ -78,7 +77,7 @@ create table debug (
 	serviceId 	varchar(32) not null,
 	debugTime	datetime not null,
 	uriSeq 		int not null,
-	info		json
+	info		json,
 	primary key (accessId)
 );
 
@@ -86,7 +85,7 @@ create table debug (
 create table map_uri_seq (
   uriSeq int(11) not null AUTO_INCREMENT,
   uriText varchar(250) not null,
-  primary key (uri_seq)
+  primary key (uriSeq)
 );
 
 alter table  map_uri_seq 
@@ -128,10 +127,10 @@ create table stat_response (
 	serviceId 	 varchar(32) not NULL,
 	hh 			 varchar(10) not NULL,
 	times int not null default 1,
-    totalTime int not null default 1,
+    totalTime int not null,
     maxTime int not null,
     avgTime int not null,
-    primary key(service_id, hh)
+    primary key(serviceId, hh)
 );
 
 create table stat_warning (
@@ -140,26 +139,6 @@ create table stat_warning (
     lasted timestamp not null default current_timestamp,
     content int
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -17,30 +17,42 @@ import com.ppx.cloud.monitor.config.MonitorConfig;
  */
 public class MonitorCache {
 	
-	// 存放数据库sql的md5值，用作缓存, maxTime
-	private static Map<String, Integer> sqlMd5Map = new HashMap<String, Integer>();
+	// 存放sql的md5值，用作缓存, maxTime
+	private static Map<String, Integer> sqlMd5MaxTimeMap = new HashMap<String, Integer>();
 	
-	// 存放数据库uri的sequence值，用作缓存
-	private static Map<String, UriPojo> uriMap = new HashMap<String, UriPojo>();
+	// 存放uri的seq值，用作缓存
+	private static Map<String, Integer> uriTextSeqMap = new HashMap<String, Integer>();
+	// 存放seq的maxTime值，用作缓存
+	private static Map<Integer, Integer> uriSeqMaxTimeMap = new HashMap<Integer, Integer>();
+	
 	
 	public static Integer getSqlMaxTime(String sqlMd5) {
-		return sqlMd5Map.get(sqlMd5);
+		return sqlMd5MaxTimeMap.get(sqlMd5);
 	}
 	
 	public static void putSqlMaxTime(String sqlMd5, Integer maxTime) {
-		sqlMd5Map.put(sqlMd5, maxTime);
+		sqlMd5MaxTimeMap.put(sqlMd5, maxTime);
 	}
 	
-	public static UriPojo getUri(String uri) {
-		return uriMap.get(uri);
+	public static Integer getUriSeq(String uri) {
+		return uriTextSeqMap.get(uri);
+	}
+	
+	public static Integer getUriMaxTime(Integer uriSeq) {
+		return uriSeqMaxTimeMap.get(uriSeq);
 	}
 	
 	public static void putUri(String uri, Integer uriSeq, Integer maxTime) {
-		uriMap.put(uri, new UriPojo(uriSeq, maxTime));
+		uriTextSeqMap.put(uri, uriSeq);
+		uriSeqMaxTimeMap.put(uriSeq, maxTime);
 		
 		if (MonitorConfig.IS_DEV) {
 			addSeqUriDev(uriSeq, uri);
 		}
+	}
+	
+	public static void putUriMaxTime(Integer uriSeq, Integer maxTime) {
+		uriSeqMaxTimeMap.put(uriSeq, maxTime);
 	}
 	
 	

@@ -24,7 +24,6 @@ import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
-import com.ppx.cloud.monitor.cache.UriPojo;
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 import com.ppx.cloud.monitor.pojo.DebugEntity;
@@ -86,9 +85,10 @@ public class PersistenceImpl extends PersistenceSupport {
 	public int insertAccess(AccessLog a) {
 		
 		if (a.getUriSeq() == null) {
-			t.sql("insert into map_uri_seq(uriText) select '" + a.getUri()
-			+ "' from dual where not exists(select 1 from map_uri_seq where uriText = '" + a.getUri() + "')");
-			int uriSeq = getLastInsertId(t);
+			t.sql("insert into map_uri_seq(uriText) values('" + a.getUri() + "')");
+			
+			String seqSql = "select uriSeq from map_uri_seq where uriText = '\" + a.getUri() + \"'";
+			int uriSeq = t.sql(seqSql).fetchOne().getInt("uriSeq");
 			a.setUriSeq(uriSeq);
 		}
 		
@@ -170,13 +170,11 @@ public class PersistenceImpl extends PersistenceSupport {
 		distribute(update, a.getSpendTime());
 
 		// maxTime, 缓存uri最大的maxTime值
-		UriPojo uriPojo = MonitorCache.getUri(a.getUri());
-		if (uriPojo == null || spendTime > uriPojo.getMaxTime()) {
+		Integer maxTime = MonitorCache.getUriMaxTime(a.getUriSeq());
+		if (maxTime == null || spendTime > maxTime) {
 			Map<String, Object> maxMap = getUriMaxDetail(a);
 			update.max("maxTime", spendTime, "maxDetail", maxMap);
-			if (uriPojo != null) {
-				uriPojo.setMaxTime(spendTime);
-			}
+			MonitorCache.putUriMaxTime(a.getUriSeq(), maxTime);
 		}
 		update.execute(t);
 
