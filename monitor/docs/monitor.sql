@@ -83,46 +83,6 @@ create table debug (
 );
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 create table map_uri_seq (
   uriSeq int(11) not null AUTO_INCREMENT,
   uriText varchar(250) not null,
