@@ -46,14 +46,14 @@ $(function() {
 	</table>
 	<table>
 		<tr th:fragment="template">
-			<td>{{v.sid}}</td>
-			<td>{{v.created}}</td>
-			<td>{{v.requestInfo.maxProcessingTime}}</td>
-			<td>{{v.requestInfo.concurrentN}}</td>
-			<td>{{v.dsActive}}</td>
-			<td>{{v.uMem}}M</td>
-			<td>{{(v.uMem*100/v.mMem).toFixed(2)}}%</td>
-			<td>{{(v.pCpuLoad*100).toFixed(2)}}%</td>
+			<td>{{v.serviceId}}</td>
+			<td>{{v.gatherTime}}</td>
+			<td>{{v.maxProcessingTime}}</td>
+			<td>{{v.info.concurrentN}}</td>
+			<td>{{v.info.dsActive}}</td>
+			<td>{{v.info.uMem}}M</td>
+			<td>{{(v.info.uMem*100/v.info.mMem).toFixed(2)}}%</td>
+			<td>{{(v.info.pCpuLoad*100).toFixed(2)}}%</td>
 			<td>{{v.isOver}}</td>
 			<td>
 				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>

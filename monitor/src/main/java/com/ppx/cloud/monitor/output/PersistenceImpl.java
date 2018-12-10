@@ -75,8 +75,10 @@ public class PersistenceImpl extends PersistenceSupport {
         confUpdate.execute(t);
 	}
 
-	public void insertGather(Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
-		t.add(COL_GATHER, gatherMap);
+	public void insertGather(Date gatherTime, int isOver, long maxProcessingTime, Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
+		List<Object> bindValue = Arrays.asList(ApplicationUtils.getServiceId(), gatherTime, isOver, maxProcessingTime, toJson(gatherMap));
+		String gatherSql = "insert into gather(serviceId, gatherTime, isOver, maxProcessingTime, info) values(?, ?, ?, ?, ?)";
+		t.sql(gatherSql, bindValue);
 		
 		// updateSql
 		MyUpdate updateSql = MyUpdate.getInstance(false, TABLE_SERVICE, "serviceId", ApplicationUtils.getServiceId());

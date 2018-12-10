@@ -84,11 +84,11 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		try (LogTemplate t = new LogTemplate()) {
 			
 			MyCriteria c = new MyCriteria("where");
-			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
+			c.addAnd("service_id = ?", sid);
 			
-			var cSql = new StringBuilder("select count(*) from col_gather").append(c);
-			var qSql = new StringBuilder("select doc from col_gather").append(c).append(" order by json_extract(doc, '$.created') desc");
-			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
+			var cSql = new StringBuilder("select count(*) from gather").append(c);
+			var qSql = new StringBuilder("select * from gather").append(c).append(" order by gatherTime desc");
+			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
