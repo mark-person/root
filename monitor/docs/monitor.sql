@@ -9,7 +9,7 @@ create table access (
 	info 		json,
 	primary key (accessId, accessDate)
 )
-partition by hash (dayofmonth(accessDate)) partitions 10
+partition by hash (dayofmonth(accessDate)) partitions 10;
 
 create table access_log (
 	accessId int not null,

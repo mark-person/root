@@ -84,6 +84,14 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	// 返回accessId
 	public int insertAccess(AccessLog a) {
+		
+		if (a.getUriSeq() == null) {
+			t.sql("insert into map_uri_seq(uriText) select '" + a.getUri()
+			+ "' from dual where not exists(select 1 from map_uri_seq where uriText = '" + a.getUri() + "')");
+			int uriSeq = getLastInsertId(t);
+			a.setUriSeq(uriSeq);
+		}
+		
 		String[] timeStr = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()).split(" ");
 		long useMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
         
@@ -95,6 +103,9 @@ public class PersistenceImpl extends PersistenceSupport {
 		
 		int accessId = getLastInsertId(t);
 		
+		
+		
+		// 日志logger
 		if (a.getLog() != null) {
 			var logMap = new LinkedHashMap<String, String>();
 			a.getLog().forEach(s -> {
@@ -148,7 +159,7 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	public void insertStatUri(AccessLog a) {
 
-		MyUpdate update = MyUpdate.getInstanceSql(true, TABLE_STAT_URI, "uriSeq", "(select uriSeq from map_uri_seq where uriText = '" + a.getUri() + "')");
+		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_URI, "uriSeq", a.getUriSeq());
 		int spendTime = (int) a.getSpendTime();
 		update.inc("times", 1);
 		update.inc("totalTime", a.getSpendTime());
@@ -167,9 +178,6 @@ public class PersistenceImpl extends PersistenceSupport {
 				uriPojo.setMaxTime(spendTime);
 			}
 		}
-
-		t.sql("insert into map_uri_seq(uriText) select '" + a.getUri()
-				+ "' from dual where not exists(select 1 from map_uri_seq where uriText = '" + a.getUri() + "')");
 		update.execute(t);
 
 	}

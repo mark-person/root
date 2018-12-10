@@ -31,6 +31,7 @@ public class AccessLog {
     private int spendTime;
     private String method;
     private String uri;
+    private Integer uriSeq;
     private String queryString;
     private Throwable throwable;
     private Integer accountId;
@@ -112,14 +113,23 @@ public class AccessLog {
         
         UriPojo uriPojo = MonitorCache.getUri(uri);
         if (uriPojo != null) {
-        	this.uri = uriPojo.getUriSeq() + "";
+        	uriSeq = uriPojo.getUriSeq();
+        	this.uri = null;
         }
         else {
         	this.uri = uri;
         }
     }
+    
+    public Integer getUriSeq() {
+		return uriSeq;
+	}
 
-    public String getQueryString() {
+	public void setUriSeq(Integer uriSeq) {
+		this.uriSeq = uriSeq;
+	}
+
+	public String getQueryString() {
     	return (queryString == null) ? "" : queryString;
     }
 
