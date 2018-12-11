@@ -3,6 +3,7 @@ package com.ppx.cloud.common.exception;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -23,6 +24,7 @@ import com.ppx.cloud.common.exception.security.PermissionUrlException;
  * @date 2018年10月28日
  */
 @ControllerAdvice
+@ConditionalOnMissingClass({"com.ppx.cloud.monitor.exception.MonitorExceptionHandler"})
 public class CustomExceptionHandler implements HandlerExceptionResolver {
 
     @ExceptionHandler(value = Throwable.class)

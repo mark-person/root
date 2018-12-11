@@ -42,6 +42,7 @@ public class Test2ServiceImpl extends MyDaoSupport {
 		
 		getJdbcTemplate().update("update test set test_name = 'xxxx' where test_id = 12");
 		
+		int i =  1 / 0;
 		
 		NamedParameterJdbcTemplate nameTemplate = new NamedParameterJdbcTemplate(getJdbcTemplate());
 		

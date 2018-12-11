@@ -120,11 +120,13 @@ public class AccessQueueConsumer {
 				impl.insertDebug(accessId, a);
 			}
 
+			System.out.println("9999999------------001:" + a.getThrowable());
 			if (a.getThrowable() == null) {
 				// 响应时间统计(有异常的不统计响应时间)
 				impl.insertResponse(a);
 			} else {
 				// 异常处理
+				
 				impl.insertError(a.getThrowable(), accessId, a);
 			}
 
