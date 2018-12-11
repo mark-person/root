@@ -116,7 +116,11 @@ public class PersistenceImpl extends PersistenceSupport {
 					marker = ss[0];
 					log = ss[1];
 				}
-				logMap.put(marker, (logMap.get(marker) == null ? "" : logMap.get(marker)) + log);
+				else if (s.endsWith("<<m>>" )) {
+					marker = ss[0];
+					log = null;
+				}
+				logMap.put(marker, (logMap.get(marker) == null ? "" : log));
 			});
 			
 			String logSql = "insert into access_log(accessId, marker, log) values(?, ?, ?)";

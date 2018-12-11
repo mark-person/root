@@ -442,10 +442,6 @@ public final class Logger implements org.slf4j.Logger, LocationAwareLogger, Appe
          */
         AccessLog accessLog = TaskThread.getAccessLog();
         if (accessLog != null) {
-//            if (marker != null) {
-//                accessLog.addMarker(marker.getName());
-//            }
-            
             if (t != null) {
                 accessLog.setThrowable(t); 
             }
@@ -458,7 +454,11 @@ public final class Logger implements org.slf4j.Logger, LocationAwareLogger, Appe
                     	accessLog.addLog(getHHMmSsSss() + le.toString() + " " + classMsg);
                     }
                     else {
-                    	accessLog.addLog("" + marker.getName() + "<<m>>" + getHHMmSsSss() + le.toString() + " " + classMsg);
+                    	String logMsg = "";
+                    	if (le.getMessage() != null) {
+                    		logMsg = getHHMmSsSss() + le.toString() + " " + classMsg;
+                    	}
+                    	accessLog.addLog("" + marker.getName() + "<<m>>" + logMsg);
                     }
                 }
             }
