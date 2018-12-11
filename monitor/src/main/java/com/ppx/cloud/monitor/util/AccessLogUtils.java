@@ -5,15 +5,15 @@ package com.ppx.cloud.monitor.util;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.util.DateUtils;
-import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 
 /**
@@ -92,4 +92,21 @@ public class AccessLogUtils {
 
 		return infoList;
 	}
+	
+	public static Map<String, Object> getDebugMap(AccessLog a) {
+		Map<String, Object> map = new HashMap<String, Object>();
+        
+		// SQL部分
+		map.put("sql", a.getSqlList());
+		map.put("sqla", a.getSqlArgMap());
+		map.put("sqls", a.getSqlSpendTime());
+		map.put("sqlc", a.getSqlCount());
+		map.put("sqlb", a.getSqlBeginTime());
+
+		map.put("params", a.getParams());
+		map.put("inJson", a.getInJson());
+		map.put("outJson", a.getOutJson());
+   
+        return map;
+    }
 }

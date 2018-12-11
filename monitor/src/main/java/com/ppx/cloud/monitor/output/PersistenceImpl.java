@@ -28,6 +28,7 @@ import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 import com.ppx.cloud.monitor.pojo.DebugEntity;
 import com.ppx.cloud.monitor.pojo.ErrorEntity;
+import com.ppx.cloud.monitor.util.AccessLogUtils;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
 /**
@@ -50,7 +51,7 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	public void insertStart(Map<String, Object> serviceInfo,  Map<String, Object> startInfo, Date startTime) {
 		// 服务
-		MyUpdate updateSql = MyUpdate.getInstance(true, TABLE_SERVICE, "serviceId", ApplicationUtils.getServiceId());
+		MyUpdate updateSql = MyUpdate.getInstance(true, "service", "serviceId", ApplicationUtils.getServiceId());
 		updateSql.setJson("serviceInfo", serviceInfo);
 		updateSql.execute(t);
 		
@@ -61,7 +62,7 @@ public class PersistenceImpl extends PersistenceSupport {
 		t.sql(startupSql, bindValue);
 		
 		// 配置
-		MyUpdate confUpdate = MyUpdate.getInstance(true, TABLE_CONF, "serviceId", ApplicationUtils.getServiceId());
+		MyUpdate confUpdate = MyUpdate.getInstance(true, "conf", "serviceId", ApplicationUtils.getServiceId());
         confUpdate.set("isDebug", MonitorConfig.IS_DEV ? 1 : 0);
     	confUpdate.set("isWarning", MonitorConfig.IS_DEV ? 1 : 0);
         confUpdate.set("gatherInterval", MonitorConfig.GATHER_INTERVAL);
@@ -76,7 +77,7 @@ public class PersistenceImpl extends PersistenceSupport {
 		t.sql(gatherSql, bindValue);
 		
 		// updateSql
-		MyUpdate updateSql = MyUpdate.getInstance(false, TABLE_SERVICE, "serviceId", ApplicationUtils.getServiceId());
+		MyUpdate updateSql = MyUpdate.getInstance(false, "service", "serviceId", ApplicationUtils.getServiceId());
 		updateSql.setJson("serviceLastInfo", lastUpdate);
 		updateSql.execute(t);
 	}
@@ -159,7 +160,7 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	public void insertStatUri(AccessLog a) {
 
-		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_URI, "uriSeq", a.getUriSeq());
+		MyUpdate update = MyUpdate.getInstance(true, "stat_uri", "uriSeq", a.getUriSeq());
 		int spendTime = (int) a.getSpendTime();
 		update.inc("times", 1);
 		update.inc("totalTime", a.getSpendTime());
@@ -214,7 +215,7 @@ public class PersistenceImpl extends PersistenceSupport {
 				t.sql("insert ignore into map_sql_md5(sqlMd5, sqlText) values(?, ?)", Arrays.asList(sqlMd5, sqlText));
 			}
 			// sql执行异常时，长度不一样
-			MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_SQL, "sqlMd5", sqlMd5);
+			MyUpdate update = MyUpdate.getInstance(true, "stat_sql", "sqlMd5", sqlMd5);
 			update.inc("times", 1);
 
 			// sql开始执行时间
@@ -243,18 +244,19 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	}
 
-	public void insertDebug(DebugEntity d) {
-		List<Object> bindValue = Arrays.asList(d.getAccessId(), ApplicationUtils.getServiceId(), d.getB(), d.getUri(), toJson("")); 
+	public void insertDebug(Integer accessId, AccessLog a) {
+		Map<String, Object> debug = AccessLogUtils.getDebugMap(a);
+		List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), a.getBeginTime(),
+				a.getUriSeq(), toJson(debug)); 
 		String sql = "insert into debug(accessId, serviceId, debugTime, uriSeq, info) values(?, ?, ?, ?, ?)";
-		
-
+		t.sql(sql, bindValue);
 	}
 
 	public void insertResponse(AccessLog a) {
 		// 机器ID yyyyMMddHH小时 访问量 总时间
 		String hh = new SimpleDateFormat("yyyyMMddHH").format(a.getBeginTime());
 
-		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_RESPONSE, "serviceId,hh", ApplicationUtils.getServiceId(), hh);
+		MyUpdate update = MyUpdate.getInstance(true, "stat_response", "serviceId,hh", ApplicationUtils.getServiceId(), hh);
 		update.inc("times", 1);
 		update.inc("totalTime", a.getSpendTime());
 		update.setSql("avgTime", "totalTime/times");
@@ -263,7 +265,7 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	}
 
-	public void insertError(ErrorEntity errorEntity, Throwable throwable, DebugEntity d) {
+	public void insertError(ErrorEntity errorEntity, Throwable throwable, Integer accessId,  AccessLog a) {
 		ErrorBean errorBean = ErrorCode.getErroCode(throwable);
 		errorEntity.setC(errorBean.getCode());
 
@@ -271,24 +273,25 @@ public class PersistenceImpl extends PersistenceSupport {
 		// 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情
 		if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
 			// 出错时，记录输入参数
-			List<Object> bindValue = Arrays.asList(d.getAccessId(), ApplicationUtils.getServiceId(), 
-					d.getB(), errorBean.getCode(), errorBean.getInfo() + ";param|injson:" + d.getP() + d.getIn());
+			List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), 
+					a.getBeginTime(), errorBean.getCode(), errorBean.getInfo() + ";param|injson:" + a.getParams() + "|" + a.getInJson());
 			t.sql(errorSql, bindValue);
 
 		} else {
 			// 出错时，记录输入参数
-			List<Object> bindValue = Arrays.asList(d.getAccessId(), ApplicationUtils.getServiceId(), 
-					d.getB(), errorBean.getCode(), errorBean.getInfo() + ";param|injson:" + d.getP() + d.getIn());
+			List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), 
+					a.getBeginTime(), errorBean.getCode(), errorBean.getInfo());
 			t.sql(errorSql, bindValue);
 			
+			var debug = AccessLogUtils.getDebugMap(a);
 			String detailSql = "insert into error_detail(accessId, errorDetail, debugDetail) values(?, ?, ?)";
-			List<Object> detailBindValue = Arrays.asList(d.getAccessId(), MonitorUtils.getExcepiton(throwable), toJson(d));
+			List<Object> detailBindValue = Arrays.asList(accessId, MonitorUtils.getExcepiton(throwable), toJson(debug));
 			t.sql(detailSql, detailBindValue);
 		}
 	}
 
 	public void insertWarning(AccessLog a, BitSet content) {
-		MyUpdate update = MyUpdate.getInstance(true, TABLE_STAT_WARNING, "uri", a.getUri());
+		MyUpdate update = MyUpdate.getInstance(true, "stat_warning", "uri", a.getUri());
 		update.set("lasted", a.getBeginTime());
 		update.setSql("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
 		update.execute(t);
@@ -298,10 +301,6 @@ public class PersistenceImpl extends PersistenceSupport {
     	SqlResult sr = t.sql("select * from conf where serviceId = ?", Arrays.asList(serviceId));
     	return sr.fetchOne();
     }
-    
-	public void insertGather(Map<String, Object> map) {
-		t.add(COL_GATHER, map);
-	}
 	
 	private static void distribute(MyUpdate update, int t) {
 		if (t < 10) {

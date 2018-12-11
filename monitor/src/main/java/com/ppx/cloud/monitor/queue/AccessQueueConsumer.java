@@ -106,7 +106,7 @@ public class AccessQueueConsumer {
 
 	private void logToDb(AccessLog a) {
 
-		long t1 = System.currentTimeMillis();
+		// long t1 = System.currentTimeMillis();
 
 		AccessEntity accessEntity = AccessEntity.getInstance(a);
 
@@ -120,8 +120,7 @@ public class AccessQueueConsumer {
 			DebugEntity debugEntity = null;
 			if (MonitorConfig.IS_DEBUG) {
 				// debug日志
-				debugEntity = DebugEntity.getInstance(a, accessId);
-				impl.insertDebug(debugEntity);
+				impl.insertDebug(accessId, a);
 			}
 
 			if (a.getThrowable() == null) {
@@ -129,9 +128,9 @@ public class AccessQueueConsumer {
 				impl.insertResponse(a);
 			} else {
 				// 异常处理
-				debugEntity = debugEntity == null ? DebugEntity.getInstance(a, accessId) : debugEntity;
+				// debugEntity = debugEntity == null ? DebugEntity.getInstance(a, accessId) : debugEntity;
 				ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
-				impl.insertError(e, a.getThrowable(), debugEntity);
+				impl.insertError(e, a.getThrowable(), accessId, a);
 			}
 
 			// warning访问日志 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
