@@ -26,8 +26,6 @@ import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.pojo.AccessLog;
-import com.ppx.cloud.monitor.pojo.DebugEntity;
-import com.ppx.cloud.monitor.pojo.ErrorEntity;
 import com.ppx.cloud.monitor.util.AccessLogUtils;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
@@ -265,9 +263,8 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	}
 
-	public void insertError(ErrorEntity errorEntity, Throwable throwable, Integer accessId,  AccessLog a) {
+	public void insertError(Throwable throwable, Integer accessId,  AccessLog a) {
 		ErrorBean errorBean = ErrorCode.getErroCode(throwable);
-		errorEntity.setC(errorBean.getCode());
 
 		String errorSql = "insert into error(accessId, serviceId, errorTime, uriSeq, errorCode, errorMsg) values(?, ?, ?, ?, ?, ?)";
 		// 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情

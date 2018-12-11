@@ -25,9 +25,7 @@ public class MonitorViewController {
     public ModelAndView index(ModelAndView mv) {
 		
 		List<Map> serviceList = impl.listDisplayService();
-		for (Map map : serviceList) {
-			
-		}
+		
 		mv.addObject("listMachine", serviceList);	
 		mv.addObject("currentServiceId", ApplicationUtils.getServiceId());
 		mv.addObject("title", TITLE);

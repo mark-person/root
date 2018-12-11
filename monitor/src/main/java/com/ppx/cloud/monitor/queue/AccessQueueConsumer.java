@@ -14,10 +14,7 @@ import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.output.ConsoleImpl;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
-import com.ppx.cloud.monitor.persistence.AccessEntity;
 import com.ppx.cloud.monitor.pojo.AccessLog;
-import com.ppx.cloud.monitor.pojo.DebugEntity;
-import com.ppx.cloud.monitor.pojo.ErrorEntity;
 import com.ppx.cloud.monitor.util.AccessAnalysisUtils;
 
 /**
@@ -108,7 +105,6 @@ public class AccessQueueConsumer {
 
 		// long t1 = System.currentTimeMillis();
 
-		AccessEntity accessEntity = AccessEntity.getInstance(a);
 
 		// 访问日志、 访问日志索引、uri统计、sql统计、响应统计
 		try (LogTemplate t = new LogTemplate()) {
@@ -117,7 +113,6 @@ public class AccessQueueConsumer {
 			impl.insertStatUri(a);
 			impl.insertStatSql(a);
 
-			DebugEntity debugEntity = null;
 			if (MonitorConfig.IS_DEBUG) {
 				// debug日志
 				impl.insertDebug(accessId, a);
@@ -128,9 +123,7 @@ public class AccessQueueConsumer {
 				impl.insertResponse(a);
 			} else {
 				// 异常处理
-				// debugEntity = debugEntity == null ? DebugEntity.getInstance(a, accessId) : debugEntity;
-				ErrorEntity e = ErrorEntity.getInstance(a, accessEntity.get_id());
-				impl.insertError(e, a.getThrowable(), accessId, a);
+				impl.insertError(a.getThrowable(), accessId, a);
 			}
 
 			// warning访问日志 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
