@@ -14,6 +14,8 @@ import org.springframework.util.StringUtils;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.util.DateUtils;
+import com.ppx.cloud.common.util.MD5Utils;
+import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 
 /**
@@ -27,13 +29,7 @@ public class AccessLogUtils {
 		
 		String beginTime = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime());
 
-		String uri = a.getUri();
-		// 开发环境URI转换
-//		Pattern pattern = Pattern.compile("[0-9]*");
-//		if (pattern.matcher(uri).matches()) {
-//			uri = MonitorCache.getSeqUri(Integer.parseInt(uri));
-//			uri = uri == null ? a.getUri() : uri;
-//		}
+		String uri = a.getUri() == null ? MonitorCache.getSeqUriDev(a.getUriSeq()) : a.getUri();
 		
 		
 		StringBuilder accessSb = new StringBuilder(a.getIp()).append("[").append(beginTime).append("]")
@@ -59,12 +55,12 @@ public class AccessLogUtils {
 		
 		if (a.getSqlList().size() > 0) {
 			// 开发环境SQL转换
-//			for (int i = 0; i < a.getSqlList().size(); i++) {
-//				String v = a.getSqlList().get(i);
-//				v = MonitorCache.getMd5Sql(v);
-//				v = v == null ? a.getSqlList().get(i) : v;
-//				a.getSqlList().set(i, v);
-//			}
+			for (int i = 0; i < a.getSqlList().size(); i++) {
+				String v = a.getSqlList().get(i);
+				v = MonitorCache.getMd5SqlDev(v);
+				v = v == null ? a.getSqlList().get(i) : v;
+				a.getSqlList().set(i, v);
+			}
 
 			String sql = StringUtils.collectionToDelimitedString(a.getSqlList(), "\r\n        ");
 			infoList.add("sqlText:" + sql);
@@ -96,8 +92,20 @@ public class AccessLogUtils {
 	public static Map<String, Object> getDebugMap(AccessLog a) {
 		Map<String, Object> map = new HashMap<String, Object>();
         
+		var sqlList = new ArrayList<String>(6);
+		for (String sql : a.getSqlList()) {
+			if (sql.length() != 32 || sql.indexOf(" ") > 0) {
+				sqlList.add(MD5Utils.getMD5(sql));
+			}
+			else {
+				sqlList.add(sql);
+			}
+		}
+		
 		// SQL部分
-		map.put("sql", a.getSqlList());
+		map.put("sql", sqlList);
+		
+		
 		map.put("sqla", a.getSqlArgMap());
 		map.put("sqls", a.getSqlSpendTime());
 		map.put("sqlc", a.getSqlCount());

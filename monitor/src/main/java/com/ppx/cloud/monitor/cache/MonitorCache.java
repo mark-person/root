@@ -67,7 +67,7 @@ public class MonitorCache {
 		seqUriMap.put(seq, uri);
 	}
 	
-	public static String getSeqUriDev(Object seq) {
+	public static String getSeqUriDev(Integer seq) {
 		return seqUriMap.get(seq);
 	}
 	

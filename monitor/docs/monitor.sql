@@ -134,10 +134,11 @@ create table stat_response (
 );
 
 create table stat_warning (
-	uri varchar(250) not null primary key,
+	uriSeq int not null primary key,
 	firsted timestamp not null default current_timestamp,
     lasted timestamp not null default current_timestamp,
-    content int
+    content int,
+    primary key(uriSeq)
 );
 
 

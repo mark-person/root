@@ -58,18 +58,20 @@ public class AccessQueueConsumer {
 			if (MonitorConfig.IS_DEV) {
 				ConsoleImpl.print(a);
 			}
-
+			
 			// 监控页面的查看不输出(异常时输出)
-			if (a.getUriSeq() == -1 || a.getThrowable() != null) {
-				try {
-					logToDb(a);
-				} catch (Throwable e) {
-					e.printStackTrace();
-					// 输出mongodb异常，则打印到控制台
-					System.err.println("Error(logToDb):" + e.getMessage());
-					if (!MonitorConfig.IS_DEV) {
-						ConsoleImpl.print(a);
-					}
+			if (a.getUriSeq() != null && a.getUriSeq() == -1 && a.getThrowable() == null) {
+				continue;
+			}
+			
+			try {
+				logToDb(a);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				// 输出异常，则打印到控制台
+				logger.error("Error(logToDb):{}", e.getMessage());
+				if (!MonitorConfig.IS_DEV) {
+					ConsoleImpl.print(a);
 				}
 			}
 		}

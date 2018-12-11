@@ -288,7 +288,7 @@ public class PersistenceImpl extends PersistenceSupport {
 	}
 
 	public void insertWarning(AccessLog a, BitSet content) {
-		MyUpdate update = MyUpdate.getInstance(true, "stat_warning", "uri", a.getUri());
+		MyUpdate update = MyUpdate.getInstance(true, "stat_warning", "uriSeq", a.getUriSeq());
 		update.set("lasted", a.getBeginTime());
 		update.setSql("content", content.toLongArray()[0] + "", "content|" + content.toLongArray()[0]);
 		update.execute(t);
