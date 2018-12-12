@@ -24,7 +24,7 @@ public class MonitorViewController {
 	
     public ModelAndView index(ModelAndView mv) {
 		
-		List<Map> serviceList = impl.listDisplayService();
+		List<Map<String, Object>> serviceList = impl.listDisplayService();
 		
 		mv.addObject("listMachine", serviceList);	
 		mv.addObject("currentServiceId", ApplicationUtils.getServiceId());
@@ -56,12 +56,15 @@ public class MonitorViewController {
 	public ModelAndView access() {
 		ModelAndView mv = new ModelAndView();
 		String today = DateUtils.today();
-		mv.addObject("list", listAccess(new Page(), today, null));
+		mv.addObject("today", today);
+		mv.addObject("list", listAccess(new Page(), today, null, null));
+		
+		mv.addObject("listService", impl.listDisplayService());
 		
 		return mv;
 	}
-	public Map<?, ?> listAccess(Page page, String date, String sid) {
-		List<Map<String, Object>> list = impl.listAccess(page, date, sid);
+	public Map<?, ?> listAccess(Page page, String date, String serviceId, String uriText) {
+		List<Map<String, Object>> list = impl.listAccess(page, date, serviceId, uriText);
 		return ControllerReturn.success(list, page);
 	}
 	

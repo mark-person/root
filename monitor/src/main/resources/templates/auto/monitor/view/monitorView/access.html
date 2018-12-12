@@ -27,14 +27,14 @@ $(function() {
 		<label>服务:</label>
 		<select class="form-control input-sm" name="sid">
 			<option value="">全部</option>
-			<option th:value="${item._id}" th:text="${item._id}" th:each="item:${listMachine}"></option>
+			<option th:value="${item.serviceId}" th:text="${item.serviceId}" th:each="item:${listService}"></option>
 		</select>
 		<label>日期:</label>
-		<input type="text" class="form-control input-sm w-date" style="width:90px" name="date" th:value="${date}" onclick="WdatePicker()">
+		<input type="text" class="form-control input-sm w-date" style="width:90px" name="date" th:value="${today}" onclick="WdatePicker()">
 	    <input type="text" class="form-control input-sm w-date" style="width:90px" name="beginTime" placeholder="开始时分秒" onclick="WdatePicker({dateFmt:'HH:mm:ss'})">
 	    	-
 	    <input type="text" class="form-control input-sm w-date" style="width:90px" name="endTime" placeholder="结束时分秒" onclick="WdatePicker({dateFmt:'HH:mm:ss'})">	
-		<label>URI:</label><input type="text" class="form-control input-sm" name="uri" placeholder="全匹配URI">
+		<label>URI:</label><input type="text" class="form-control input-sm" name="uriText" placeholder="全匹配URI">
 		<label>标记:</label><input type="text" class="form-control input-sm" name="marker" style="width:90px">
 		
 		
@@ -61,7 +61,7 @@ $(function() {
 		<tr th:fragment="template">
 			<td>{{v.serviceId}}</td>
 			<td>{{v.accessDate}}</td>
-			<td>{{v.uri}}</td>
+			<td>{{v.uriText}}</td>
 			<td>{{v.info.q}}</td>
 			<td>{{v.spendTime}}</td>
 			<td>{{v.info.ip}}</td>

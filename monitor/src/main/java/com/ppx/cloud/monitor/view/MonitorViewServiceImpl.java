@@ -1,11 +1,13 @@
 package com.ppx.cloud.monitor.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.mysql.cj.xdevapi.Row;
 import com.ppx.cloud.common.jdbc.MyCriteria;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.page.Page;
@@ -15,9 +17,18 @@ import com.ppx.cloud.monitor.output.PersistenceSupport;
 public class MonitorViewServiceImpl extends PersistenceSupport {
     
 	
-	public List<Map> listDisplayService() {
-		
-		return null;
+	public List<Map<String, Object>> listDisplayService() {
+		var returnList  = new ArrayList<Map<String, Object>>();
+		try (LogTemplate t = new LogTemplate()) {
+			String sql = "select serviceId from service where serviceDisplay = 1";
+			List<Row> list = t.sql(sql).fetchAll();
+			for (Row row : list) {
+				var map = new HashMap<String, Object>();
+				map.put("serviceId", row.getString("serviceId"));
+				returnList.add(map);
+			}
+		}
+		return returnList;
 	}
 
 	public List<Map<String, Object>> listAllService(Page page) {
@@ -46,16 +57,17 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	}
 
 	
-	public List<Map<String, Object>> listAccess(Page page, String date, String serviceId) {
+	public List<Map<String, Object>> listAccess(Page page, String date, String serviceId, String uriText) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			
-			MyCriteria c = new MyCriteria("where");
-			c.addAnd("accessDate = ?", date);
-			c.addAnd("serviceId = ?", serviceId);
+			MyCriteria c = new MyCriteria("where").addAnd("a.accessDate = ?", date)
+				.addAnd("a.serviceId = ?", serviceId)
+				.addAnd("s.uriText = ?", uriText);
 			
-			var cSql = new StringBuilder("select count(*) from access").append(c);
-			var qSql = new StringBuilder("select * from access").append(c).append(" order by accessTime desc");
+			var cSql = new StringBuilder("select count(*) from access a left join map_uri_seq s on s.uriSeq = a.uriSeq").append(c);
+			var qSql = new StringBuilder("select a.*, s.uriText from access a left join map_uri_seq s on s.uriSeq = a.uriSeq")
+					.append(c).append(" order by a.accessTime desc");
 			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
