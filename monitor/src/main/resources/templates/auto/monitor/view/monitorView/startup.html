@@ -24,8 +24,11 @@ $(function() {
 
 <div id="pageDiv" th:include="common/fragment::page('')">
 	<div th:fragment="query">
-		<label>服务：</label>
-		<input type="text" class="form-control" name="sid">
+		<label>服务:</label>
+		<select class="form-control input-sm" name="serviceId">
+			<option value="">全部</option>
+			<option th:value="${item.serviceId}" th:text="${item.serviceId}" th:each="item:${listService}"></option>
+		</select>
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
 	<table th:fragment="list">
@@ -45,13 +48,13 @@ $(function() {
 	</table>
 	<table>
 		<tr th:fragment="template">
-			<td>{{v.sid}}</td>
-			<td>{{v.artifactId}}</td>
-			<td>{{v.version}}</td>
-			<td>{{v.startTime}}</td>
-			<td>{{v.jvmSpendTime}}</td>
-			<td>{{v.handlerMethodsSize}}</td>
-			<td>{{v.beanDefinitionCount}}</td>
+			<td>{{v.serviceId}}</td>
+			<td>{{v.info.artifactId}}</td>
+			<td>{{v.info.version}}</td>
+			<td>{{v.startupTime}}</td>
+			<td>{{v.info.jvmSpendTime}}</td>
+			<td>{{v.info.handlerMethodsSize}}</td>
+			<td>{{v.info.beanDefinitionCount}}</td>
 			<td>
 				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>
 			</td>

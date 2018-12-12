@@ -37,7 +37,7 @@ function viewDetail(accessId) {
 <div id="pageDiv" th:include="common/fragment::page('')">
 	<div th:fragment="query">
 		<label>服务:</label>
-		<select class="form-control input-sm" name="sid">
+		<select class="form-control input-sm" name="serviceId">
 			<option value="">全部</option>
 			<option th:value="${item.serviceId}" th:text="${item.serviceId}" th:each="item:${listService}"></option>
 		</select>

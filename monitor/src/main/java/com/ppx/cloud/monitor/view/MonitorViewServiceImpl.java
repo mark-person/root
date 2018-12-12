@@ -44,11 +44,11 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		return returnList;
 	}
 	
-	public List<Map<String, Object>> listStart(Page page, String sid) {
+	public List<Map<String, Object>> listStartup(Page page, String serviceId) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			MyCriteria c = new MyCriteria("where");
-			c.addAnd("serviceId = ?", sid);
+			c.addAnd("serviceId = ?", serviceId);
 			
 			var cSql = new StringBuilder("select count(*) from startup").append(c);
 			var qSql = new StringBuilder("select * from startup").append(c).append(" order by startupTime desc");
@@ -89,12 +89,12 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		return returnMap;
 	}
 	
-	public List<Map<String, Object>> listError(Page page, String sid) {
+	public List<Map<String, Object>> listError(Page page, String serviceId) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			
 			MyCriteria c = new MyCriteria("where");
-			c.addAnd("serviceId = ?", sid);
+			c.addAnd("serviceId = ?", serviceId);
 			
 			var cSql = new StringBuilder("select count(*) from error").append(c);
 			var qSql = new StringBuilder("select * from error").append(c).append(" order by errorTime desc");
@@ -103,12 +103,12 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		return returnList;
 	}
 	
-	public List<Map<String, Object>> listGather(Page page, String sid) {
+	public List<Map<String, Object>> listGather(Page page, String serviceId) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			
 			MyCriteria c = new MyCriteria("where");
-			c.addAnd("service_id = ?", sid);
+			c.addAnd("service_id = ?", serviceId);
 			
 			var cSql = new StringBuilder("select count(*) from gather").append(c);
 			var qSql = new StringBuilder("select * from gather").append(c).append(" order by gatherTime desc");

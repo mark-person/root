@@ -43,13 +43,13 @@ public class MonitorViewController {
 		return ControllerReturn.success(list, page);
 	}
 	
-	public ModelAndView start() {
+	public ModelAndView startup() {
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("list", listStart(new Page(), null));
+		mv.addObject("list", listStartup(new Page(), null));
 		return mv;
 	}
-	public Map<?, ?> listStart(Page page, String sid) {
-		List<Map<String, Object>> list = impl.listStart(page, sid);
+	public Map<?, ?> listStartup(Page page, String serviceId) {
+		List<Map<String, Object>> list = impl.listStartup(page, serviceId);
 		return ControllerReturn.success(list, page);
 	}
 	
@@ -77,8 +77,8 @@ public class MonitorViewController {
 		
 		return mv;
 	}
-	public Map<?, ?> listError(Page page, String sid) {
-		List<Map<String, Object>> list = impl.listError(page, sid);
+	public Map<?, ?> listError(Page page, String serviceId) {
+		List<Map<String, Object>> list = impl.listError(page, serviceId);
 		return ControllerReturn.success(list, page);
 	}
 	
@@ -88,8 +88,8 @@ public class MonitorViewController {
 		
 		return mv;
 	}
-	public Map<?, ?> listGather(Page page, String sid) {
-		List<Map<String, Object>> list = impl.listGather(page, sid);
+	public Map<?, ?> listGather(Page page, String serviceId) {
+		List<Map<String, Object>> list = impl.listGather(page, serviceId);
 		return ControllerReturn.success(list, page);
 	}
 	
