@@ -23,10 +23,7 @@ public class MonitorViewController {
 	
 	
     public ModelAndView index(ModelAndView mv) {
-		
-		List<Map<String, Object>> serviceList = impl.listDisplayService();
-		
-		mv.addObject("listMachine", serviceList);	
+		mv.addObject("listService", impl.listDisplayService());	
 		mv.addObject("currentServiceId", ApplicationUtils.getServiceId());
 		mv.addObject("title", TITLE);
 		return mv;
@@ -46,6 +43,7 @@ public class MonitorViewController {
 	public ModelAndView startup() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", listStartup(new Page(), null));
+		mv.addObject("listService", impl.listDisplayService());
 		return mv;
 	}
 	public Map<?, ?> listStartup(Page page, String serviceId) {
