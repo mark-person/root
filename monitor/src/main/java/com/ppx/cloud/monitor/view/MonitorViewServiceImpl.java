@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.Row;
 import com.ppx.cloud.common.jdbc.MyCriteria;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
@@ -47,11 +48,11 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			MyCriteria c = new MyCriteria("where");
-			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
+			c.addAnd("serviceId = ?", sid);
 			
-			var cSql = new StringBuilder("select count(*) from col_start").append(c);
-			var qSql = new StringBuilder("select doc from col_start").append(c).append(" order by json_extract(doc, '$.startTime') desc");
-			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
+			var cSql = new StringBuilder("select count(*) from startup").append(c);
+			var qSql = new StringBuilder("select * from startup").append(c).append(" order by startupTime desc");
+			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
@@ -93,11 +94,11 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		try (LogTemplate t = new LogTemplate()) {
 			
 			MyCriteria c = new MyCriteria("where");
-			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
+			c.addAnd("serviceId = ?", sid);
 			
-			var cSql = new StringBuilder("select count(*) from col_error").append(c);
-			var qSql = new StringBuilder("select doc from col_error").append(c).append(" order by json_extract(doc, '$.b') desc");
-			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
+			var cSql = new StringBuilder("select count(*) from error").append(c);
+			var qSql = new StringBuilder("select * from error").append(c).append(" order by errorTime desc");
+			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
@@ -181,16 +182,19 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	
 	
 	
-	public List<Map<String, Object>> listDebug(Page page, String sid) {
+	public List<Map<String, Object>> listDebug(Page page, String serviceId) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			
 			MyCriteria c = new MyCriteria("where");
-			c.addAnd("json_extract(doc, '$.sid') = ?", sid);
+			c.addAnd("d.serviceId = ?", serviceId);
 			
-			var cSql = new StringBuilder("select count(*) from col_debug").append(c);
-			var qSql = new StringBuilder("select doc from col_debug").append(c).append(" order by json_extract(doc, '$.b') desc");
-			returnList = queryCollectionPage(t, page, cSql, qSql, c.getParaList());
+			var cSql = new StringBuilder("select count(*) from debug d").append(c);
+			var qSql = new StringBuilder("select d.*, s.uriText from debug d"
+					+ " left join access a on d.accessId = a.accessId"
+					+ " left join map_uri_seq s on a.uriSeq = s.uriSeq")
+					.append(c).append(" order by d.debugTime desc");
+			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
 	}
