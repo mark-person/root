@@ -44,7 +44,7 @@ $(function() {
 		<thead class="thead-light">
 		<tr>
 			<th class="w-id">服务</th>
-			<th class="w-id">访问时间</th>
+			<th class="w-time">访问时间</th>
 			<th class="w-id">URI</th>
 			<th class="w-id">queryString</th>
 			<th class="w-id">用时ms</th>
@@ -60,7 +60,7 @@ $(function() {
 	<table>
 		<tr th:fragment="template">
 			<td>{{v.serviceId}}</td>
-			<td>{{v.accessDate}}</td>
+			<td>{{v.accessDate}}&nbsp;{{v.accessTime}}</td>
 			<td>{{v.uriText}}</td>
 			<td>{{v.info.q}}</td>
 			<td>{{v.spendTime}}</td>

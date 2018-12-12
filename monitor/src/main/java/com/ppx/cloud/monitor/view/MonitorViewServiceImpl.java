@@ -57,11 +57,15 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	}
 
 	
-	public List<Map<String, Object>> listAccess(Page page, String date, String serviceId, String uriText) {
+	public List<Map<String, Object>> listAccess(Page page, String date, String beginTime, String endTime,
+			String serviceId, String uriText)
+			 {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			
 			MyCriteria c = new MyCriteria("where").addAnd("a.accessDate = ?", date)
+				.addAnd("a.accessTime >= ?", beginTime)
+				.addAnd("a.accessTime <= ?", endTime)
 				.addAnd("a.serviceId = ?", serviceId)
 				.addAnd("s.uriText = ?", uriText);
 			

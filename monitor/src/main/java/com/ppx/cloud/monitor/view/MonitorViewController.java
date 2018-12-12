@@ -57,14 +57,14 @@ public class MonitorViewController {
 		ModelAndView mv = new ModelAndView();
 		String today = DateUtils.today();
 		mv.addObject("today", today);
-		mv.addObject("list", listAccess(new Page(), today, null, null));
+		mv.addObject("list", listAccess(new Page(), today, null, null, null, null));
 		
 		mv.addObject("listService", impl.listDisplayService());
 		
 		return mv;
 	}
-	public Map<?, ?> listAccess(Page page, String date, String serviceId, String uriText) {
-		List<Map<String, Object>> list = impl.listAccess(page, date, serviceId, uriText);
+	public Map<?, ?> listAccess(Page page, String date, String beginTime, String endTime, String serviceId, String uriText) {
+		List<Map<String, Object>> list = impl.listAccess(page, date, beginTime, endTime, serviceId, uriText);
 		return ControllerReturn.success(list, page);
 	}
 	
