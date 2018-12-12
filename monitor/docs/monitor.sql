@@ -1,4 +1,5 @@
 
+
 create table access (
 	accessId 	int not null auto_increment,
 	accessDate 	date not null,
