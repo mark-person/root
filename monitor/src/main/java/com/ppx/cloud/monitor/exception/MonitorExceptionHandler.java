@@ -29,14 +29,12 @@ public class MonitorExceptionHandler extends CustomExceptionHandler {
 	
 	private static Logger logger = LoggerFactory.getLogger(MonitorExceptionHandler.class);
     
-    private AtomicInteger sequence = new AtomicInteger(0);
-    
     @Override
     @ExceptionHandler(value = Throwable.class)
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object object,
             Exception exception) {
-        // 100秒+系列号，在页面中显示和数据库中存储
-        String marker = System.currentTimeMillis() / 100000 + "-" + sequence.getAndIncrement();
+        // 在页面中显示并在数据库中存储
+        String marker = (System.currentTimeMillis() + "" + (int)(Math.random() * 1000));
         // 传参marker到CustomExceptionHandler
         request.setAttribute("marker", marker);
         super.resolveException(request, response, object, exception);
