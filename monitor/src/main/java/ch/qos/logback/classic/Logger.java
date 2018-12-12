@@ -454,9 +454,9 @@ public final class Logger implements org.slf4j.Logger, LocationAwareLogger, Appe
                     	accessLog.addLog(getHHMmSsSss() + le.toString() + " " + classMsg);
                     }
                     else {
-                    	String logMsg = "";
-                    	if (le.getMessage() != null) {
-                    		logMsg = getHHMmSsSss() + le.toString() + " " + classMsg;
+                    	String logMsg = getHHMmSsSss() + le.toString() + " " + classMsg;
+                    	if ("ERROR".equals(le.getMessage())) {
+                    		logMsg = "ERROR";
                     	}
                     	accessLog.addLog("" + marker.getName() + "<<m>>" + logMsg);
                     }

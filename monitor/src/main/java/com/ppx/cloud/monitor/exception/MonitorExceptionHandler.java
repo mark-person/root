@@ -36,7 +36,7 @@ public class MonitorExceptionHandler extends CustomExceptionHandler {
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object object,
             Exception exception) {
         // 100秒+系列号，在页面中显示和数据库中存储
-        String marker = System.currentTimeMillis() / 100000 + "" + sequence.getAndIncrement();
+        String marker = System.currentTimeMillis() / 100000 + "-" + sequence.getAndIncrement();
         // 传参marker到CustomExceptionHandler
         request.setAttribute("marker", marker);
         super.resolveException(request, response, object, exception);
@@ -46,7 +46,7 @@ public class MonitorExceptionHandler extends CustomExceptionHandler {
             return null;
         }
         // accessLog.addMarker(marker);
-        logger.error(MarkerFactory.getMarker(marker), null);
+        logger.error(MarkerFactory.getMarker(marker), "ERROR");
         
         if (StringUtils.isEmpty(accessLog.getParams())) {
             // 所有异常 包括ErrorCode.IGNORE_ERROR，都要打印输入参数

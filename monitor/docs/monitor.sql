@@ -69,6 +69,7 @@ create table error (
 create table error_detail (
 	accessId 	int not null,
 	errorDetail json,
+	debugDetail json,
 	primary key (accessId)
 );
 
