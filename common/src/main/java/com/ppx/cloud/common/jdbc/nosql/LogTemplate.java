@@ -109,6 +109,17 @@ public class LogTemplate implements AutoCloseable {
 		}
 	}
 	
+	public SqlResult sql(Object sql, Object... bindValue) {
+		if (sql == null) return null;
+		try {
+			SqlResult r = session.sql(sql.toString()).bind(bindValue).execute();
+			return r;
+		} catch (Exception e) {
+			this.isException = true;
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public boolean existsTable(String tableName) {
 		List<Table> list = schema.getTables(tableName);
 		return list.isEmpty() ? false : true;

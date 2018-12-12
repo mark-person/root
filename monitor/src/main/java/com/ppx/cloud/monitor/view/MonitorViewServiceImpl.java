@@ -58,23 +58,34 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 
 	
 	public List<Map<String, Object>> listAccess(Page page, String date, String beginTime, String endTime,
-			String serviceId, String uriText)
-			 {
+			String serviceId, String uriText) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			
-			MyCriteria c = new MyCriteria("where").addAnd("a.accessDate = ?", date)
-				.addAnd("a.accessTime >= ?", beginTime)
+			MyCriteria c = new MyCriteria("and").addAnd("a.accessTime >= ?", beginTime)
 				.addAnd("a.accessTime <= ?", endTime)
 				.addAnd("a.serviceId = ?", serviceId)
 				.addAnd("s.uriText = ?", uriText);
+			c.addPrePara(date);
 			
-			var cSql = new StringBuilder("select count(*) from access a left join map_uri_seq s on s.uriSeq = a.uriSeq").append(c);
-			var qSql = new StringBuilder("select a.*, s.uriText from access a left join map_uri_seq s on s.uriSeq = a.uriSeq")
-					.append(c).append(" order by a.accessTime desc");
+			var cSql = new StringBuilder("select count(*) from access a left join map_uri_seq s on s.uriSeq = a.uriSeq"
+					+ " where a.accessDate = ?").append(c);
+			var qSql = new StringBuilder("select a.*, s.uriText from access a left join map_uri_seq s on s.uriSeq = a.uriSeq"
+					+ " where a.accessDate = ?").append(c).append(" order by a.accessTime desc");
 			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
+	}
+	
+	public Map<String, Object> getAccess(String accessId) {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		var sql = "select a.*, s.uriText, l.marker, l.log from access a"
+				+ " left join map_uri_seq s on s.uriSeq = a.uriSeq "
+				+ " left join access_log l on l.accessId = a.accessId where a.accessId = ?";
+		try (LogTemplate t = new LogTemplate()) {
+			returnMap = fetchOne(t, sql, accessId);
+		}
+		return returnMap;
 	}
 	
 	public List<Map<String, Object>> listError(Page page, String sid) {

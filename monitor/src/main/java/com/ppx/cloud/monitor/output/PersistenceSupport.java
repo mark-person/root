@@ -187,4 +187,12 @@ public class PersistenceSupport {
 	}
 	
 	
+	protected Map<String, Object> fetchOne(LogTemplate t, String sql, Object... obj) {
+		SqlResult sr = t.sql(sql, obj);
+		Row row = sr.fetchOne();
+		List<Column> colList = sr.getColumns();
+		return getRowMap(row, colList);
+	}
+	
+	
 }

@@ -67,6 +67,9 @@ public class MonitorViewController {
 		List<Map<String, Object>> list = impl.listAccess(page, date, beginTime, endTime, serviceId, uriText);
 		return ControllerReturn.success(list, page);
 	}
+	public Map<?, ?> getAccess(String accessId) {
+		return impl.getAccess(accessId);
+	}
 	
 	public ModelAndView error() {
 		ModelAndView mv = new ModelAndView();
