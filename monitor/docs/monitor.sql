@@ -88,17 +88,16 @@ create table map_uri_seq (
   primary key (uriSeq)
 );
 
-alter table  map_uri_seq 
-add unique index idx_map_uri_text (uriText ASC) VISIBLE;
+alter table map_uri_seq add unique index idx_map_uri_text (uriText ASC) VISIBLE;
 
 create table map_sql_md5 (
   sqlMd5 varchar(32) not NULL,
   sqlText varchar(2048) default NULL,
-  PRIMARY KEY (sqlMd5)
+  primary key (sqlMd5)
 );
 
 create table stat_uri (
-	uriSeq int not null primary key,
+	uriSeq int not null,
 	times int not null default 1,
     totalTime int not null default 1,
     maxTime int not null,
@@ -106,11 +105,12 @@ create table stat_uri (
     firsted timestamp not null default current_timestamp,
     lasted timestamp not null default current_timestamp,
     distribute json,
-    maxDetail json
+    maxDetail json,
+    primary key (uriSeq)
 );
 
 create table stat_sql (
-	sqlMd5 varchar(32) not null primary key,
+	sqlMd5 varchar(32) not null,
 	times int not null default 1,
     totalTime int not null default 1,
     maxTime int not null,
@@ -120,7 +120,8 @@ create table stat_sql (
     lasted timestamp not null default current_timestamp,
     distribute json,
     maxDetail json,
-    uri json
+    uri json,
+    primary key (sqlMd5)
 );
 
 create table stat_response (
@@ -134,11 +135,11 @@ create table stat_response (
 );
 
 create table stat_warning (
-	uriSeq int not null primary key,
+	uriSeq int,
 	firsted timestamp not null default current_timestamp,
     lasted timestamp not null default current_timestamp,
     content int,
-    primary key(uriSeq)
+    primary key (uriSeq)
 );
 
 

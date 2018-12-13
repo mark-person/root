@@ -271,13 +271,13 @@ public class PersistenceImpl extends PersistenceSupport {
 		if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
 			// 出错时，记录输入参数
 			List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), 
-					a.getBeginTime(), a.getUriSeq(), errorBean.getCode(), errorBean.getInfo() + ";param|injson:" + a.getParams() + "|" + a.getInJson());
+					a.getBeginTime(), errorBean.getCode(), errorBean.getInfo() + ";param|injson:" + a.getParams() + "|" + a.getInJson());
 			t.sql(errorSql, bindValue);
 
 		} else {
 			// 出错时，记录输入参数
 			List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), 
-					a.getBeginTime(), a.getUriSeq(), errorBean.getCode(), errorBean.getInfo());
+					a.getBeginTime(), errorBean.getCode(), errorBean.getInfo());
 			t.sql(errorSql, bindValue);
 			
 			var debug = AccessLogUtils.getDebugMap(a);
