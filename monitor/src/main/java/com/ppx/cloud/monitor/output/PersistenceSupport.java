@@ -52,24 +52,28 @@ public class PersistenceSupport {
 		
 		SqlResult sr = t.sql(qSql.toString(), paraList);
 		
+		
 		List<Row> list = sr.fetchAll();
 		
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		List<Column> colList = sr.getColumns();
-		
+		List<String> colNameList = sr.getColumnNames();
 	
 		
 		for (Row row : list) {
-			returnList.add(getRowMap(row, colList));
+			returnList.add(getRowMap(row, colList, colNameList));
 		}
 		return returnList;
 	}
 	
-	private Map<String, Object> getRowMap(Row row, List<Column> colList) {
+	private Map<String, Object> getRowMap(Row row, List<Column> colList, List<String> colNameList) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		int i = 0;
 		for (Column col : colList) {
-			
-			if (col.getType() == Type.INT) {
+			if (StringUtils.isEmpty(col.getColumnName())) {
+				map.put(colNameList.get(i), row.getString(colNameList.get(i)));
+			}
+			else if (col.getType() == Type.INT) {
 				map.put(col.getColumnName(), row.getInt(col.getColumnName()));
 			}
 			else if (col.getType() == Type.TIMESTAMP) {
@@ -103,6 +107,7 @@ public class PersistenceSupport {
 			else {
 				map.put(col.getColumnName(), row.getString(col.getColumnName()));
 			}
+			i++;
 		}
 		return map;
 	}
@@ -111,7 +116,8 @@ public class PersistenceSupport {
 		SqlResult sr = t.sql(sql, obj);
 		Row row = sr.fetchOne();
 		List<Column> colList = sr.getColumns();
-		return getRowMap(row, colList);
+		List<String> colNameList = sr.getColumnNames();
+		return getRowMap(row, colList, colNameList);
 	}
 	
 	

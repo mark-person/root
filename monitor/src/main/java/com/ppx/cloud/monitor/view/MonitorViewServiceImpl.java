@@ -192,9 +192,11 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			c.addAnd("d.serviceId = ?", serviceId);
 			
 			var cSql = new StringBuilder("select count(*) from debug d").append(c);
-			var qSql = new StringBuilder("select d.*, s.uriText, a.accessInfo, a.spendTime from debug d"
+			var qSql = new StringBuilder("select d.*, s.uriText, a.accessInfo, a.spendTime, (select group_concat(l.marker) from access_log l where l.accessId = d.accessId) marker"
+					+ " from debug d"
 					+ " left join access a on d.accessId = a.accessId"
-					+ " left join map_uri_seq s on a.uriSeq = s.uriSeq")
+					+ " left join map_uri_seq s on a.uriSeq = s.uriSeq"
+					+ " left join access_log l on l.accessId = a.accessId")
 					.append(c).append(" order by d.debugTime desc");
 			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
