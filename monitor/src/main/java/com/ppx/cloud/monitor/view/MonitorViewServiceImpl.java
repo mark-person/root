@@ -97,7 +97,9 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			c.addAnd("serviceId = ?", serviceId);
 			
 			var cSql = new StringBuilder("select count(*) from error").append(c);
-			var qSql = new StringBuilder("select * from error").append(c).append(" order by errorTime desc");
+			var qSql = new StringBuilder("select e.*, s.uriText, a.accessInfo from error e" + 
+					" left join access a on a.accessId = a.accessId" + 
+					" left join map_uri_seq s on s.uriSeq = a.uriSeq").append(c).append(" order by errorTime desc");
 			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
 		return returnList;
@@ -190,7 +192,7 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 			c.addAnd("d.serviceId = ?", serviceId);
 			
 			var cSql = new StringBuilder("select count(*) from debug d").append(c);
-			var qSql = new StringBuilder("select d.*, s.uriText from debug d"
+			var qSql = new StringBuilder("select d.*, s.uriText, a.accessInfo, a.spendTime from debug d"
 					+ " left join access a on d.accessId = a.accessId"
 					+ " left join map_uri_seq s on a.uriSeq = s.uriSeq")
 					.append(c).append(" order by d.debugTime desc");

@@ -54,9 +54,9 @@ public class PersistenceImpl extends PersistenceSupport {
 		updateSql.execute(t);
 		
 		// 启动
-		String info = toJson(startInfo);
-		String startupSql = "insert into startup(startupTime, serviceId, info) values(?, ?, ?)";
-		List<Object> bindValue = Arrays.asList(startTime, ApplicationUtils.getServiceId(), info);
+		String startupInfo = toJson(startInfo);
+		String startupSql = "insert into startup(startupTime, serviceId, startupInfo) values(?, ?, ?)";
+		List<Object> bindValue = Arrays.asList(startTime, ApplicationUtils.getServiceId(), startupInfo);
 		t.sql(startupSql, bindValue);
 		
 		// 配置
@@ -71,7 +71,7 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	public void insertGather(Date gatherTime, int isOver, long maxProcessingTime, int concurrentN, Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {
 		List<Object> bindValue = Arrays.asList(ApplicationUtils.getServiceId(), gatherTime, isOver, maxProcessingTime, concurrentN, toJson(gatherMap));
-		String gatherSql = "insert into gather(serviceId, gatherTime, isOver, maxProcessingTime, concurrentN, info) values(?, ?, ?, ?, ?, ?)";
+		String gatherSql = "insert into gather(serviceId, gatherTime, isOver, maxProcessingTime, concurrentN, gatherInfo) values(?, ?, ?, ?, ?, ?)";
 		t.sql(gatherSql, bindValue);
 		
 		// updateSql
@@ -95,9 +95,9 @@ public class PersistenceImpl extends PersistenceSupport {
 		long useMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
         
 		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "uid", -1);
-		String info = toJson(map);
-		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUriSeq(), a.getSpendTime(), info);
-		String sql = "insert into access(accessDate, accessTime, serviceId, uriSeq, spendTime, info) values(?, ?, ?, ?, ?, ?)";
+		String accessInfo = toJson(map);
+		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUriSeq(), a.getSpendTime(), accessInfo);
+		String sql = "insert into access(accessDate, accessTime, serviceId, uriSeq, spendTime, accessInfo) values(?, ?, ?, ?, ?, ?)";
 		t.sql(sql, bindValue);
 		
 		int accessId = getLastInsertId(t);
@@ -245,9 +245,8 @@ public class PersistenceImpl extends PersistenceSupport {
 
 	public void insertDebug(Integer accessId, AccessLog a) {
 		Map<String, Object> debug = AccessLogUtils.getDebugMap(a);
-		List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), a.getBeginTime(),
-				a.getUriSeq(), toJson(debug)); 
-		String sql = "insert into debug(accessId, serviceId, debugTime, uriSeq, info) values(?, ?, ?, ?, ?)";
+		List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), a.getBeginTime(), toJson(debug)); 
+		String sql = "insert into debug(accessId, serviceId, debugTime, debugInfo) values(?, ?, ?, ?)";
 		t.sql(sql, bindValue);
 	}
 
@@ -267,7 +266,7 @@ public class PersistenceImpl extends PersistenceSupport {
 	public void insertError(Throwable throwable, Integer accessId,  AccessLog a) {
 		ErrorBean errorBean = ErrorCode.getErroCode(throwable);
 
-		String errorSql = "insert into error(accessId, serviceId, errorTime, uriSeq, errorCode, errorMsg) values(?, ?, ?, ?, ?, ?)";
+		String errorSql = "insert into error(accessId, serviceId, errorTime, errorCode, errorMsg) values(?, ?, ?, ?, ?)";
 		// 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情
 		if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
 			// 出错时，记录输入参数

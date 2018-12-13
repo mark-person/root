@@ -7,7 +7,7 @@ create table access (
 	serviceId 	varchar(32) not null,
 	uriSeq		int not null,
 	spendTime 	int not null,
-	info 		json,
+	accessInfo 		json,
 	primary key (accessId, accessDate)
 )
 partition by hash (dayofmonth(accessDate)) partitions 10;
@@ -23,7 +23,7 @@ create table startup (
 	startupId		int not null auto_increment,
 	startupTime		datetime not null,
 	serviceId		varchar(32) not null,
-	info			json,
+	startupInfo			json,
 	primary key (startupId)
 );
 
@@ -53,7 +53,7 @@ create table gather (
 	isOver				tinyint not null default 0,
 	maxProcessingTime 	int not null default 0,
 	concurrentN			int not null default 0,
-	info				json,
+	gatherInfo				json,
 	primary key (serviceId, gatherTime)
 );
 
@@ -61,7 +61,6 @@ create table error (
 	accessId 	int not null,
 	serviceId 	varchar(32) not null,
 	errorTime 	datetime not null,
-	uriSeq 		int not null,
 	errorCode 	int not null default -1,
 	errorMsg	varchar(1024),
 	primary key (accessId)
@@ -78,8 +77,7 @@ create table debug (
 	accessId 	int not null,
 	serviceId 	varchar(32) not null,
 	debugTime	datetime not null,
-	uriSeq 		int not null,
-	info		json,
+	debugInfo		json,
 	primary key (accessId)
 );
 

@@ -49,12 +49,12 @@ $(function() {
 	<table>
 		<tr th:fragment="template">
 			<td>{{v.serviceId}}</td>
-			<td>{{v.info.artifactId}}</td>
-			<td>{{v.info.version}}</td>
+			<td>{{v.startupInfo.artifactId}}</td>
+			<td>{{v.startupInfo.version}}</td>
 			<td>{{v.startupTime}}</td>
-			<td>{{v.info.jvmSpendTime}}</td>
-			<td>{{v.info.handlerMethodsSize}}</td>
-			<td>{{v.info.beanDefinitionCount}}</td>
+			<td>{{v.startupInfo.jvmSpendTime}}</td>
+			<td>{{v.startupInfo.handlerMethodsSize}}</td>
+			<td>{{v.startupInfo.beanDefinitionCount}}</td>
 			<td>
 				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>
 			</td>

@@ -56,9 +56,7 @@ public class MonitorViewController {
 		String today = DateUtils.today();
 		mv.addObject("today", today);
 		mv.addObject("list", listAccess(new Page(), today, null, null, null, null));
-		
 		mv.addObject("listService", impl.listDisplayService());
-		
 		return mv;
 	}
 	public Map<?, ?> listAccess(Page page, String date, String beginTime, String endTime, String serviceId, String uriText) {
@@ -72,7 +70,7 @@ public class MonitorViewController {
 	public ModelAndView error() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", listError(new Page(), null));
-		
+		mv.addObject("listService", impl.listDisplayService());
 		return mv;
 	}
 	public Map<?, ?> listError(Page page, String serviceId) {
