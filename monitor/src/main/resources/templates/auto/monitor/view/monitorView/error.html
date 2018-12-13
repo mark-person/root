@@ -12,6 +12,17 @@ $(function() {
 });
 
 
+function viewDetail(accessId) {
+	
+	showLoading();
+	$.post(controllerPath + "getError", {accessId:accessId}, function(r) {
+		hideLoading();
+		$("#viewDetailJson").text(formatJson(JSON.stringify(r)));
+		$("#viewDetail").modal("show");
+		
+	});
+	
+}
 
 </script>
 </head>
@@ -29,6 +40,11 @@ $(function() {
 			<option value="">全部</option>
 			<option th:value="${item.serviceId}" th:text="${item.serviceId}" th:each="item:${listService}"></option>
 		</select>
+		<label>日期:</label>		
+		<input type="text" class="form-control input-sm" name="date" th:value="${date}" onclick="WdatePicker()" style="width:90px">			
+	    <input type="text" class="form-control input-sm" name="beginTime" placeholder="开始时分秒" onclick="WdatePicker({dateFmt:'HH:mm:ss'})" style="width:90px">-<input type="text" class="form-control input-sm" name="endTime" placeholder="结束时分秒" onclick="WdatePicker({dateFmt:'HH:mm:ss'})" style="width:90px">	
+		<label>URI:</label><input type="text" class="form-control input-sm" name="uri" placeholder="全匹配URI">
+		<label>标记:</label><input type="text" class="form-control input-sm" name="marker" style="width:90px">
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
 	<table th:fragment="list">
@@ -50,11 +66,11 @@ $(function() {
 			<td>{{v.serviceId}}</td>
 			<td>{{v.errorTime}}</td>
 			<td>{{v.uriText}}</td>
-			<td>{{v.info.q}}</td>
+			<td>{{v.accessInfo.q}}</td>
 			<td>{{v.errorCode}}</td>
 			<td>{{v.errorMsg}}</td>
 			<td>
-				<a href="#" data-content="{{transfer(v)}}" onclick="viewDetail(this)">详情</a>
+				<a href="#" onclick="viewDetail('{{v.accessId}}')">详情</a>
 			</td>
 		</tr>
 	</table>

@@ -77,6 +77,9 @@ public class MonitorViewController {
 		List<Map<String, Object>> list = impl.listError(page, serviceId);
 		return ControllerReturn.success(list, page);
 	}
+	public Map<?, ?> getError(String accessId) {
+		return ControllerReturn.success(impl.getDebug(accessId));
+	}
 	
 	public ModelAndView gather() {
 		ModelAndView mv = new ModelAndView();
