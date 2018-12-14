@@ -1,10 +1,8 @@
 package com.ppx.cloud.auth.cache;
 
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.MemoryUnit;
@@ -16,8 +14,8 @@ import net.sf.ehcache.config.MemoryUnit;
  * @author mark
  * @date 2018年7月2日
  */
-@Configuration
-@EnableCaching
+//@Configuration
+//@EnableCaching
 public class EhCacheConfig {
 	
 	public static final String LOCAL_MANAGER = "LOCAL_MANAGER";

@@ -19,8 +19,8 @@ public class StartAuth implements ApplicationListener<ContextRefreshedEvent> {
     
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
-        AuthCache authCache = ehCacheServ.initAuthVersion();
-        AuthFilterUtils.localAuthAllVersion = authCache.getAllVersion();
-        AuthFilterUtils.localAuthGrantVersion = authCache.getGrantVersion();
+//        AuthCache authCache = ehCacheServ.initAuthVersion();
+//        AuthFilterUtils.localAuthAllVersion = authCache.getAllVersion();
+//        AuthFilterUtils.localAuthGrantVersion = authCache.getGrantVersion();
     }
 }

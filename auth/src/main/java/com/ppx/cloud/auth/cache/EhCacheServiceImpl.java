@@ -1,6 +1,5 @@
 package com.ppx.cloud.auth.cache;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
@@ -77,13 +74,13 @@ public class EhCacheServiceImpl extends AuthMongoSupport implements EhCacheServi
     @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadUriIndex'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
     public Map<String, Integer> loadUriIndex() {
         Map<String, Integer> returnMap = new HashMap<String, Integer>();
-        List<Map> list = mongoTemplate.findAll(Map.class, COL_URI_INDEX);
-        if (list == null) {
-            return returnMap;
-        }
-        for (Map map : list) {
-            returnMap.put((String)map.get("_id"), (Integer)map.get("index"));
-        }
+//        List<Map> list = mongoTemplate.findAll(Map.class, COL_URI_INDEX);
+//        if (list == null) {
+//            return returnMap;
+//        }
+//        for (Map map : list) {
+//            returnMap.put((String)map.get("_id"), (Integer)map.get("index"));
+//        }
         return returnMap;
     }
     
@@ -96,27 +93,27 @@ public class EhCacheServiceImpl extends AuthMongoSupport implements EhCacheServi
         Map<Integer, Map> IdMap = new HashMap<Integer, Map>();
         Map<Integer, List<Map>> pMenuIdMap = new HashMap<Integer, List<Map>>();
         
-        List<Map> list = mongoTemplate.findAll(Map.class, COL_RESOURCE_URI);
-        if (list == null) {
-            return returnMap;
-        }
-        for (Map map : list) {
-            IdMap.put((Integer)map.get("_id"), map);
-            
-            Integer pMenuId = (Integer)map.get("pMenuId");
-            if (pMenuId != null) {
-                List<Map> tmpList = pMenuIdMap.get(pMenuId);
-                tmpList = tmpList == null ? new ArrayList<Map>() : tmpList;
-                tmpList.add(map);
-                pMenuIdMap.put(pMenuId, tmpList);
-            }
-        }
-        
-        pMenuIdMap.forEach((pMenuId, value) -> {
-            Map map = IdMap.get(pMenuId);
-            List<String> uriList = (List<String>)map.get("uri");
-            returnMap.put((String)uriList.get(0), value);
-        });
+//        List<Map> list = mongoTemplate.findAll(Map.class, COL_RESOURCE_URI);
+//        if (list == null) {
+//            return returnMap;
+//        }
+//        for (Map map : list) {
+//            IdMap.put((Integer)map.get("_id"), map);
+//            
+//            Integer pMenuId = (Integer)map.get("pMenuId");
+//            if (pMenuId != null) {
+//                List<Map> tmpList = pMenuIdMap.get(pMenuId);
+//                tmpList = tmpList == null ? new ArrayList<Map>() : tmpList;
+//                tmpList.add(map);
+//                pMenuIdMap.put(pMenuId, tmpList);
+//            }
+//        }
+//        
+//        pMenuIdMap.forEach((pMenuId, value) -> {
+//            Map map = IdMap.get(pMenuId);
+//            List<String> uriList = (List<String>)map.get("uri");
+//            returnMap.put((String)uriList.get(0), value);
+//        });
         return returnMap;
     }
     
@@ -125,21 +122,22 @@ public class EhCacheServiceImpl extends AuthMongoSupport implements EhCacheServi
     public Map<Integer, Map> loadResouceUri() {
         Map<Integer, Map> returnMap = new HashMap<Integer, Map>();
         
-        List<Map> list = mongoTemplate.findAll(Map.class, COL_RESOURCE_URI);
-        if (list == null) {
-            return returnMap;
-        }
-        for (Map map : list) {
-            returnMap.put((Integer)map.get("_id"), map);
-        }
+//        List<Map> list = mongoTemplate.findAll(Map.class, COL_RESOURCE_URI);
+//        if (list == null) {
+//            return returnMap;
+//        }
+//        for (Map map : list) {
+//            returnMap.put((Integer)map.get("_id"), map);
+//        }
         return returnMap;
     }
     
     @SuppressWarnings("rawtypes")
     @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadResource'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
     public Map loadResource() {
-        Query query = Query.query(Criteria.where("_id").is(0));
-        Map map =  mongoTemplate.findOne(query, Map.class, COL_RESOURCE);
-        return map;
+    	Map<Integer, String> returnMap = new HashMap<Integer, String>();
+//        Query query = Query.query(Criteria.where("_id").is(0));
+//        Map map =  mongoTemplate.findOne(query, Map.class, COL_RESOURCE);
+        return returnMap;
     }
 }

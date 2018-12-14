@@ -1,9 +1,5 @@
 package com.ppx.cloud.auth.common;
 
-import javax.annotation.Resource;
-
-import org.springframework.data.mongodb.core.MongoTemplate;
-
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 /**
@@ -18,6 +14,4 @@ public class AuthMongoSupport extends MyDaoSupport {
     protected final String COL_RESOURCE_URI = "grant_resource_uri";
     protected final String COL_SEQUENCE = "grant_sequence";
     
-    @Resource(name="grantMongoTemplate")
-    protected MongoTemplate mongoTemplate;
 }
