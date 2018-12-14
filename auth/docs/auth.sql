@@ -1,3 +1,5 @@
+
+
 create table auth_res (
 	res_id int not null,
     parent_id int not null,
