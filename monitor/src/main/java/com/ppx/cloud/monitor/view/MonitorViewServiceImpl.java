@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,6 +107,15 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 		return returnList;
 	}
 	
+	public Map<String, Object> getError(String accessId) {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		var sql = "select from error where accessId = ?";
+		try (LogTemplate t = new LogTemplate()) {
+			returnMap = fetchOne(t, sql, accessId);
+		}
+		return returnMap;
+	}
+	
 	public List<Map<String, Object>> listGather(Page page, String serviceId) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
@@ -184,19 +195,25 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	
 	
 	
-	public List<Map<String, Object>> listDebug(Page page, String serviceId) {
+	public List<Map<String, Object>> listDebug(Page page, String serviceId, String date, String beginTime, String endTime,
+			String uri, String marker) {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
 			
 			MyCriteria c = new MyCriteria("where");
 			c.addAnd("d.serviceId = ?", serviceId);
+			c.addAnd("d.debugTime >= ?", Strings.isEmpty(beginTime) ? null : date + " " + beginTime);
+			c.addAnd("d.debugTime <= ?", Strings.isEmpty(endTime) ? null : date + " " + endTime);
+			c.addAnd("s.uriText = ?", uri);
+			c.addAnd("exists(select 1 from access_log where accessId = d.accessId and marker = ?)", marker);
 			
-			var cSql = new StringBuilder("select count(*) from debug d").append(c);
+			var cSql = new StringBuilder("select count(*) from debug d "
+					+ " left join access a on d.accessId = a.accessId "
+					+ " left join map_uri_seq s on a.uriSeq = s.uriSeq").append(c);
 			var qSql = new StringBuilder("select d.*, s.uriText, a.accessInfo, a.spendTime, (select group_concat(l.marker) from access_log l where l.accessId = d.accessId) marker"
 					+ " from debug d"
 					+ " left join access a on d.accessId = a.accessId"
-					+ " left join map_uri_seq s on a.uriSeq = s.uriSeq"
-					+ " left join access_log l on l.accessId = a.accessId")
+					+ " left join map_uri_seq s on a.uriSeq = s.uriSeq")
 					.append(c).append(" order by d.debugTime desc");
 			returnList = queryTablePage(t, page, cSql, qSql, c.getParaList());
 		}
@@ -204,7 +221,17 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
 	}
 	
 	
-	
+	public Map<String, Object> getDebug(String accessId) {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		var sql = "select d.*, s.uriText, a.accessInfo, a.spendTime" + 
+				" from debug d" + 
+				" left join access a on d.accessId = a.accessId" + 
+				" left join map_uri_seq s on a.uriSeq = s.uriSeq where d.accessId = ?";
+		try (LogTemplate t = new LogTemplate()) {
+			returnMap = fetchOne(t, sql, accessId);
+		}
+		return returnMap;
+	}
 	
 	
 	

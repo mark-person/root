@@ -77,6 +77,9 @@ public class MonitorViewController {
 		List<Map<String, Object>> list = impl.listError(page, serviceId);
 		return ControllerReturn.success(list, page);
 	}
+	public Map<?, ?> getError(String accessId) {
+		return ControllerReturn.success(impl.getDebug(accessId));
+	}
 	
 	public ModelAndView gather() {
 		ModelAndView mv = new ModelAndView();
@@ -128,11 +131,16 @@ public class MonitorViewController {
 	}
 	
 	public ModelAndView debug(ModelAndView mv) {
-		mv.addObject("list", listDebug(new Page(), null));
+		mv.addObject("listService", impl.listDisplayService());
+		mv.addObject("list", listDebug(new Page(), null, null, null, null, null, null));
 		return mv;
 	}
-	public Map<?, ?> listDebug(Page page, String serviceId) {
-		List<Map<String, Object>> list = impl.listDebug(page, serviceId);
+	public Map<?, ?> listDebug(Page page, String serviceId, String date, String beginTime, String endTime,
+			String uri, String marker) {
+		List<Map<String, Object>> list = impl.listDebug(page, serviceId, date, beginTime, endTime, uri, marker);
 		return ControllerReturn.success(list, page);
+	}
+	public Map<?, ?> getDebug(String accessId) {
+		return ControllerReturn.success(impl.getDebug(accessId));
 	}
 }

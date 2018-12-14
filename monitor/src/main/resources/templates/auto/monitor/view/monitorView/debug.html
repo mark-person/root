@@ -11,7 +11,17 @@ $(function() {
 	$("#pageDiv").page({url:controllerPath + "listDebug", data:[[${list}]]});
 });
 
- 
+function viewDetail(accessId) {
+	
+	showLoading();
+	$.post(controllerPath + "getDebug", {accessId:accessId}, function(r) {
+		hideLoading();
+		$("#viewDetailJson").text(formatJson(JSON.stringify(r)));
+		$("#viewDetail").modal("show");
+		
+	});
+	
+}
 
 </script>
 </head>
@@ -23,8 +33,16 @@ $(function() {
 
 <div id="pageDiv" th:include="common/fragment::page('')">
 	<div th:fragment="query">
-		<label>服务：</label>
-		<input type="text" class="form-control" name="sid">
+		<select class="form-control input-sm" name="serviceId">
+			<option value="">全部</option>
+			<option th:value="${item.serviceId}" th:text="${item.serviceId}" th:each="item:${listService}"></option>
+		</select>
+		<label>日期:</label>	
+		<input type="text" class="form-control input-sm" name="date" th:value="${date}" onclick="WdatePicker()" style="width:90px">			
+       <input type="text" class="form-control input-sm" name="beginTime" placeholder="开始时分秒" onclick="WdatePicker({dateFmt:'HH:mm:ss'})" style="width:90px">-<input type="text" class="form-control input-sm" name="endTime" placeholder="结束时分秒" onclick="WdatePicker({dateFmt:'HH:mm:ss'})" style="width:90px">	
+		<label>URI:</label><input type="text" class="form-control input-sm" name="uri" placeholder="全匹配URI">
+		<label>标记:</label><input type="text" class="form-control input-sm" name="marker" style="width:150px">
+	
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
 	<table th:fragment="list">
@@ -51,13 +69,13 @@ $(function() {
 			<td>{{v.spendTime}}</td>
 			<td>{{v.accessInfo.ip}}</td>
 			<td>{{v.marker}}</td>
-			<td></td>
+			<td><a href="#" onclick="viewDetail('{{v.accessId}}')">详情</a></td>
 		</tr>
 	</table>
 </div>
 
 
-
+<div th:replace="monitor/monitorFragment::viewDetail"></div>
 
 
 </div>
