@@ -28,7 +28,6 @@ import com.ppx.cloud.common.exception.security.PermissionUrlException;
  *  1:java异常，需要修改，打印
  *  2:jdbc部分异常，需要修改，打印
  *  3:模板错误
- *  4:mongodb异常
  *  -1:未知异常，打印
  * @author dengxz
  * @date 2017年4月1日
@@ -43,8 +42,6 @@ public class ErrorCode {
     private final static int JAVA_LANG_ERROR = 1;
     // jdbc异常
     private final static int JDBC_ERROR = 2;
-    // mongodb异常
-    private final static int MONGO_ERROR = 3;
     // thymeleaf异常
     private final static int THYMELEAF_ERROR = 4;
     // 紧急异常，需要紧急处理
@@ -118,10 +115,6 @@ public class ErrorCode {
 		else if ("org.springframework.dao".equals(e.getClass().getPackage().getName())) {
 			// 必须栏插入空值，重复数据，Integer field返回int
 			return new ErrorBean(JDBC_ERROR, e.getClass().getSimpleName());
-		}
-		else if ("org.springframework.data.mongodb".equals(e.getClass().getPackage().getName())) {
-			// 必须栏插入空值，重复数据，Integer field返回int
-			return new ErrorBean(MONGO_ERROR, e.getClass().getSimpleName());
 		}
 		
 		return new ErrorBean(UNKNOWN_ERROR, e.getClass().getSimpleName());

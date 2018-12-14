@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ppx.cloud.auth.cache.EhCacheService;
-import com.ppx.cloud.auth.common.AuthMongoSupport;
 import com.ppx.cloud.auth.console.grant.GrantService;
+import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 /**
  * 资源管理
@@ -18,7 +18,7 @@ import com.ppx.cloud.auth.console.grant.GrantService;
  * @date 2018年7月2日
  */
 @Service
-public class ResourceServiceImpl extends AuthMongoSupport implements ResourceService {
+public class ResourceServiceImpl extends MyDaoSupport implements ResourceService {
 	
 	@Autowired
     private EhCacheService ehCacheServ;

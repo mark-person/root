@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ppx.cloud.auth.bean.Merchant;
 import com.ppx.cloud.auth.cache.EhCacheService;
-import com.ppx.cloud.auth.common.AuthMongoSupport;
 import com.ppx.cloud.common.jdbc.MyCriteria;
+import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.page.Page;
 
 /**
@@ -20,7 +20,7 @@ import com.ppx.cloud.common.page.Page;
  * @date 2018年7月2日
  */
 @Service
-public class GrantServiceImpl extends AuthMongoSupport implements GrantService {
+public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 	
 	@Autowired
 	private EhCacheService ehCacheServ;

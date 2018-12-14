@@ -31,6 +31,7 @@
 			<artifactId>root-auth</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		 
 	</dependencies>
 
 
@@ -74,6 +75,7 @@
 									<overWrite>true</overWrite>
 									<outputDirectory>${project.build.directory}/classes</outputDirectory>
 								</artifactItem>
+								<!-- 
 								<artifactItem>
 									<groupId>com.ppx.cloud</groupId>
 									<artifactId>root-auth</artifactId>
@@ -81,6 +83,7 @@
 									<overWrite>true</overWrite>
 									<outputDirectory>${project.build.directory}/classes</outputDirectory>
 								</artifactItem>
+								-->
 							</artifactItems>
 						</configuration>
 					</execution>

@@ -12,7 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
-import com.ppx.cloud.auth.common.AuthMongoSupport;
+import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 
 /**
@@ -21,7 +21,7 @@ import com.ppx.cloud.auth.common.AuthMongoSupport;
  * @date 2018年6月22日
  */
 @Service
-public class EhCacheServiceImpl extends AuthMongoSupport implements EhCacheService {
+public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
 	
 	@Autowired
 	@Qualifier(EhCacheConfig.LOCAL_MANAGER)

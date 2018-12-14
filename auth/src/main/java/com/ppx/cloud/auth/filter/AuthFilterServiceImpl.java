@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import com.ppx.cloud.auth.bean.MerchantAccount;
 import com.ppx.cloud.auth.cache.EhCacheConfig;
 import com.ppx.cloud.auth.cache.EhCacheService;
-import com.ppx.cloud.auth.common.AuthMongoSupport;
 import com.ppx.cloud.auth.console.grant.GrantService;
+import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 
 /**
@@ -23,7 +23,7 @@ import com.ppx.cloud.auth.console.grant.GrantService;
  * @date 2018年7月2日
  */
 @Service
-public class AuthFilterServiceImpl extends AuthMongoSupport {
+public class AuthFilterServiceImpl extends MyDaoSupport {
 
 	@Autowired
 	private GrantService grantService;
