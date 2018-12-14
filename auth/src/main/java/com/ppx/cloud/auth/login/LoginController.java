@@ -59,7 +59,6 @@ public class LoginController {
 		CookieUtils.setCookie(response, VALIDATE_TOKEN_NAME, token);
 	}
 	
-	@GetMapping
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mv = new ModelAndView();
 		createValidateToken(mv, response);
@@ -68,7 +67,6 @@ public class LoginController {
 		return mv;
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<?, ?> doLogin(HttpServletRequest request, HttpServletResponse response, 
 			@RequestParam String a, @RequestParam String p, @RequestParam String v) {
 	    

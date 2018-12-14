@@ -28,62 +28,53 @@ public class ChildController {
     @Autowired
     private ChildServiceImpl impl;
 
-    @GetMapping
     public ModelAndView child() {
         ModelAndView mv = new ModelAndView();
         mv.addObject("listJson", list(new Page(), new MerchantAccount()));
         return mv;
     }
 
-    @PostMapping
-    @ResponseBody
+  
     public Map<?, ?> list(Page page, MerchantAccount child) {
         List<MerchantAccount> list = impl.listChild(page, child);
         return ControllerReturn.success(list, page);
     }
 
-    @PostMapping
-    @ResponseBody
+    
     public Map<?, ?> insertChild(MerchantAccount bean) {
         int r = impl.insertChild(bean);
         return ControllerReturn.success(r);
     }
 
-    @PostMapping
-    @ResponseBody
+    
     public Map<?, ?> getChild(@RequestParam Integer id) {
         MerchantAccount bean = impl.getChild(id);
         return ControllerReturn.success(bean);
     }
 
-    @PostMapping
-    @ResponseBody
+   
     public Map<?, ?> updateAccount(MerchantAccount bean) {
         int r = impl.updateAccount(bean);
         return ControllerReturn.success(r);
     }
 
-    @PostMapping
-    @ResponseBody
+   
     public Map<?, ?> updatePassword(@RequestParam Integer accountId,
             @RequestParam String loginPassword) {
         int r = impl.updatePassword(accountId, loginPassword);
         return ControllerReturn.success(r);
     }
 
-    @PostMapping @ResponseBody
     public Map<?, ?> deleteChild(Integer id) {
         int r = impl.deleteChild(id);
         return ControllerReturn.success(r);
     }
     
-    @PostMapping @ResponseBody
     public Map<?, ?> disable(Integer id) {
         int r = impl.disable(id);
         return ControllerReturn.success(r);
     }
     
-    @PostMapping @ResponseBody
     public Map<?, ?> enable(Integer id) {
         int r = impl.enable(id);
         return ControllerReturn.success(r);
@@ -99,22 +90,17 @@ public class ChildController {
     @Autowired
     private ResourceServiceImpl resourceImpl;
 
-    @GetMapping
     public ModelAndView grantToChild() {
         ModelAndView mv = new ModelAndView();
         mv.addObject("listJson", listChildAccount(new Page(), new MerchantAccount()));
         return mv;
     }
 
-    @PostMapping
-    @ResponseBody
     public Map<?, ?> listChildAccount(Page page, MerchantAccount child) {
         List<MerchantAccount> list = impl.listChild(page, child);
         return ControllerReturn.success(list, page);
     }
 
-    @PostMapping
-    @ResponseBody
     public Map<?, ?> getAuthorize(@RequestParam Integer accountId) {
         Map<?, ?> resMap = resourceImpl.getResource();
         if (resMap == null) {
@@ -125,7 +111,6 @@ public class ChildController {
         return returnMap;
     }
 
-    @PostMapping @ResponseBody
     public Map<?, ?> saveAuthorize(@RequestParam Integer accountId, @RequestParam String resIds) {
         long r = grantImpl.saveGrantResIds(accountId, resIds);
         return ControllerReturn.success(r);

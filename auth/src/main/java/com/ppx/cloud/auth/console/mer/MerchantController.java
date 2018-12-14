@@ -28,38 +28,32 @@ public class MerchantController {
 	@Autowired
 	private MerchantServiceImpl impl;
 	
-	@GetMapping
     public ModelAndView listMerchant() {			
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("listJson", listJson(new Page(), new Merchant()));
 		return mv;
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> listJson(Page page, Merchant mer) {
 		List<Merchant> list = impl.listMerchant(page, mer);
 		return ControllerReturn.success(list);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> insertMerchant(Merchant bean) {
 		int r = impl.insertMerchant(bean);
 		return ControllerReturn.success(r);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> getMerchant(@RequestParam Integer id) {
 		Merchant bean = impl.getMerchant(id);
 		return ControllerReturn.success(bean);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> getMerchantAccount(@RequestParam Integer id) {
 		MerchantAccount bean = impl.getMerchantAccount(id);
 		return ControllerReturn.success(bean);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> updateMerchant(Merchant bean) {
 		int r = impl.updateMerchant(bean);
 		return ControllerReturn.success(r);
@@ -71,25 +65,21 @@ public class MerchantController {
 		return ControllerReturn.success(r);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> updateMerchantPassword(@RequestParam Integer merId, @RequestParam String merPassword) {
 		int r = impl.updateMerchantPassword(merId, merPassword);
 		return ControllerReturn.success(r);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> deleteMerchant(Integer id) {
 		int r = impl.deleteMerchant(id);
 		return ControllerReturn.success(r);
 	}
 	
-	@PostMapping @ResponseBody
     public Map<Object, Object> disable(Integer id) {
         int r = impl.disable(id);
         return ControllerReturn.success(r);
     }
 	
-	@PostMapping @ResponseBody
     public Map<Object, Object> enable(Integer id) {
         int r = impl.enable(id);
         return ControllerReturn.success(r);

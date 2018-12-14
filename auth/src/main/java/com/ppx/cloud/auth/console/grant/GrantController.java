@@ -31,20 +31,17 @@ public class GrantController {
 	@Autowired
 	private ResourceService resourceServ;
 	
-	@GetMapping
     public ModelAndView grantToMerchant() {			
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("listJson", listMerchant(new Page(), new Merchant()));
 		return mv;
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> listMerchant(Page page, Merchant mer) {
 		List<Merchant> list = impl.listMerchant(page, mer);
 		return ControllerReturn.success(list, page);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> getAuthorize(@RequestParam Integer accountId) {
 	    Map<?, ?> resMap = resourceServ.getResource();
         if (resMap == null) {
@@ -56,7 +53,6 @@ public class GrantController {
 		return returnMap;
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> saveAuthorize(@RequestParam Integer accountId, @RequestParam String resIds) {
 		long r = impl.saveGrantResIds(accountId, resIds);
 		return ControllerReturn.success(r);

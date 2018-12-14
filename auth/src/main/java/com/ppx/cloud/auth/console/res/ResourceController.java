@@ -34,14 +34,12 @@ public class ResourceController {
 	private ResourceServiceImpl impl;
 	
 	
-	@GetMapping
     public ModelAndView resource() {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("res", getResource());
 		return mv;
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> getResource() {
 		@SuppressWarnings("rawtypes")
 		Map map = impl.getResource();
@@ -51,13 +49,11 @@ public class ResourceController {
 		return ControllerReturn.success(map);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> saveResource(@RequestParam String tree, String removeIds) {
 		impl.saveResource(tree, removeIds);
 		return ControllerReturn.success();
 	}
 		
-	@PostMapping @ResponseBody
 	public Map<Object, Object> getUri(@RequestParam Integer resId) {
 		@SuppressWarnings("rawtypes")
 		Map map = impl.getUri(resId);		
@@ -67,20 +63,16 @@ public class ResourceController {
 		return ControllerReturn.success(map);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> saveUri(@RequestParam Integer resId, @RequestParam String uri, Integer menuId) {
 		Map<?, ?> map = impl.saveUri(resId, uri, menuId);
 		return ControllerReturn.success(map);
 	}	
 	
-	@RequestMapping
-	@ResponseBody
 	public Map<Object, Object> removeUri(@RequestParam Integer resId, @RequestParam String uri, @RequestParam int uriIndex) {
 		impl.removeUri(resId, uri, uriIndex);
 		return ControllerReturn.success();
 	}
 	
-	@RequestMapping @ResponseBody
     public Map<Object, Object> getResourceUri() {
         RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();

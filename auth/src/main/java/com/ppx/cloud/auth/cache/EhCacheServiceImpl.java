@@ -23,9 +23,9 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
 @Service
 public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
 	
-	@Autowired
-	@Qualifier(EhCacheConfig.LOCAL_MANAGER)
-	private CacheManager cacheManager;
+//	@Autowired
+//	@Qualifier(EhCacheConfig.LOCAL_MANAGER)
+//	private CacheManager cacheManager;
 	
 	public AuthCache getAuthVersion() {
 	    AuthCache authCache = getJdbcTemplate().queryForObject("select all_version, grant_version from auth_cache where cache_type = ?",
@@ -66,8 +66,8 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
     }
 	
 	private void clearCache(String cacheName) {
-        Cache cache = cacheManager.getCache(cacheName);
-        cache.clear();
+//        Cache cache = cacheManager.getCache(cacheName);
+//        cache.clear();
     }
 	
 	@SuppressWarnings("rawtypes")

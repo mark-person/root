@@ -31,19 +31,16 @@ public class IndexController {
     @Autowired
     private PasswordServiceImpl passwrodImpl;
     
-    @GetMapping
     public ModelAndView adminHome() {    
         ModelAndView mv = new ModelAndView();
         return mv;
     }   
 	
-	@GetMapping
     public ModelAndView editPassword() {	
 		ModelAndView mv = new ModelAndView();
 		return mv;
 	}	
 	
-	@PostMapping @ResponseBody
 	public Map<?, ?> updatePassword(@RequestParam String oldP, @RequestParam String newP) {
 		int r = passwrodImpl.updatePassword(oldP, newP);
 		return ControllerReturn.success(r);
@@ -54,7 +51,6 @@ public class IndexController {
 	@Autowired
 	private MenuServiceImpl menuService;
 	
-	@GetMapping
 	public ModelAndView menu(HttpServletRequest request) {		
 		ModelAndView mv = new ModelAndView();
 	
