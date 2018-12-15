@@ -103,12 +103,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 //		mongoTemplate.upsert(query, update, COL_RESOURCE);
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public Map getUri(Integer resId) {
-//		Query query = Query.query(Criteria.where("_id").is(resId));
-//		return mongoTemplate.findOne(query, Map.class, COL_RESOURCE_URI);
-		return null;
-	}	
+		
 	
 	@SuppressWarnings("rawtypes")
 	private int saveToUri(String uri) {
@@ -136,33 +131,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		return 1;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public Map saveUri(Integer resId, String uri, Integer menuId) {	
-		
-//	    ehCacheServ.increaseAllDbVersion();
-//				
-//		Update update = new Update();	
-//		String[] uriArray = uri.split(",");
-//		List<String> uriList = new ArrayList<String>();
-//		List<Integer> indexList = new ArrayList<Integer>();
-//		for (String u : uriArray) {
-//			uriList.add(u);
-//			int index = saveToUri(u);
-//			indexList.add(index);
-//		}		
-//		update.addToSet("uri").each(uriList.toArray());
-//		update.addToSet("uriIndex").each(indexList.toArray());
-//		if (menuId != null) {
-//			update.set("pMenuId", menuId);
-//		}
-//		
-//		Query query = Query.query(Criteria.where("_id").is(resId));
-//		Map map = mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().upsert(true).returnNew(true),
-//				Map.class, COL_RESOURCE_URI);
-//		return map;
-		
-		return null;
-	}
+
 	
 	
 	public void removeUri(Integer resId, String uri, int uriIndex) {
@@ -247,4 +216,62 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		return 1;
 	}
 	
+	@Transactional
+	public int insertUri(Integer resId, String uri, Integer menuId) {
+		
+		/*
+		 * create table auth_uri_seq (
+	uri_seq int not null auto_increment,
+    uri_text varchar(64) not null,
+    primary key (uri_seq)
+) comment='URI系列';
+
+create table auth_res_uri (
+	res_id int not null,
+    uri_seq int not null,
+    primary key (res_id, uri_seq)
+) comment='资源对应多个URI';
+		 */
+	
+		String insertSeqSql = "insert ignore into auth_uri_seq(uri_text) values(?)";
+		getJdbcTemplate().update(insertSeqSql, uri);
+		
+		String seqSql = "select uri_seq from auth_uri_seq where uri_text = ?";
+		int uriSeq = getJdbcTemplate().queryForObject(seqSql, Integer.class, uri);
+		
+		String insertResUriSql = "insert into auth_res_uri(res_id, uri_seq) value(?, ?)";
+		return getJdbcTemplate().update(insertResUriSql, resId, uriSeq);
+		
+//	    ehCacheServ.increaseAllDbVersion();
+//				
+//		Update update = new Update();	
+//		String[] uriArray = uri.split(",");
+//		List<String> uriList = new ArrayList<String>();
+//		List<Integer> indexList = new ArrayList<Integer>();
+//		for (String u : uriArray) {
+//			uriList.add(u);
+//			int index = saveToUri(u);
+//			indexList.add(index);
+//		}		
+//		update.addToSet("uri").each(uriList.toArray());
+//		update.addToSet("uriIndex").each(indexList.toArray());
+//		if (menuId != null) {
+//			update.set("pMenuId", menuId);
+//		}
+//		
+//		Query query = Query.query(Criteria.where("_id").is(resId));
+//		Map map = mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().upsert(true).returnNew(true),
+//				Map.class, COL_RESOURCE_URI);
+//		return map;
+	}
+	
+	public List<Map<String, Object>> getUri(Integer resId) {
+//		Query query = Query.query(Criteria.where("_id").is(resId));
+//		return mongoTemplate.findOne(query, Map.class, COL_RESOURCE_URI);
+		
+		String sql = "select s.uri_seq, s.uri_text from auth_uri_seq s join auth_res_uri u on s.uri_seq = u.uri_seq where u.res_id = ?";
+		
+		
+		return getJdbcTemplate().queryForList(sql, resId);
+	}
 }

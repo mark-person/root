@@ -6,13 +6,12 @@ $(function() {
 	initTree([res.tree]);
 	
 	// 异步加载系统uri
-	/*
-	$.post(contextPath + "res/getResUri", null, function(r){
+	$.post(contextPath + "auto/res/getResUri", null, function(r){
 		typeHeadSource = r.arrayList;
 		for (var i in typeHeadSource) {
 			typeHeadSourceMap[typeHeadSource[i]] = 1;
 		}
-	});*/
+	});
 });
 
 var treeUtils = {childrenId:[]}
@@ -87,15 +86,15 @@ function initTree(tree) {
 				$("#uriList li:gt(0)").remove();
 				$("#uriList").append('<li class="list-group-item" style="background-color: white;"><i class="fa fa-refresh fa-spin"></i></li>');
 				
-				/*
-				$.post(contextPath + "resource/getUri", "resId=" + data.id, function(r){					
+				
+				$.post(contextPath + "auto/res/getUri", "resId=" + data.id, function(r){					
 					$("#uriList li:gt(0)").remove();
 					var uriList = [];
-					for (var i = 0; r.uri && i < r.uri.length; i++) {
-						uriList.push({uri:r.uri[i], uriIndex:r.uriIndex[i]});
+					for (var i = 0; r.arrayList && i < r.arrayList.length; i++) {
+						uriList.push({uri:r.arrayList[i].uri_text, uriIndex:r.arrayList[i].uri_seq});
 					}
 					$("#uriList").append(template('uriListTemplate', uriList));
-				});*/
+				});
 			}
 			$("#uri").show();			
 		},
@@ -249,7 +248,7 @@ function addUri() {
 	$("#addUri").modal("show");
 	
 	action = function() {
-		if (!$("#addUriModalForm").valid()) {
+		if (!$("#addUriForm").valid()) {
 			return;
 		}
 		
@@ -266,13 +265,13 @@ function addUri() {
 		var menuId = parentType == 1 ? "&menuId=" + parent.id : "";
 		
 		showLoading();
-		$.post(contextPath + "resource/saveUri", "resId=" + selectedNode.id + "&uri=" + uriArray + menuId, function(r){
+		$.post(contextPath + "auto/res/insertUri", "resId=" + selectedNode.id + "&uri=" + uriArray + menuId, function(r){
 			hideLoading();
 			alertSuccess("添加成功！");			
 			$("#uriList li:gt(0)").remove();		
 			var uriList = [];
-			for (var i = 0; r.uri && i < r.uri.length; i++) {
-				uriList.push({uri:r.uri[i], uriIndex:r.uriIndex[i]});
+			for (var i = 0; r.arrayList && i < r.arrayList.length; i++) {
+				uriList.push({uri:r.arrayList[i].uri_text, uriIndex:r.arrayList[i].uri_seq});
 			}
 			$("#uriList").append(template('uriListTemplate', uriList));
 			$("#addUri").modal("hide");

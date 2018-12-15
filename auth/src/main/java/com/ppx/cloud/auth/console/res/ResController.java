@@ -49,26 +49,16 @@ public class ResController {
 		return ControllerReturn.success();
 	}
 		
-	public Map<Object, Object> getUri(@RequestParam Integer resId) {
-		@SuppressWarnings("rawtypes")
-		Map map = impl.getUri(resId);		
-		if (map == null) {
-			return ControllerReturn.success(-1);
-		}		
-		return ControllerReturn.success(map);
-	}
 	
-	public Map<Object, Object> saveUri(@RequestParam Integer resId, @RequestParam String uri, Integer menuId) {
-		Map<?, ?> map = impl.saveUri(resId, uri, menuId);
-		return ControllerReturn.success(map);
-	}	
+	
+	
 	
 	public Map<Object, Object> removeUri(@RequestParam Integer resId, @RequestParam String uri, @RequestParam int uriIndex) {
 		impl.removeUri(resId, uri, uriIndex);
 		return ControllerReturn.success();
 	}
 	
-    public Map<Object, Object> getResourceUri() {
+    public Map<?, ?> getResUri() {
         RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();
         
@@ -83,8 +73,8 @@ public class ResController {
             Set<String> uriSet = info.getPatternsCondition().getPatterns();
             for (Object uri : uriSet) {     
                 // 监控部分
-                if (uri.toString().startsWith("/monitorConf/")) continue;
-                if (uri.toString().startsWith("/monitorView/")) continue;
+                if (uri.toString().startsWith("/auto/monitorConf/")) continue;
+                if (uri.toString().startsWith("/auto/monitorView/")) continue;
                     
                 // 权限部分
                 if (uri.toString().startsWith("/grant/")) continue;
@@ -126,5 +116,13 @@ public class ResController {
     	return ControllerReturn.success(impl.updateResPrio(ids));
     }
     
+    public Map<?, ?> insertUri(@RequestParam Integer resId, @RequestParam String uri, Integer menuId) {
+    	impl.insertUri(resId, uri, menuId);
+		return ControllerReturn.success(getUri(resId));
+	}	
     
+    public Map<?, ?> getUri(@RequestParam Integer resId) {
+		List<Map<String, Object>> list = impl.getUri(resId);	
+		return ControllerReturn.success(list);
+	}
 }

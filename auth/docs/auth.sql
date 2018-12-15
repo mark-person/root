@@ -16,6 +16,9 @@ create table auth_uri_seq (
     primary key (uri_seq)
 ) comment='URI系列';
 
+alter table  auth_uri_seq add unique index idx_auth_uri_text (uri_text asc);
+
+
 create table auth_res_uri (
 	res_id int not null,
     uri_seq int not null,
