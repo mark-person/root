@@ -113,4 +113,12 @@ public class ResController {
     		@RequestParam int resType, Integer uriSeq) {
     	return ControllerReturn.success(impl.insertRes(parentId, resName, resType, uriSeq));
     }
+    
+    public Map<?, ?> updateRes(@RequestParam int id, @RequestParam String resName) {
+    	return ControllerReturn.success(impl.updateRes(id, resName));
+    }
+    
+    public Map<?, ?> deleteRes(@RequestParam int id) {
+    	return ControllerReturn.success(impl.deleteRes(id));
+    }
 }

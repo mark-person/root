@@ -58,6 +58,12 @@ function confirm(msg, func) {
 	$("#myConfig").modal('show');
 }
 
+function myConfigOk() {
+	var func = $("#myConfig").data("func");
+	func.call();
+	$("#myConfig").modal('hide');
+}
+
 function showLoading() {
 	$('#loading').modal('show');
 	$($(".modal-backdrop")[$(".modal-backdrop").length - 1]).css("z-index", "9999");

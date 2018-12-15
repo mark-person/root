@@ -3,8 +3,7 @@ var typeHeadSource = ['/加载中...稍后请重新打开'];
 var typeHeadSourceMap = [];
 
 $(function() {
-	var tree = res.value == -1 ? [{text:"资源", icon:"glyphicon glyphicon-home"}] : [treeUtils.decompressNode(res.tree)];
-	initTree(tree);
+	initTree([res.tree]);
 	
 	// 异步加载系统uri
 	/*
@@ -21,7 +20,7 @@ treeUtils.getChildrenIds = function(node) {
 	this.childrenId.push(node.id);
 	if (node.nodes) {
 		for (var i = 0; i < node.nodes.length; i++) {
-			getChildrenIds(node.nodes[i]);
+			this.getChildrenIds(node.nodes[i]);
 		}
 	}
 	return this.childrenId;
@@ -36,27 +35,18 @@ treeUtils.compressNode = function(node) {
 	}
 	return newNode;
 }
-treeUtils.decompressNode = function(node) {
-	var newNode = {id:node.id,text:node.t,icon:this.getNodeIcon(node.i)};
-	if (node.n) {
-		newNode.nodes = [];
-		for (var i = 0; i < node.n.length; i++) {
-			newNode.nodes.push(this.decompressNode(node.n[i]));
-		}
-	}
-	return newNode;
-}
+
 treeUtils.getNodeIcon = function(nodeType) {
 	// -1资源 0目录 1菜单 2操作
-	if (nodeType == 0) return "glyphicon glyphicon-folder-close";
-	if (nodeType == 1) return "glyphicon glyphicon-th-list";
-	if (nodeType == 2) return "glyphicon glyphicon-wrench";
-	return "glyphicon glyphicon-home";
+	if (nodeType == 0) return "fa fa-folder";
+	if (nodeType == 1) return "fa fa-file";
+	if (nodeType == 2) return "fa fa-cogs";
+	return "fa fa-home";
 }
 treeUtils.getNodeType = function(nodeIcon) {
-	if (nodeIcon == "glyphicon glyphicon-folder-close") return 0;
-	if (nodeIcon == "glyphicon glyphicon-th-list") return 1;
-	if (nodeIcon == "glyphicon glyphicon-wrench") return 2;
+	if (nodeIcon == "fa fa-folder") return 0;
+	if (nodeIcon == "fa fa-file") return 1;
+	if (nodeIcon == "fa fa-cogs") return 2;
 	return -1;
 }
 
@@ -87,8 +77,9 @@ function initTree(tree) {
 			$("#uriList li:gt(0)").remove();
 			if (data.id) {
 				$("#uriList li:gt(0)").remove();
-				$("#uriList").append('<li class="list-group-item" style="background-color: white;"><span>读取中...</span></li>');
+				$("#uriList").append('<li class="list-group-item" style="background-color: white;"><i class="fa fa-refresh fa-spin"></i></li>');
 				
+				/*
 				$.post(contextPath + "resource/getUri", "resId=" + data.id, function(r){					
 					$("#uriList li:gt(0)").remove();
 					var uriList = [];
@@ -96,7 +87,7 @@ function initTree(tree) {
 						uriList.push({uri:r.uri[i], uriIndex:r.uriIndex[i]});
 					}
 					$("#uriList").append(template('uriListTemplate', uriList));
-				});
+				});*/
 			}
 			$("#uri").show();			
 		},
@@ -157,12 +148,11 @@ function addChild() {
 		if (!$("#addChildForm").valid()) return;
 		
 		var selectNode = $('#tree').treeview('getSelected')[0];
-		alert(selectNode.id);
-		//return;
+		
 		
 		// insertRes(  parentId,  String resName, resType
 		showLoading();
-		var param = {parentId:-1,resName:$("#addNodeName").val(),resType:$("#addNodeType").val()};
+		var param = {parentId:selectNode.id,resName:$("#addNodeName").val(),resType:$("#addNodeType").val()};
 		$.post(contextPath + "auto/res/insertRes", param, function(r){
 			hideLoading();
 			
@@ -190,15 +180,17 @@ function editNode() {
 	$("#editNode").modal("show");
 	
 	action = function() {
-		if (!jQuery("#editForm").validationEngine('validate')) {
-			return;
-		}
+		if (!$("#editNodeForm").valid()) return;
 		
-		var selectedNode = $('#tree').treeview('getSelected')[0];
-		selectedNode.text =  $("#updateNodeName").val();
-		initTree([$('#tree').treeview('getNode', 0)]);
-		$("#editNode").modal("hide");
-		saveResource();
+		showLoading();
+		var param = {id:selectNode.id,resName:$("#updateNodeName").val()};
+		$.post(contextPath + "auto/res/updateRes", param, function(r){
+			hideLoading();
+			var selectedNode = $('#tree').treeview('getSelected')[0];
+			selectedNode.text =  $("#updateNodeName").val();
+			initTree([$('#tree').treeview('getNode', 0)]);
+			$("#editNode").modal("hide");
+		})
 	}
 }
 
@@ -207,26 +199,31 @@ function editNode() {
 function removeNode() {
 	var callback = function() {
 		var selectedNode = $('#tree').treeview('getSelected')[0];
-		childrenId = [];
-		var removeIds = treeUtils.getChildrenIds(selectedNode);
-		
-		var parentNode = $('#tree').treeview('getParent', selectedNode);
-		// 只有一个节点时，删除[]，否则只删除数组里的元素
-		if (parentNode.nodes.length == 1) {
-			delete parentNode.nodes;
-		}
-		else {
-			for (var i = 0; i < parentNode.nodes.length; i++) {
-				if (parentNode.nodes[i].nodeId == selectedNode.nodeId) {
-					parentNode.nodes.splice(i, 1);
-					break;
+		showLoading();
+		$.post(contextPath + "auto/res/deleteRes", {id:selectedNode.id}, function(r){
+			hideLoading();
+			
+			var selectedNode = $('#tree').treeview('getSelected')[0];
+			childrenId = [];
+			var removeIds = treeUtils.getChildrenIds(selectedNode);
+			
+			var parentNode = $('#tree').treeview('getParent', selectedNode);
+			// 只有一个节点时，删除[]，否则只删除数组里的元素
+			if (parentNode.nodes.length == 1) {
+				delete parentNode.nodes;
+			}
+			else {
+				for (var i = 0; i < parentNode.nodes.length; i++) {
+					if (parentNode.nodes[i].nodeId == selectedNode.nodeId) {
+						parentNode.nodes.splice(i, 1);
+						break;
+					}
 				}
 			}
-		}
-		
-		initTree([$('#tree').treeview('getNode', 0)]);
-		$("#uri").hide();
-		saveResource(removeIds);
+			
+			initTree([$('#tree').treeview('getNode', 0)]);
+			$("#uri").hide();
+		})
 	}
 	
 	var selectNode = $('#tree').treeview('getSelected')[0];	
@@ -247,12 +244,12 @@ function validateUri(obj) {
 }
 
 function addUri() {
-	$("#uriUl").html(getUriLi('glyphicon-plus-sign', 'addUriItem'));
+	$("#uriUl").html(getUriLi('fa-plus-sign', 'addUriItem'));
 	addTypeHead($("#typeaheadId"));
 	$("#addUri").modal("show");
 	
 	action = function() {
-		if (!jQuery("#addUriModalForm").validationEngine('validate')) {
+		if (!$("#addUriModalForm").valid()) {
 			return;
 		}
 		
@@ -288,14 +285,14 @@ function removeUriItem(obj) {
 }
 
 function addUriItem(obj) {
-	$("#uriUl").append(getUriLi('glyphicon-minus-sign', 'removeUriItem'));
+	$("#uriUl").append(getUriLi('fa-minus-sign', 'removeUriItem'));
 	addTypeHead($("#uriUl [data-provide='typeahead']").last());
 }
 
 function getUriLi(icon, click) {
 	var li = '<li class="list-group-item">\
 		<input id="typeaheadId" type="text" class="form-control input-sm" data-provide="typeahead" required data-function="validateUri(this)" style="width:370px;float:left;margin:-5px">\
-		<a href="#this" class="glyphicon ' + icon + '" style="margin-left:12px;" onclick="' + click + '(this)"></a></li>';
+		<a href="#this" class="fa ' + icon + '" style="margin-left:12px;" onclick="' + click + '(this)"></a></li>';
 	return li;
 }
 
@@ -397,7 +394,7 @@ move.downNode = function() {
 	saveResource();
 }
 move.refreshMoveButton = function() {
-	$("#uri .glyphicon").hide();
+	$("#uri .fa").hide();
 	
 	var node = $('#tree').treeview('getSelected')[0];
 	var nodeId = node.nodeId;
@@ -419,16 +416,16 @@ move.refreshMoveButton = function() {
 	}
 	
 	if (currentN == 0) {
-		$("#uri .glyphicon-arrow-down").show();
+		$("#uri .fa-arrow-down").show();
 	}
 	else if (currentN == parent.nodes.length - 1) {
-		$("#uri .glyphicon-step-backward").show();
-		$("#uri .glyphicon-arrow-up").show();	
+		$("#uri .fa-step-backward").show();
+		$("#uri .fa-arrow-up").show();	
 	}
 	else  {
-		$("#uri .glyphicon-step-backward").show();
-		$("#uri .glyphicon-arrow-up").show();
-		$("#uri .glyphicon-arrow-down").show();
+		$("#uri .fa-step-backward").show();
+		$("#uri .fa-arrow-up").show();
+		$("#uri .fa-arrow-down").show();
 	}
 }
 

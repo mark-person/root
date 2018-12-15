@@ -15,9 +15,9 @@ var res = [[${res}]];
 
 
 <style type="text/css">
-.glyphicon-folder-close {color:rgb(242, 221, 122)}
-.glyphicon-th-list {color:black;}
-.glyphicon-wrench {color:green}
+.fa-folder {color:rgb(242, 221, 122)}
+.fa-file {color:black;}
+.fa-cogs {color:green}
 #uri .list-group-item {background-color: #428bca;}
 #tree .list-group-item, #uri .list-group-item {padding-top:4px;height:30px;}
 .indeterminate {color:blue;}
@@ -36,9 +36,9 @@ var res = [[${res}]];
 		<a href="#this" class="operatorNode" onclick="removeNode()" style="color:white">[删除]</a>&nbsp;
 		<a href="#this" class="operatorNode" onclick="addUri()" style="color:white">[添加URI]</a>&nbsp;&nbsp;
 		|&nbsp;&nbsp;
-		<a href="#this" title="同级置顶" class="glyphicon glyphicon-step-backward" onclick="move.topNode()" style="transform: rotate(90deg);color:white"></a>&nbsp;
-		<a href="#this" title="同级上移" class="glyphicon glyphicon-arrow-up" onclick="move.upNode()" style="color:white"></a>&nbsp;
-		<a href="#this" title="同级下移" class="glyphicon glyphicon-arrow-down" onclick="move.downNode()" style="color:white"></a>	
+		<a href="#this" title="同级置顶" class="fa fa-step-backward" onclick="move.topNode()" style="transform: rotate(90deg);color:white"></a>&nbsp;
+		<a href="#this" title="同级上移" class="fa fa-arrow-up" onclick="move.upNode()" style="color:white"></a>&nbsp;
+		<a href="#this" title="同级下移" class="fa fa-arrow-down" onclick="move.downNode()" style="color:white"></a>	
 	</li>		
 	<script id="uriListTemplate" type="text/html">
 	{{each}}
@@ -56,26 +56,27 @@ var res = [[${res}]];
 
 <div th:fragment="addChild" th:replace="common/fragment::modal('addChild', '添加子节点',  '')">
 	<div class="form-group form-inline">
-		<label class="col-3">节点类型</label>
-		<div class="col-9">
+		<label class="col-4">节点类型</label>
+		<div class="col-8">
 			<select id="addNodeType" class="form-control" onchange="noteTypeChange(this.value)"  style="width:230px">
 	      		<option value="0">目录</option><option value="1">菜单</option><option value="2">操作</option>
 	 		</select>
 	 	</div>
 	</div>	
 	<div class="form-group form-inline">
-		<label class="col-3">名称&nbsp;&nbsp;<i class="fa fa-folder-o"></i></label>
-		<div class="col-9">
+		<label class="col-4">名称&nbsp;&nbsp;<i id="nodeGlyphicon"></i></label>
+		<div class="col-8">
 			<input type="text" id="addNodeName" class="form-control" required placeholder="请输入名称" maxlength="10" style="width:230px">
 		</div>
 	</div>	
 </div>
 
 <div th:fragment="editNode" th:replace="common/fragment::modal('editNode', '修改节点', '')">
-	<div class="input-group">
-		<span class="input-group-addon" style="width:120px">
-		<span id="updateNodeGlyphicon" class="glyphicon glyphicon-folder-close"></span>名称</span>
-		<input type="text" id="updateNodeName" class="form-control" required maxlength="10" style="width:230px">
+	<div class="form-group form-inline">
+		<label class="col-4">名称&nbsp;&nbsp;<i id="updateNodeGlyphicon"></i></label>
+		<div class="col-8">
+			<input type="text" id="updateNodeName" class="form-control" required maxlength="10">
+		</div>
 	</div>
 </div>
 

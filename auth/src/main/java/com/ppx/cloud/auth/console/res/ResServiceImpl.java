@@ -1,11 +1,13 @@
 package com.ppx.cloud.auth.console.res;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
@@ -26,6 +28,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getResource() {
+		var returnMap = new HashMap<String, Object>();
 //		Query query = Query.query(Criteria.where("_id").is(0));
 //		LinkedHashMap<String, Object> resMap = mongoTemplate.findOne(query, LinkedHashMap.class, COL_RESOURCE);	
 //		
@@ -40,7 +43,49 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 //		}
 //		
 //		return resMap;
-		return null;
+		
+		String resSql = "select res_id id, parent_id pId, res_name text, if (res_type = 0, 'fa fa-folder', 'fa fa-file') icon from auth_res";
+		List<Map<String, Object>> resList = getJdbcTemplate().queryForList(resSql);
+		
+		var folderList = new ArrayList<Map<String, Object>>();
+		for (Map<String, Object> map : resList) {
+			int pId = (int)map.get("pId");
+			if (pId == -1) {
+				folderList.add(map);
+			}
+		}
+		
+		folderList.forEach(f -> {
+			var folderId = (int)f.get("id");
+			var menuList = getMenuList(folderId, resList);
+			if (!menuList.isEmpty()) {
+				f.put("nodes", menuList);	
+			}		
+		});
+		
+		
+		var resMap = Map.of("id", -1, "text", "资源", "icon", "fa fa-home");
+		var rootMap = new HashMap<String, Object>(resMap);
+		
+		rootMap.put("nodes", folderList);
+		
+		
+		returnMap.put("tree", rootMap);
+		
+		
+		return returnMap;
+	}
+	
+	private List<Map<String, Object>> getMenuList(int folderId, List<Map<String, Object>> resList) {
+		var returnList = new ArrayList<Map<String, Object>>();
+		resList.forEach(r -> {
+			int pId = (int)r.get("pId");
+			
+			if (pId == folderId) {
+				returnList.add(r);
+			}
+		});
+		return returnList;
 	}
 	
 	public void saveResource(String tree, String removeIds) {
@@ -175,4 +220,18 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		String sql = "insert into auth_res(parent_id, res_name, res_type, uri_seq) values(?, ?, ?, ?)";
 		return getJdbcTemplate().update(sql, parentId, resName, resType, uriSeq);
 	}
+	
+	public int updateRes(int id, String resName) {
+		String sql = "update auth_res set res_name = ? where res_id = ?";
+		return getJdbcTemplate().update(sql, resName, id);
+	}
+	
+	@Transactional
+	public int deleteRes(int id) {
+		String pSql = "delete from auth_res where parent_id = ?";
+		getJdbcTemplate().update(pSql, id);
+		String sql = "delete from auth_res where res_id = ?";
+		return getJdbcTemplate().update(sql, id);
+	}
+	
 }
