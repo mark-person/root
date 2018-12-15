@@ -25,6 +25,14 @@ treeUtils.getChildrenIds = function(node) {
 	}
 	return this.childrenId;
 }
+treeUtils.getFirstLevelChildrenIds = function(node) {
+	this.childrenId = [];
+	node.nodes.forEach(function(o, i) {
+		treeUtils.childrenId.push(o.id);
+	})
+	return this.childrenId;
+}
+
 treeUtils.compressNode = function(node) {
 	var newNode = {id:node.id,t:node.text,i:this.getNodeType(node.icon)};
 	if (node.nodes) {
@@ -107,15 +115,7 @@ function initTree(tree) {
 	});
 }
 
-function saveResource(removeIds) {
-	var tree = JSON.stringify(treeUtils.compressNode($('#tree').treeview('getNode', 0)));	
-	showLoading();
-	var para = "tree=" + tree + "&removeIds=" + removeIds;
-	$.post(contextPath + "auto/res/saveRes", para, function(r){
-		alertSuccess("保存成功！");
-		hideLoading();
-	});
-}
+
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>addChild
@@ -339,7 +339,7 @@ move.topNode = function() {
 	$("#uri").css("margin-top", top);
 	
 	this.refreshMoveButton();
-	saveResource();
+	updateResPrio(treeUtils.getFirstLevelChildrenIds(parent));
 }
 move.upNode = function() {
 	var node = $('#tree').treeview('getSelected')[0];
@@ -365,7 +365,7 @@ move.upNode = function() {
 	$("#uri").css("margin-top", top);
 	
 	this.refreshMoveButton();
-	saveResource();
+	updateResPrio(treeUtils.getFirstLevelChildrenIds(parent));
 }
 move.downNode = function() {
 	var node = $('#tree').treeview('getSelected')[0];
@@ -391,7 +391,7 @@ move.downNode = function() {
 	$("#uri").css("margin-top", top);
 	
 	this.refreshMoveButton();
-	saveResource();
+	updateResPrio(treeUtils.getFirstLevelChildrenIds(parent));
 }
 move.refreshMoveButton = function() {
 	$("#uri .fa").hide();
@@ -429,3 +429,10 @@ move.refreshMoveButton = function() {
 	}
 }
 
+function updateResPrio(ids) {
+	var param = {ids:ids + ""}
+	$.post(contextPath + "auto/res/updateResPrio", param, function(r){
+		alertSuccess("保存成功！");
+		hideLoading();
+	});
+}

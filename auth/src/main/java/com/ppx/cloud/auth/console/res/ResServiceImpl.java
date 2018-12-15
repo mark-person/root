@@ -44,7 +44,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 //		
 //		return resMap;
 		
-		String resSql = "select res_id id, parent_id pId, res_name text, if (res_type = 0, 'fa fa-folder', 'fa fa-file') icon from auth_res";
+		String resSql = "select res_id id, parent_id pId, res_name text, if (res_type = 0, 'fa fa-folder', 'fa fa-file') icon from auth_res order by res_prio";
 		List<Map<String, Object>> resList = getJdbcTemplate().queryForList(resSql);
 		
 		var folderList = new ArrayList<Map<String, Object>>();
@@ -217,8 +217,12 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	// >>>>>>>>>>>>>>>>.new
 	
 	public int insertRes(int parentId, String resName, int resType, Integer uriSeq) {
-		String sql = "insert into auth_res(parent_id, res_name, res_type, uri_seq) values(?, ?, ?, ?)";
-		return getJdbcTemplate().update(sql, parentId, resName, resType, uriSeq);
+		String countSql = "select count(*) from auth_res where parent_id = ?";
+		int c = getJdbcTemplate().queryForObject(countSql, Integer.class, parentId);
+		
+		String sql = "insert into auth_res(parent_id, res_name, res_prio, res_type, uri_seq)"
+				+ " values(?, ?, ?,?, ?)";
+		return getJdbcTemplate().update(sql, parentId, resName, c + 1, resType, uriSeq);
 	}
 	
 	public int updateRes(int id, String resName) {
@@ -232,6 +236,15 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		getJdbcTemplate().update(pSql, id);
 		String sql = "delete from auth_res where res_id = ?";
 		return getJdbcTemplate().update(sql, id);
+	}
+	
+	public int updateResPrio(String ids) {
+		String[] id = ids.split(",");
+		for (int i = 0; i < id.length; i++) {
+			String sql = "update auth_res set res_prio = ? where res_id = ?";
+			getJdbcTemplate().update(sql, i, Integer.parseInt(id[i]));
+		}
+		return 1;
 	}
 	
 }

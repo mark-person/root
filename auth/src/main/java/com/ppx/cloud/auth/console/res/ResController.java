@@ -121,4 +121,10 @@ public class ResController {
     public Map<?, ?> deleteRes(@RequestParam int id) {
     	return ControllerReturn.success(impl.deleteRes(id));
     }
+    
+    public Map<?, ?> updateResPrio(String ids) {
+    	return ControllerReturn.success(impl.updateResPrio(ids));
+    }
+    
+    
 }

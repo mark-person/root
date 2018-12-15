@@ -4,6 +4,7 @@ create table auth_res (
 	res_id int not null auto_increment,
     parent_id int not null,
     res_name varchar(32),
+    res_prio int not null,
     res_type tinyint not null comment '0:目录1:菜单',
     uri_seq int,
     primary key (res_id)
