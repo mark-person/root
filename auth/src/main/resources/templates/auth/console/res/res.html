@@ -3,11 +3,11 @@
 <head>
 <title></title>
 
-<link th:replace="common/common::common"/>
-<link th:replace="common/common::treeview"/>
-<link th:replace="common/common::typeahead"/>
+<link th:replace="common/fragment::common"/>
+<link th:replace="auth/authFragment::treeview"/>
+<link th:replace="auth/authFragment::typeahead"/>
 
-<script type="text/javascript" th:src="@{/static/auth/resource.js?v1}"></script>
+<script type="text/javascript" th:src="@{/static/auth/console/res.js?v1}"></script>
 
 <script type="text/javascript" th:inline="javascript">
 var res = [[${res}]];
@@ -54,29 +54,32 @@ var res = [[${res}]];
 </div>
 </div>
 
-<div th:fragment="addChild" th:replace="common/common::modal('addChild', '添加子节点', 380)">
-	<div class="input-group">
-		<span class="input-group-addon" style="width:120px">节点类型</span>
-		<select id="addNodeType" class="form-control" onchange="noteTypeChange(this.value)"  style="width:230px">
-      		<option value="0">目录</option><option value="1">菜单</option><option value="2">操作</option>
- 		</select>
+<div th:fragment="addChild" th:replace="common/fragment::modal('addChild', '添加子节点',  '')">
+	<div class="form-group form-inline">
+		<label class="col-3">节点类型</label>
+		<div class="col-9">
+			<select id="addNodeType" class="form-control" onchange="noteTypeChange(this.value)"  style="width:230px">
+	      		<option value="0">目录</option><option value="1">菜单</option><option value="2">操作</option>
+	 		</select>
+	 	</div>
 	</div>	
-	<div class="input-group" style="margin-top:10px">
-		<span class="input-group-addon" style="width:120px">
-		<span id="nodeGlyphicon" class="glyphicon glyphicon-folder-close"></span>名称</span>
-		<input type="text" id="addNodeName" class="form-control validate[required]" placeholder="请输入名称" maxlength="10" style="width:230px">
+	<div class="form-group form-inline">
+		<label class="col-3">名称&nbsp;&nbsp;<i class="fa fa-folder-o"></i></label>
+		<div class="col-9">
+			<input type="text" id="addNodeName" class="form-control" required placeholder="请输入名称" maxlength="10" style="width:230px">
+		</div>
 	</div>	
 </div>
 
-<div th:fragment="editNode" th:replace="common/common::modal('editNode', '修改节点', 380)">
+<div th:fragment="editNode" th:replace="common/fragment::modal('editNode', '修改节点', '')">
 	<div class="input-group">
 		<span class="input-group-addon" style="width:120px">
 		<span id="updateNodeGlyphicon" class="glyphicon glyphicon-folder-close"></span>名称</span>
-		<input type="text" id="updateNodeName" class="form-control"  maxlength="10" style="width:230px">
+		<input type="text" id="updateNodeName" class="form-control" required maxlength="10" style="width:230px">
 	</div>
 </div>
 
-<div th:fragment="addUri" th:replace="common/common::modal('addUri', '添加Uri', 450)">	
+<div th:fragment="addUri" th:replace="common/fragment::modal('addUri', '添加Uri', '')">	
 	<ul class="list-group" id="uriUl"></ul>	
 	<div style="margin-left:20px;">提示:/*所有权限；/test/*以/test/开头权限；可以添加一个参数</div>	
 </div>

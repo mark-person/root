@@ -8,11 +8,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -28,14 +24,13 @@ import com.ppx.cloud.common.util.ApplicationUtils;
  * @date 2018年7月2日
  */
 @Controller
-public class ResourceController {
+public class ResController {
 	
 	@Autowired
-	private ResourceServiceImpl impl;
+	private ResServiceImpl impl;
 	
 	
-    public ModelAndView resource() {
-		ModelAndView mv = new ModelAndView();
+    public ModelAndView res(ModelAndView mv) {
 		mv.addObject("res", getResource());
 		return mv;
 	}
@@ -109,5 +104,13 @@ public class ResourceController {
      
         returnList.addAll(controllerSet);
         return ControllerReturn.success(returnList);
+    }
+    
+    
+    
+    // >>>>>>>>>>>>>>>....new
+    public Map<?, ?> insertRes(@RequestParam int parentId, @RequestParam String resName,
+    		@RequestParam int resType, Integer uriSeq) {
+    	return ControllerReturn.success(impl.insertRes(parentId, resName, resType, uriSeq));
     }
 }

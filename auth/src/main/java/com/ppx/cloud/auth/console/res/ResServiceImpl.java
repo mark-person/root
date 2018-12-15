@@ -5,11 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ppx.cloud.auth.cache.EhCacheService;
-import com.ppx.cloud.auth.console.grant.GrantService;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 /**
@@ -18,13 +15,13 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
  * @date 2018年7月2日
  */
 @Service
-public class ResourceServiceImpl extends MyDaoSupport implements ResourceService {
+public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
-	@Autowired
-    private EhCacheService ehCacheServ;
+//	@Autowired
+//    private EhCacheService ehCacheServ;
 	
-	@Autowired
-    private GrantService grantService;
+//	@Autowired
+//    private GrantService grantService;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -170,4 +167,12 @@ public class ResourceServiceImpl extends MyDaoSupport implements ResourceService
 		return newNode;
 	}
 	
+	
+	
+	// >>>>>>>>>>>>>>>>.new
+	
+	public int insertRes(int parentId, String resName, int resType, Integer uriSeq) {
+		String sql = "insert into auth_res(parent_id, res_name, res_type, uri_seq) values(?, ?, ?, ?)";
+		return getJdbcTemplate().update(sql, parentId, resName, resType, uriSeq);
+	}
 }

@@ -5,14 +5,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.auth.bean.Merchant;
-import com.ppx.cloud.auth.console.res.ResourceService;
+import com.ppx.cloud.auth.console.res.ResService;
 import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.page.Page;
 
@@ -29,7 +26,7 @@ public class GrantController {
 	private GrantServiceImpl impl;
 	
 	@Autowired
-	private ResourceService resourceServ;
+	private ResService resourceServ;
 	
     public ModelAndView grantToMerchant() {			
 		ModelAndView mv = new ModelAndView();

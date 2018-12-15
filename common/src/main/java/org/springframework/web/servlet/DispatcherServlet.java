@@ -1095,8 +1095,8 @@ public class DispatcherServlet extends FrameworkServlet {
 				String[] p =  m.getBeanType().getPackage().getName().split("\\.");
 				String serviceName = p[3];
 				String moduleName = p[4];
-				defaultViewName = defaultViewName.replaceFirst("auto", "auto/" + serviceName + "/" + moduleName);
-				mv.setViewName(defaultViewName);
+				defaultViewName = defaultViewName.replaceFirst("auto", "" + serviceName + "/" + moduleName);
+				mv.setViewName(defaultViewName); 
 			}
 			if (defaultViewName != null) {
 				mv.setViewName(defaultViewName);

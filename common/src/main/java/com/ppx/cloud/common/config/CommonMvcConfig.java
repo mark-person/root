@@ -13,10 +13,11 @@ import com.ppx.cloud.common.contoller.CommonInterceptor;
 
 
 
+
 /**
  * MVC配置，由项目创建配置
  * @author mark
- * @date 2018年7月16日
+ * @date 2018年12月15日
  */
 public class CommonMvcConfig extends WebMvcConfigurationSupport {
 

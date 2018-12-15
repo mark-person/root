@@ -3,16 +3,17 @@ var typeHeadSource = ['/加载中...稍后请重新打开'];
 var typeHeadSourceMap = [];
 
 $(function() {
-	var tree = res.result == -1 ? [{text:"资源", icon:"glyphicon glyphicon-home"}] : [treeUtils.decompressNode(res.tree)];
+	var tree = res.value == -1 ? [{text:"资源", icon:"glyphicon glyphicon-home"}] : [treeUtils.decompressNode(res.tree)];
 	initTree(tree);
 	
 	// 异步加载系统uri
-	$.post(contextPath + "resource/getResourceUri", null, function(r){
+	/*
+	$.post(contextPath + "res/getResUri", null, function(r){
 		typeHeadSource = r.arrayList;
 		for (var i in typeHeadSource) {
 			typeHeadSourceMap[typeHeadSource[i]] = 1;
 		}
-	});
+	});*/
 });
 
 var treeUtils = {childrenId:[]}
@@ -119,7 +120,7 @@ function saveResource(removeIds) {
 	var tree = JSON.stringify(treeUtils.compressNode($('#tree').treeview('getNode', 0)));	
 	showLoading();
 	var para = "tree=" + tree + "&removeIds=" + removeIds;
-	$.post(contextPath + "resource/saveResource", para, function(r){
+	$.post(contextPath + "auto/res/saveRes", para, function(r){
 		alertSuccess("保存成功！");
 		hideLoading();
 	});
@@ -153,24 +154,32 @@ function addChild() {
 	$('#addChild').modal('show');
 	
 	action = function() {
-		if (!jQuery("#addForm").validationEngine('validate')) {
-			return;
-		}
+		if (!$("#addChildForm").valid()) return;
 		
-		var icon = treeUtils.getNodeIcon($("#addNodeType").val());
-		var nodes = $('#tree').treeview('getNodes');
-		
-		var childNode = {text:$("#addNodeName").val(),icon:icon,id:nodes.length};	
 		var selectNode = $('#tree').treeview('getSelected')[0];
-		if (!selectNode.nodes) {
-			selectNode.nodes = [];
-		}
-		selectNode.nodes.push(childNode);
-		selectNode.state.expanded = true;
+		alert(selectNode.id);
+		//return;
 		
-		initTree([$('#tree').treeview('getNode', 0)]);
-		$("#addChild").modal("hide");
-		saveResource();
+		// insertRes(  parentId,  String resName, resType
+		showLoading();
+		var param = {parentId:-1,resName:$("#addNodeName").val(),resType:$("#addNodeType").val()};
+		$.post(contextPath + "auto/res/insertRes", param, function(r){
+			hideLoading();
+			
+			var icon = treeUtils.getNodeIcon($("#addNodeType").val());
+			var nodes = $('#tree').treeview('getNodes');
+			
+			var childNode = {text:$("#addNodeName").val(),icon:icon,id:nodes.length};	
+			
+			if (!selectNode.nodes) {
+				selectNode.nodes = [];
+			}
+			selectNode.nodes.push(childNode);
+			selectNode.state.expanded = true;
+			
+			initTree([$('#tree').treeview('getNode', 0)]);
+			$("#addChild").modal("hide");
+		});
 	}
 }
 

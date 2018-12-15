@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -59,7 +58,6 @@ public class MerchantController {
 		return ControllerReturn.success(r);
 	}
 	
-	@PostMapping @ResponseBody
 	public Map<Object, Object> updateMerchantAccount(MerchantAccount bean) {
 		int r = impl.updateMerchantAccount(bean);
 		return ControllerReturn.success(r);
