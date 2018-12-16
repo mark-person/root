@@ -88,49 +88,10 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		return returnList;
 	}
 	
-	public void saveResource(String tree, String removeIds) {
-	    
-//	    ehCacheServ.increaseAllDbVersion();
-//				
-//		if (!StringUtils.isEmpty(removeIds)) {
-//			String[] resId = removeIds.split(",");	
-//			Query removeQuery = Query.query(Criteria.where("_id").in(new ArrayList<String>(Arrays.asList(resId))));
-//			mongoTemplate.remove(removeQuery, COL_RESOURCE_URI);
-//		}
-//		
-//		Update update = Update.update("tree", BasicDBObject.parse(tree));
-//		Query query = Query.query(Criteria.where("_id").is(0));
-//		mongoTemplate.upsert(query, update, COL_RESOURCE);
-	}
+
 	
 		
-	
-	@SuppressWarnings("rawtypes")
-	private int saveToUri(String uri) {
-//		int index = getUriSeq();
-//		Update update = new Update();
-//		update.setOnInsert("index", index);
-//		
-//		Query uriQuery = Query.query(Criteria.where("_id").is(uri));
-//		Map uriMap = mongoTemplate.findAndModify(uriQuery, update, FindAndModifyOptions.options().upsert(true).returnNew(true),
-//				Map.class, "grant_uri_index");			
-//		return (Integer)uriMap.get("index");
-		return 1;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	private int getUriSeq() {
-//		Query seqQuery = Query.query(Criteria.where("_id").is("URI_SEQ"));
-//		Update update = new Update();
-//		update.inc("value", 1);
-//		Map seqMap = mongoTemplate.findAndModify(seqQuery, update, FindAndModifyOptions.options().upsert(true).returnNew(true)
-//				,Map.class, COL_SEQUENCE);
-//		int seq = (Integer)seqMap.get("sequence_value");
-//		return seq;
-		
-		return 1;
-	}
-	
+
 
 	
 	

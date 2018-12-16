@@ -44,10 +44,7 @@ public class ResController {
 		return ControllerReturn.success(map);
 	}
 	
-	public Map<Object, Object> saveResource(@RequestParam String tree, String removeIds) {
-		impl.saveResource(tree, removeIds);
-		return ControllerReturn.success();
-	}
+	
 		
 	
 	
