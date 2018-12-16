@@ -297,13 +297,11 @@ function getUriLi(icon, click) {
 
 function removeUri(obj) {
 	var callback = function() {
-		// mongodb数组只有一条数据时，删除整条记录uri=-1表示删除
-		var uri = $(obj).parent().parent().find("li").length == 2 ? "-1" : $(obj).attr("data-uri");
 		
-		showLoading();
 		var resId = $('#tree').treeview('getSelected')[0].id;
-		var para = "resId=" + resId + "&uri=" + uri + "&uriIndex=" + $(obj).attr("data-uri-index");
-		$.post(contextPath + "resource/removeUri", para, function(r) {
+		var uriSeq = ($(obj).attr("data-uri-index"));
+		showLoading();
+		$.post(contextPath + "auto/res/deleteUri", {resId:resId, uriSeq:uriSeq}, function(r) {
 			hideLoading();
 			$(obj).parent().remove();	
 			alertSuccess("删除成功！");	

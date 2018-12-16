@@ -39,18 +39,19 @@ var res = [[${res}]];
 		<a href="#this" title="同级置顶" class="fa fa-step-backward" onclick="move.topNode()" style="transform: rotate(90deg);color:white"></a>&nbsp;
 		<a href="#this" title="同级上移" class="fa fa-arrow-up" onclick="move.upNode()" style="color:white"></a>&nbsp;
 		<a href="#this" title="同级下移" class="fa fa-arrow-down" onclick="move.downNode()" style="color:white"></a>	
-	</li>		
-	<script id="uriListTemplate" type="text/html">
-	{{each}}
-	<li class="list-group-item" style="background-color: white;">
-		<span title="{{$value.uri}}({{$value.uriIndex}})" style="width:355px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-		{{$value.uri}}({{$value.uriIndex}})
-		</span>
-		<a href="#this" data-uri="{{$value.uri}}" data-uri-index="{{$value.uriIndex}}" class="glyphicon glyphicon-minus-sign" style="margin-left:12px;" onclick="removeUri(this)"></a>
 	</li>
-	{{/each}}
-	</script>			
 </ul>
+<script id="uriListTemplate" type="text/html">
+{{each}}
+<li class="list-group-item" style="background-color: white;">
+	<span title="{{$value.uri}}({{$value.uriIndex}})" style="width:355px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+	{{$value.uri}}({{$value.uriIndex}})
+	</span>
+	<a href="#this" data-uri="{{$value.uri}}" data-uri-index="{{$value.uriIndex}}" class="fa fa-minus" style="margin-left:12px;" onclick="removeUri(this)"></a>
+</li>
+{{/each}}
+</script>		
+
 </div>
 </div>
 

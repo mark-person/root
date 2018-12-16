@@ -53,10 +53,7 @@ public class ResController {
 	
 	
 	
-	public Map<Object, Object> removeUri(@RequestParam Integer resId, @RequestParam String uri, @RequestParam int uriIndex) {
-		impl.removeUri(resId, uri, uriIndex);
-		return ControllerReturn.success();
-	}
+	
 	
     public Map<?, ?> getResUri() {
         RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
@@ -125,4 +122,19 @@ public class ResController {
 		List<Map<String, Object>> list = impl.getUri(resId);	
 		return ControllerReturn.success(list);
 	}
+    
+    public Map<Object, Object> deleteUri(@RequestParam int resId, @RequestParam int uriSeq) {
+		impl.deleteUri(resId, uriSeq);
+		return ControllerReturn.success();
+	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

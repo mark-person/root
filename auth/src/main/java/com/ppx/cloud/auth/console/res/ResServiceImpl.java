@@ -134,23 +134,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 
 	
 	
-	public void removeUri(Integer resId, String uri, int uriIndex) {
-	    
-//	    ehCacheServ.increaseAllDbVersion();
-//				
-//		Query query = Query.query(Criteria.where("_id").is(resId));
-//		
-//		if ("-1".equals(uri)) {
-//			// mongodb数组只有一条数据时，删除整条记录
-//			mongoTemplate.remove(query, COL_RESOURCE_URI);
-//		}
-//		else {
-//			Update update = new Update();	
-//			update.pull("uri", uri);
-//			update.pull("uriIndex", uriIndex);
-//			mongoTemplate.updateFirst(query, update, COL_RESOURCE_URI);
-//		}
-	}
+	
 	
 	
 	/**
@@ -209,30 +193,18 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
 	public int updateResPrio(String ids) {
 		String[] id = ids.split(",");
+		List<Object[]> paramList = new ArrayList<Object[]>();
 		for (int i = 0; i < id.length; i++) {
-			String sql = "update auth_res set res_prio = ? where res_id = ?";
-			getJdbcTemplate().update(sql, i, Integer.parseInt(id[i]));
+			Object[] obj = {i, Integer.parseInt(id[i])};
+			paramList.add(obj);
 		}
+		String sql = "update auth_res set res_prio = ? where res_id = ?";
+		getJdbcTemplate().batchUpdate(sql, paramList);
 		return 1;
 	}
 	
 	@Transactional
 	public int insertUri(Integer resId, String uri, Integer menuId) {
-		
-		/*
-		 * create table auth_uri_seq (
-	uri_seq int not null auto_increment,
-    uri_text varchar(64) not null,
-    primary key (uri_seq)
-) comment='URI系列';
-
-create table auth_res_uri (
-	res_id int not null,
-    uri_seq int not null,
-    primary key (res_id, uri_seq)
-) comment='资源对应多个URI';
-		 */
-	
 		String insertSeqSql = "insert ignore into auth_uri_seq(uri_text) values(?)";
 		getJdbcTemplate().update(insertSeqSql, uri);
 		
@@ -241,37 +213,17 @@ create table auth_res_uri (
 		
 		String insertResUriSql = "insert into auth_res_uri(res_id, uri_seq) value(?, ?)";
 		return getJdbcTemplate().update(insertResUriSql, resId, uriSeq);
-		
-//	    ehCacheServ.increaseAllDbVersion();
-//				
-//		Update update = new Update();	
-//		String[] uriArray = uri.split(",");
-//		List<String> uriList = new ArrayList<String>();
-//		List<Integer> indexList = new ArrayList<Integer>();
-//		for (String u : uriArray) {
-//			uriList.add(u);
-//			int index = saveToUri(u);
-//			indexList.add(index);
-//		}		
-//		update.addToSet("uri").each(uriList.toArray());
-//		update.addToSet("uriIndex").each(indexList.toArray());
-//		if (menuId != null) {
-//			update.set("pMenuId", menuId);
-//		}
-//		
-//		Query query = Query.query(Criteria.where("_id").is(resId));
-//		Map map = mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().upsert(true).returnNew(true),
-//				Map.class, COL_RESOURCE_URI);
-//		return map;
 	}
 	
-	public List<Map<String, Object>> getUri(Integer resId) {
-//		Query query = Query.query(Criteria.where("_id").is(resId));
-//		return mongoTemplate.findOne(query, Map.class, COL_RESOURCE_URI);
-		
+	public List<Map<String, Object>> getUri(int resId) {
 		String sql = "select s.uri_seq, s.uri_text from auth_uri_seq s join auth_res_uri u on s.uri_seq = u.uri_seq where u.res_id = ?";
-		
-		
 		return getJdbcTemplate().queryForList(sql, resId);
 	}
+	
+	public int deleteUri(int resId, int uriSeq) {
+		String sql = "delete from auth_res_uri where res_id = ? and uri_seq = ?";
+		return getJdbcTemplate().update(sql, resId, uriSeq);
+	}
+	
+	
 }
