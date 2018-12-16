@@ -6,7 +6,7 @@ create table auth_res (
     res_name varchar(32),
     res_prio int not null,
     res_type tinyint not null comment '0:目录1:菜单',
-    uri_seq int,
+    uri_seq int comment '菜单uri_seq',
     primary key (res_id)
 ) comment='资源';
 
