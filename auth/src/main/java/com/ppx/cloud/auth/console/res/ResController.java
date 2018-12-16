@@ -97,8 +97,8 @@ public class ResController {
     
     // >>>>>>>>>>>>>>>....new
     public Map<?, ?> insertRes(@RequestParam int parentId, @RequestParam String resName,
-    		@RequestParam int resType, Integer uriSeq) {
-    	return ControllerReturn.success(impl.insertRes(parentId, resName, resType, uriSeq));
+    		@RequestParam int resType, String menuUri) {
+    	return ControllerReturn.success(impl.insertRes(parentId, resName, resType, menuUri));
     }
     
     public Map<?, ?> updateRes(@RequestParam int id, @RequestParam String resName) {

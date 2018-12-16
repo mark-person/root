@@ -89,11 +89,7 @@ function initTree(tree) {
 				
 				$.post(contextPath + "auto/res/getUri", "resId=" + data.id, function(r){					
 					$("#uriList li:gt(0)").remove();
-					var uriList = [];
-					for (var i = 0; r.arrayList && i < r.arrayList.length; i++) {
-						uriList.push({uri:r.arrayList[i].uri_text, uriIndex:r.arrayList[i].uri_seq});
-					}
-					$("#uriList").append(template('uriListTemplate', uriList));
+					$("#uriList").append(template('uriListTemplate', r));
 				});
 			}
 			$("#uri").show();			
@@ -128,6 +124,7 @@ function addChild() {
 	var selectNode = $('#tree').treeview('getSelected')[0];
 	var nodeType = treeUtils.getNodeType(selectNode.icon);
 	
+	$("#addMenuUriDiv").hide();
 	if (nodeType == -1) {
 		$("#addNodeType").append('<option value="0">目录</option>');	
 		noteTypeChange(0);
@@ -135,23 +132,31 @@ function addChild() {
 	else if (nodeType == 0) {
 		$("#addNodeType").append('<option value="1" selected>菜单</option>');	
 		noteTypeChange(1);
+		$("#addMenuUriDiv").show();
+		addTypeHead($("#addMenuUri"));
 	}
 	else if (nodeType == 1) {
 		$("#addNodeType").append('<option value="2" selected>操作</option>');	
 		noteTypeChange(2);
 	}
 	
+	
 	$('#addChild').modal('show');
 	
 	action = function() {
 		if (!$("#addChildForm").valid()) return;
+		
+		if ($("#addMenuUriDiv").css("display") != "none" && !validateUri($("#addMenuUri").val())) {
+			alertWarning("URI不存在");
+			return;
+		}
 		
 		var selectNode = $('#tree').treeview('getSelected')[0];
 		
 		
 		// insertRes(  parentId,  String resName, resType
 		showLoading();
-		var param = {parentId:selectNode.id,resName:$("#addNodeName").val(),resType:$("#addNodeType").val()};
+		var param = {parentId:selectNode.id,resName:$("#addNodeName").val(),resType:$("#addNodeType").val(),menuUri:$("#addMenuUri").val()};
 		$.post(contextPath + "auto/res/insertRes", param, function(r){
 			hideLoading();
 			
@@ -172,14 +177,32 @@ function addChild() {
 	}
 }
 
-function editNode() {
+function editNode(obj) {
+	
+	var menuUri = $(obj).parent().next().attr("data-uri");
+	
+	
 	var selectNode = $('#tree').treeview('getSelected')[0];
 	$("#updateNodeGlyphicon").attr("class", selectNode.icon);
 	$("#updateNodeName").val(selectNode.text);
+	$("#editMenuUri").val(menuUri);
+	
+	
+	
+	$("#editMenuUriDiv").hide();
+	if ($("#editMenuUriDiv").css("display") != "none" && treeUtils.getNodeType(selectNode.icon) == 1)  {
+		$("#editMenuUriDiv").show();
+		addTypeHead($("#editMenuUri"));
+	}
+	
 	$("#editNode").modal("show");
 	
 	action = function() {
 		if (!$("#editNodeForm").valid()) return;
+		if (!validateUri($("#editMenuUri").val())) {
+			alertWarning("URI不存在");
+			return;
+		}
 		
 		showLoading();
 		var param = {id:selectNode.id,resName:$("#updateNodeName").val()};
@@ -234,11 +257,13 @@ function addTypeHead(jObj) {
 	jObj.typeahead({items:10,source:typeHeadSource});
 }
 
-function validateUri(obj) {
-	var uri = $.trim($(obj).val());		 
+function validateUri(uri) { 
 	var u = uri.split("?")[0];
 	if (typeHeadSourceMap[u] != 1) {
-		return "uri不存在！";
+		return false;
+	}
+	else {
+		return true;
 	}
 }
 
@@ -248,7 +273,9 @@ function addUri() {
 	$("#addUri").modal("show");
 	
 	action = function() {
-		if (!$("#addUriForm").valid()) {
+		if (!$("#addUriForm").valid()) return;
+		if (!validateUri($("#typeaheadId").val())) {
+			alertWarning("URI不存在");
 			return;
 		}
 		
@@ -268,12 +295,8 @@ function addUri() {
 		$.post(contextPath + "auto/res/insertUri", "resId=" + selectedNode.id + "&uri=" + uriArray + menuId, function(r){
 			hideLoading();
 			alertSuccess("添加成功！");			
-			$("#uriList li:gt(0)").remove();		
-			var uriList = [];
-			for (var i = 0; r.arrayList && i < r.arrayList.length; i++) {
-				uriList.push({uri:r.arrayList[i].uri_text, uriIndex:r.arrayList[i].uri_seq});
-			}
-			$("#uriList").append(template('uriListTemplate', uriList));
+			$("#uriList li:gt(0)").remove();
+			$("#uriList").append(template('uriListTemplate', r));
 			$("#addUri").modal("hide");
 		});
 	}
@@ -290,7 +313,7 @@ function addUriItem(obj) {
 
 function getUriLi(icon, click) {
 	var li = '<li class="list-group-item">\
-		<input id="typeaheadId" type="text" class="form-control input-sm" data-provide="typeahead" required data-function="validateUri(this)" style="width:370px;float:left;margin:-5px">\
+		<input id="typeaheadId" type="text" class="form-control input-sm" data-provide="typeahead" required style="width:420px;float:left;margin:-5px">\
 		<a href="#this" class="fa ' + icon + '" style="margin-left:12px;" onclick="' + click + '(this)"></a></li>';
 	return li;
 }
@@ -303,8 +326,8 @@ function removeUri(obj) {
 		showLoading();
 		$.post(contextPath + "auto/res/deleteUri", {resId:resId, uriSeq:uriSeq}, function(r) {
 			hideLoading();
-			$(obj).parent().remove();	
-			alertSuccess("删除成功！");	
+			$(obj).parent().remove();
+			alertSuccess("删除成功！");
 		});
 	}
 	confirm("确定删除'" + $(obj).prev().text() + "'?", callback);

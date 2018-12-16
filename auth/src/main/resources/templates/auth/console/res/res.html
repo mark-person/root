@@ -19,7 +19,7 @@ var res = [[${res}]];
 .fa-file {color:black;}
 .fa-cogs {color:green}
 #uri .list-group-item {background-color: #428bca;}
-#tree .list-group-item, #uri .list-group-item {padding-top:4px;height:30px;}
+#tree .list-group-item, #uri .list-group-item {padding:3px 8px}
 .indeterminate {color:blue;}
 </style>
 
@@ -32,7 +32,7 @@ var res = [[${res}]];
 <ul class="list-group" id="uriList" style="margin-top:-10px">
 	<li class="list-group-item" style="color:white">
 		<a href="#this" id="addChildId" onclick="addChild()" style="color:white">[新增子节点]</a>&nbsp;
-		<a href="#this" class="operatorNode" onclick="editNode()" style="color:white">[修改]</a>&nbsp;
+		<a href="#this" class="operatorNode" onclick="editNode(this)" style="color:white">[修改]</a>&nbsp;
 		<a href="#this" class="operatorNode" onclick="removeNode()" style="color:white">[删除]</a>&nbsp;
 		<a href="#this" class="operatorNode" onclick="addUri()" style="color:white">[添加URI]</a>&nbsp;&nbsp;
 		|&nbsp;&nbsp;
@@ -42,12 +42,13 @@ var res = [[${res}]];
 	</li>
 </ul>
 <script id="uriListTemplate" type="text/html">
-{{each}}
-<li class="list-group-item" style="background-color: white;">
-	<span title="{{$value.uri}}({{$value.uriIndex}})" style="width:355px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-	{{$value.uri}}({{$value.uriIndex}})
+{{each arrayList as v i}}
+<li class="list-group-item" style="background-color: white;" data-uri="{{v.uri_text}}">
+	<span title="{{v.uri_text}}({{v.uri_seq}})" style="width:355px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+	{{v.uri_text}}({{v.uri_seq}})
 	</span>
-	<a href="#this" data-uri="{{$value.uri}}" data-uri-index="{{$value.uriIndex}}" class="fa fa-minus" style="margin-left:12px;" onclick="removeUri(this)"></a>
+	{{if v.is_menu == 1}}菜单URI{{/if}}
+	{{if v.is_menu == 0}}<a href="#this" data-uri="{{v.uri_text}}" data-uri-index="{{v.uri_seq}}" class="fa fa-minus" onclick="removeUri(this)"></a>{{/if}}
 </li>
 {{/each}}
 </script>		
@@ -57,26 +58,38 @@ var res = [[${res}]];
 
 <div th:fragment="addChild" th:replace="common/fragment::modal('addChild', '添加子节点',  '')">
 	<div class="form-group form-inline">
-		<label class="col-4">节点类型</label>
-		<div class="col-8">
-			<select id="addNodeType" class="form-control" onchange="noteTypeChange(this.value)"  style="width:230px">
+		<label class="col-3">节点类型</label>
+		<div class="col-9">
+			<select id="addNodeType" class="form-control" onchange="noteTypeChange(this.value)"  style="width:320px">
 	      		<option value="0">目录</option><option value="1">菜单</option><option value="2">操作</option>
 	 		</select>
 	 	</div>
 	</div>	
 	<div class="form-group form-inline">
-		<label class="col-4">名称&nbsp;&nbsp;<i id="nodeGlyphicon"></i></label>
-		<div class="col-8">
-			<input type="text" id="addNodeName" class="form-control" required placeholder="请输入名称" maxlength="10" style="width:230px">
+		<label class="col-3"><i class="required">*</i>名称&nbsp;<i id="nodeGlyphicon"></i></label>
+		<div class="col-9">
+			<input type="text" id="addNodeName" class="form-control" name="resName" required placeholder="请输入名称" maxlength="10" style="width:320px">
+		</div>
+	</div>	
+	<div class="form-group form-inline" id="addMenuUriDiv">
+		<label class="col-3"><i class="required">*</i>菜单URI</label>
+		<div class="col-9">
+			<input type="text" id="addMenuUri" class="form-control" name="menuUri" required placeholder="请输入菜单URI" maxlength="64" style="width:320px">
 		</div>
 	</div>	
 </div>
 
 <div th:fragment="editNode" th:replace="common/fragment::modal('editNode', '修改节点', '')">
 	<div class="form-group form-inline">
-		<label class="col-4">名称&nbsp;&nbsp;<i id="updateNodeGlyphicon"></i></label>
-		<div class="col-8">
-			<input type="text" id="updateNodeName" class="form-control" required maxlength="10">
+		<label class="col-3"><i class="required">*</i>名称&nbsp;&nbsp;<i id="updateNodeGlyphicon"></i></label>
+		<div class="col-9">
+			<input type="text" id="updateNodeName" class="form-control" name="resName" required maxlength="10" style="width:320px">
+		</div>
+	</div>
+	<div class="form-group form-inline" id="editMenuUriDiv">
+		<label class="col-3"><i class="required">*</i>菜单URI</label>
+		<div class="col-9">
+			<input type="text" id="editMenuUri" class="form-control" name="menuUri" required placeholder="请输入菜单URI" maxlength="64" style="width:320px">
 		</div>
 	</div>
 </div>

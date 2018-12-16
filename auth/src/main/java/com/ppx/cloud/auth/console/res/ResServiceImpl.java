@@ -167,15 +167,33 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
 	
 	
-	// >>>>>>>>>>>>>>>>.new
-	
-	public int insertRes(int parentId, String resName, int resType, Integer uriSeq) {
+	// >>>>>>>>>>>>>>>>>>>>>>>>.new
+	@Transactional
+	public int insertRes(int parentId, String resName, int resType, String menuUri) {
 		String countSql = "select count(*) from auth_res where parent_id = ?";
 		int c = getJdbcTemplate().queryForObject(countSql, Integer.class, parentId);
 		
-		String sql = "insert into auth_res(parent_id, res_name, res_prio, res_type, uri_seq)"
-				+ " values(?, ?, ?,?, ?)";
-		return getJdbcTemplate().update(sql, parentId, resName, c + 1, resType, uriSeq);
+		// 1:菜单 auth_res对应的菜单uri_seq要加上
+		if (resType == 1) {
+			String insertSeqSql = "insert ignore into auth_uri_seq(uri_text) values(?)";
+			getJdbcTemplate().update(insertSeqSql, menuUri);
+			
+			String seqSql = "select uri_seq from auth_uri_seq where uri_text = ?";
+			int uriSeq = getJdbcTemplate().queryForObject(seqSql, Integer.class, menuUri);
+			
+			String sql = "insert into auth_res(parent_id, res_name, res_prio, res_type, uri_seq)"
+					+ " values(?, ?, ?, ?, ?)";
+			getJdbcTemplate().update(sql, parentId, resName, c + 1, resType, uriSeq);
+			
+			String insertResUriSql = "insert into auth_res_uri(res_id, uri_seq) value(LAST_INSERT_ID(), ?)";
+			return getJdbcTemplate().update(insertResUriSql, uriSeq);
+		}
+		else {
+			String sql = "insert into auth_res(parent_id, res_name, res_prio, res_type)"
+					+ " values(?, ?, ?, ?)";
+			return getJdbcTemplate().update(sql, parentId, resName, c + 1, resType);
+		}
+		
 	}
 	
 	public int updateRes(int id, String resName) {
@@ -185,6 +203,9 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
 	@Transactional
 	public int deleteRes(int id) {
+		String deleteUriSeq = "delete from auth_res_uri where res_id in (select res_id from auth_res where parent_id = ?) or res_id = ?";
+		getJdbcTemplate().update(deleteUriSeq, id, id);
+		
 		String pSql = "delete from auth_res where parent_id = ?";
 		getJdbcTemplate().update(pSql, id);
 		String sql = "delete from auth_res where res_id = ?";
@@ -216,8 +237,9 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	}
 	
 	public List<Map<String, Object>> getUri(int resId) {
-		String sql = "select s.uri_seq, s.uri_text from auth_uri_seq s join auth_res_uri u on s.uri_seq = u.uri_seq where u.res_id = ?";
-		return getJdbcTemplate().queryForList(sql, resId);
+		String sql = "select s.uri_seq, s.uri_text, if((select uri_seq from auth_res where res_id = ?) = s.uri_seq, 1, 0) is_menu" + 
+				" from auth_uri_seq s join auth_res_uri u on s.uri_seq = u.uri_seq where u.res_id = ? order by uri_seq";
+		return getJdbcTemplate().queryForList(sql, resId, resId);
 	}
 	
 	public int deleteUri(int resId, int uriSeq) {
