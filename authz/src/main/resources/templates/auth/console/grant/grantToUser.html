@@ -3,7 +3,7 @@
 <head>
 <title></title>
 
-<link th:replace="common/common::common"/>
+<link th:replace="common/fragment::common"/>
 <link th:replace="auth/authFragment::treeview"/>
 
 <script type="text/javascript" th:src="@{/static/auth/console/grant.js}"></script>
@@ -30,51 +30,59 @@ $(function() {
 
 <body>
 
-<div id="pageDiv" th:include="common/fragment::page('用户权限管理')">
-<div th:fragment="query">
-	<label>用户ID:</label>	
-	<input type="text" class="form-control input-sm" name="userId" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
-	<label>用户名称:</label>		
-	<input type="text" class="form-control input-sm" name="userName" >			
-	<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>		
-</div>
-	
-<table th:fragment="list">
-<tr>
-	<th>用户主账号ID</th>
-	<th>用户主账号</th> 
-	<th>用户名称</th> 
-	<th>操作</th>                
-</tr>
-</table>
-</div>
+<div class="container">
 
-<script id="pageTemplate" type="text/html">
-{{each arrayList as v i}}
-<tr>
+<div id="pageDiv" th:include="common/fragment::page('用户权限管理')">
+	<div th:fragment="query">
+		<label>用户ID:</label>	
+		<input type="text" class="form-control input-sm" name="userId" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+		<label>用户名称:</label>		
+		<input type="text" class="form-control input-sm" name="userName" >			
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>		
+	</div>
+	
+	<table th:fragment="list">
+	<thead class="thead-light">
+	<tr>
+		<th>用户主账号ID</th>
+		<th>用户主账号</th> 
+		<th>用户名称</th> 
+		<th>操作</th>                
+	</tr>
+	</thead>
+	<tbody></tbody>
+	</table>
+	<table>
+	<tr th:fragment="template">
  		<td>{{v.userId}}</td>
  		<td>{{v.loginAccount}}</td>
  		<td>{{v.userName}}</td>
 		<td><a href="#" onclick="grant('{{v.userId}}', '{{v.userName}}')">授权</a></td>
-</tr>
+	</tr>
+	</table>
+</div>
+
+<script id="pageTemplate" type="text/html">
+{{each arrayList as v i}}
+
 {{/each}}
 </script>
 
-<div class="modal fade" id="grantModal" role="dialog" tabindex="-1">
-<div class="modal-dialog" style="width:500px;">
-<div class="modal-content">
-	<div class="modal-header">
-		<button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
-		<h4 class="modal-title">授权(mer：<span id="grantViewName"></span>)<input type="hidden" id="grantAccountId"></h4>
-	</div>
+<div id="grantModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+<!--size:modal-sm 无 modal-lg -->
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header"><h5 class="modal-title">授权(user：<span id="grantViewName"></span>)<input type="hidden" id="grantAccountId"></h5>
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+		</div>
       	<div class="modal-body" style="width:100%;height:400px;overflow:auto;float:left;padding-top:4px">
 		<div id="tree" style="float:left"></div>
 	</div>   
 	<div class="modal-footer">
 		<span style="float:left">
-			<span class="glyphicon glyphicon-folder-close"></span>:<span id="viewFolderN">0</span>
-			<span class="glyphicon glyphicon-th-list"></span>:<span id="viewMenuN">0</span>
-			<span class="glyphicon glyphicon-wrench"></span>:<span id="viewActionN">0</span>
+			<span class="fa fa-folder"></span>:<span id="viewFolderN">0</span>
+			<span class="fa fa-file"></span>:<span id="viewMenuN">0</span>
+			<span class="fa fa-cogsr"></span>:<span id="viewActionN">0</span>
        	</span>
        	<button type="button" class="btn btn-success" onclick="authorize()">确定</button>
        	<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -83,6 +91,8 @@ $(function() {
 </div>
 </div>
 
+
+</div>
 </body>
 </html>
 

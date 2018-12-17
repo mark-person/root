@@ -39,7 +39,7 @@ public class GrantController {
 		return ControllerReturn.success(list, page);
 	}
 	
-	public Map<Object, Object> getAuthsorize(@RequestParam Integer accountId) {
+	public Map<Object, Object> getAuthorize(@RequestParam Integer accountId) {
 	    Map<?, ?> resMap = resourceServ.getResource();
         if (resMap == null) {
             return ControllerReturn.success(-1);

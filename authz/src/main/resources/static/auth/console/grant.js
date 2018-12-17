@@ -27,15 +27,15 @@ treeUtils.getCheckedChildrenNode = function(node) {
 }
 treeUtils.getNodeIcon = function(nodeType) {
 	// -1资源 0目录 1菜单 2操作
-	if (nodeType == 0) return "glyphicon glyphicon-folder-close";
-	if (nodeType == 1) return "glyphicon glyphicon-th-list";
-	if (nodeType == 2) return "glyphicon glyphicon-wrench";
-	return "glyphicon glyphicon-home";
+	if (nodeType == 0) return "fa fa-folder";
+	if (nodeType == 1) return "fa fa-file";
+	if (nodeType == 2) return "fa fa-cogs";
+	return "fa fa-home";
 }
 treeUtils.getNodeType = function(nodeIcon) {
-	if (nodeIcon == "glyphicon glyphicon-folder-close") return 0;
-	if (nodeIcon == "glyphicon glyphicon-th-list") return 1;
-	if (nodeIcon == "glyphicon glyphicon-wrench") return 2;
+	if (nodeIcon == "fa fa-folder") return 0;
+	if (nodeIcon == "fa fa-file") return 1;
+	if (nodeIcon == "fa fa-cogs") return 2;
 	return -1;
 }
 treeUtils.decompressNode = function(node, resMap) {
@@ -61,7 +61,7 @@ treeUtils.decompressNode = function(node, resMap) {
 function initResource() {
 	$('#tree').html("");
 	$('#loading').modal('show');
-	$.post(contextPath + "getAuthorize", "accountId=" + $("#grantAccountId").val(), function(r){
+	$.post(contextPath + "auto/grant/getAuthorize", "accountId=" + $("#grantAccountId").val(), function(r){
 		if (r.result == -1) {
 			// 刚开始没有数据时
 			var tree = [{text:"资源", icon:"glyphicon glyphicon-home"}];

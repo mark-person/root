@@ -28,12 +28,12 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 	
 	public List<AuthUser> listUser(Page page, AuthUser user) {
 		MyCriteria c = createCriteria("and")
-			.addAnd("m.mer_id = ?", user.getUserId())
-			.addAnd("m.mer_name like ?", "%", user.getUserName(), "%");
+			.addAnd("u.user_id = ?", user.getUserId())
+			.addAnd("u.user_name like ?", "%", user.getUserName(), "%");
 		
 		StringBuilder cSql = new StringBuilder("select count(*) from auth_user u where u.user_status = ?").append(c);
 		StringBuilder qSql = new StringBuilder("select u.user_id, u.user_name, a.login_account " +
-			" from merchant m left join auth_account a on m.user_id = a.account_id where u.user_status = ?")
+			" from auth_user u left join auth_account a on u.user_id = a.account_id where u.user_status = ?")
 			.append(c).append(" order by u.user_id");
 		c.addPrePara(1);
 		return queryPage(AuthUser.class, page, cSql, qSql, c.getParaList());
@@ -41,7 +41,7 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 	
 	@Override
 	public List<Integer> getGrantResIds(Integer accountId) {
-	    int c = getJdbcTemplate().queryForObject("SELECT count(*) from auth_grant where account_id = ?", Integer.class, accountId);
+	    int c = getJdbcTemplate().queryForObject("select count(*) from auth_grant where account_id = ?", Integer.class, accountId);
 	    if (c == 0) {
 	        return new ArrayList<Integer>(0);
 	    } 
