@@ -39,20 +39,22 @@ treeUtils.getNodeType = function(nodeIcon) {
 	return -1;
 }
 treeUtils.decompressNode = function(node, resMap) {
-	var newNode = {id:node.id,text:node.t,icon:this.getNodeIcon(node.i),state:{}};	
+	var newNode = {id:node.id,text:node.text,icon:node.icon,state:{}};	
+	newNode.state.checked = true;
+	/*
 	if (!node.id || resMap[node.id] == 1) {
 		// 存在已经选择的节点
 		for (i in resMap) {
 			newNode.state.checked = true;
 			break;
 		}
-	}
+	}*/
 	// 装载时半选状态
 	loadIndeterminate(newNode, node, resMap);
-	if (node.n) {
+	if (node.nodes) {
 		newNode.nodes = [];
-		for (var i = 0; i < node.n.length; i++) {
-			newNode.nodes.push(this.decompressNode(node.n[i], resMap));
+		for (var i = 0; i < node.nodes.length; i++) {
+			newNode.nodes.push(this.decompressNode(node.nodes[i], resMap));
 		}
 	}
 	return newNode;
@@ -64,7 +66,7 @@ function initResource() {
 	$.post(contextPath + "auto/grant/getAuthorize", "accountId=" + $("#grantAccountId").val(), function(r){
 		if (r.result == -1) {
 			// 刚开始没有数据时
-			var tree = [{text:"资源", icon:"glyphicon glyphicon-home"}];
+			var tree = [{text:"资源", icon:"fa fa-home"}];
 			initTree(tree);
 		}
 		else {		
@@ -75,7 +77,7 @@ function initResource() {
 					resMap[r.resIds[i]] = 1;
 				}				
 			} 
-			initTree([treeUtils.decompressNode(tree, resMap)]);			
+			initTree([treeUtils.decompressNode(r.tree)]);			
 			refreshHint();		
 		}
 		$('#loading').modal('hide');
@@ -95,27 +97,45 @@ function refreshHint() {
 	$("#viewFolderN").text(count[0]);
 	$("#viewMenuN").text(count[1]);
 	$("#viewActionN").text(count[2]);
+	
+	
+	
+	var treeNode = $("#tree [data-nodeid]");
+	$("#tree [data-nodeid]").each(function(i, o) {
+		if ($(o).css("background-color") == "rgb(255, 255, 253)") {
+			var t = $(o).find(".fa-check-square");
+			t.removeClass("fa-check-square");
+			t.addClass("fa-check-square-o");
+		}
+	})
+	
+	
+//	var o = $("[data-nodeid=1]").find(".fa-check-square-o");
+//	o.removeClass("fa-check-square-o");
+//	o.addClass("fa-check-square");
 }
 
 // 装载时半选状态
 function loadIndeterminate(newNode, node, resMap) {
+	
+	
 	if (!newNode.state.checked) {
 		return;
 	}
 	
 	if (!node.n) {
-		newNode.backColor = "#428bca";
-		newNode.color = "white";	
+		newNode.backColor = "#fffffe";
+		//newNode.color = "white";	
 	}
 	else if (node.n) {
 		var no = hasNoChecked(node.n, resMap);
 		if (no) {
-			newNode.backColor = "green";
-			newNode.color = "white";	
+			newNode.backColor = "#fffffd";
+			//newNode.color = "black";	
 		}
 		else {
-			newNode.backColor = "#428bca";
-			newNode.color = "white";
+			newNode.backColor = "#fffffe";
+			//newNode.color = "white";
 		}
 	}
 } 
@@ -134,15 +154,15 @@ function initTree(tree) {
 	$('#tree').treeview({data:tree,levels:2,showCheckbox:true,highlightSelected:false,
 		onNodeChecked:function(event, node) {
 			var n = $('#tree').treeview('getNode', node.nodeId);
-			n.backColor = "#428bca";
-			n.color = "white";
+			n.backColor = "#fffffe";
+			//n.color = "white";
 			
 			var childrenNode = treeUtils.getChildrenNodes(node);
 			for (var i = 0; i < childrenNode.length; i++) {				
 				var node = $('#tree').treeview('getNode', childrenNode[i].nodeId);				
 				node.state.checked = true;
-				node.backColor = "#428bca";
-				node.color = "white";
+				node.backColor = "#fffffe";
+				//node.color = "white";
 			}
 			clickIndeterminate(node);			
 			refreshHint();			
@@ -150,14 +170,14 @@ function initTree(tree) {
 		onNodeUnchecked:function(event, node) {
 			var n = $('#tree').treeview('getNode', node.nodeId);
 			n.backColor = "white";
-			n.color = "black";
+			//n.color = "black";
 			
 			var childrenNode = treeUtils.getChildrenNodes(node);	
 			for (var i = 0; i < childrenNode.length; i++) {				
 				var node = $('#tree').treeview('getNode', childrenNode[i].nodeId);				
 				node.state.checked = false;
 				node.backColor = "white";
-				node.color = "black";				
+				// node.color = "black";				
 			}			
 			clickIndeterminate(node);		
 			refreshHint();
@@ -175,17 +195,17 @@ function clickIndeterminate(node) {
 	var nodeLen = treeUtils.getChildrenNodes(parent).length;
 	var checkLen = treeUtils.getCheckedChildrenNode(parent).length;	
 	if (nodeLen != checkLen) {		
-		parent.backColor = "green";
-		parent.color = "white";		
+		parent.backColor = "#fffffd";
+		//parent.color = "black";		
 	}
 	else {
-		parent.backColor = "#428bca";
-		parent.color = "white";				
+		parent.backColor = "#fffffe";
+		//parent.color = "black";				
 	}	
 	
 	if (parent.state.checked == false) {
 		parent.backColor = "white";
-		parent.color = "black";
+		//parent.color = "black";
 	}
 	clickIndeterminate(parent);
 }
