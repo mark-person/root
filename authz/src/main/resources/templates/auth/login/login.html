@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>登录</title>
+<script>
+if (top != self) {
+	// 在iframe页时，跳到最外面
+	top.location.href = location.href;
+}
+</script>
+
+<link th:replace="common/common::base"/>
+<script type="text/javascript" th:src="@{/static/auth/login.js}"></script>
+
+<style>.popover-content {color:red}</style>
+<meta id="DhefwqGPrzGxEp9hPaoag" th:attr="content=${v}">
+</head>
+<body></body>
+</html>
+
+

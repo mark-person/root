@@ -61,7 +61,7 @@
 	<modules>
 		<module>common</module>
 		<module>monitor</module>
-		<module>auth</module>
+		<module>authz</module>
 		<module>demo</module> 
 	</modules>
 
