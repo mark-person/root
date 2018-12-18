@@ -30,6 +30,8 @@ public class MenuServiceImpl  {
     private EhCacheService ehCacheServ;
 	
 	public List<Map<String, Object>> getMenu() {
+		var returnList = new ArrayList<Map<String, Object>>();
+		
 		Map map = ehCacheServ.loadResource();
 		if (map == null) return null;
 		
@@ -57,7 +59,31 @@ public class MenuServiceImpl  {
 			test = filterNode(treeMap, uriMap, permitResIdList, mainPermitResIdList);
 		}
 		else {
-			test = filterNode(treeMap, uriMap, permitResIdList, null);
+			// test = filterNode(treeMap, uriMap, permitResIdList, null);
+			
+			var menuList = new ArrayList<Map<String, Object>>();
+			
+			// 菜单项1
+	        Map<String, Object> menuMap = new LinkedHashMap<String, Object>();
+	        menuMap.put("t", "目录001");
+	        menuMap.put("i", -1);
+	        menuMap.put("uri", "/auto/child/child");
+	        menuList.add(menuMap);
+	        
+	        menuMap = new LinkedHashMap<String, Object>();
+	        menuMap.put("t", "菜单001");
+	        menuMap.put("i", -2);
+	        menuMap.put("uri", "/auto/child/grantToChild");
+	        menuList.add(menuMap);
+	        
+	        // 目录项0
+	        Map<String, Object> systemMap = new LinkedHashMap<String, Object>();
+	        systemMap.put("t", "菜单002");
+	        systemMap.put("i", 0);
+	        systemMap.put("n", menuList);
+	        
+	        returnList.add(systemMap);
+	        return returnList;
 		}
 		
 		return (List<Map<String, Object>>)test.get("n");
