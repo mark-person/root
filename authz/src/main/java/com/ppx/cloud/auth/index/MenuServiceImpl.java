@@ -35,12 +35,7 @@ public class MenuServiceImpl  {
 		
 		returnList = ehCacheServ.loadResource();
 		
-		try {
-			String json = new ObjectMapper().writeValueAsString(returnList);
-			System.out.println("99999999999999json:" + json);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
 		
 		
 		if (returnList.isEmpty()) return returnList;
