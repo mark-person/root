@@ -36,7 +36,6 @@ public class ResController {
 	}
 	
 	public Map<Object, Object> getResource() {
-		@SuppressWarnings("rawtypes")
 		Map map = impl.getResource();
 		if (map == null) {
 			return ControllerReturn.success(-1);

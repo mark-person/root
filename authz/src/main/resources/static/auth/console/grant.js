@@ -19,7 +19,7 @@ treeUtils.getCheckedChildrenNode = function(node) {
 	var r = [];
 	var c = this.getChildrenNodes(node);
 	for (var i = 0; i < c.length; i++) {
-		if (c[i].state.checked == true) {
+		if (c[i].state.checked != 0) {
 			r.push(c[i]);
 		}
 	}
@@ -39,9 +39,9 @@ treeUtils.getNodeType = function(nodeIcon) {
 	return -1;
 }
 treeUtils.decompressNode = function(node, resMap) {
-	var newNode = {id:node.id,text:node.text,icon:node.icon,state:{}};
+	var newNode = {id:node.id,text:node.text,icon:node.icon,state:{},nodes:node.nodes};
 	
-	if (!node.id || resMap[node.id] == 1) {
+	if (!newNode.id || resMap[newNode.id] == 1) {
 		// 存在已经选择的节点
 		for (i in resMap) {
 			newNode.state.checked = 1;
@@ -49,7 +49,7 @@ treeUtils.decompressNode = function(node, resMap) {
 		}
 	}
 	// 装载时半选状态
-	loadIndeterminate(newNode, node, resMap);
+	loadIndeterminate(newNode, resMap);
 	if (node.nodes) {
 		newNode.nodes = [];
 		for (var i = 0; i < node.nodes.length; i++) {
@@ -99,18 +99,18 @@ function refreshHint() {
 }
 
 // 装载时半选状态
-function loadIndeterminate(newNode, resMap) {
-	if (newNode.state.checked == 0) {
+function loadIndeterminate(node, resMap) {
+	if (node.state.checked == 0) {
 		return;
 	}
 	
-	if (newNode.nodes) {
-		var no = hasNoChecked(node.n, resMap);
+	if (node.nodes) {
+		var no = hasNoChecked(node.nodes, resMap);
 		if (no) {
-			newNode.state.checked = 2;
+			node.state.checked = 2;
 		}
 		else {
-			newNode.state.checked = 1;
+			node.state.checked = 1;
 		}
 	}
 } 
@@ -118,8 +118,8 @@ function loadIndeterminate(newNode, resMap) {
 function hasNoChecked(nodes, resMap) {
 	for (var i = 0; i < nodes.length; i++) {
 		if (resMap[nodes[i].id] != 1) return true;
-		if (nodes[i].n) {
-			if (hasNoChecked(nodes[i].n, resMap)) return true;
+		if (nodes[i].nodes) {
+			if (hasNoChecked(nodes[i].nodes, resMap)) return true;
 		}
 	}	
 	return false;
@@ -179,10 +179,13 @@ function grant(accountId, viewName) {
 
 function authorize() {
 	var node = $('#tree').treeview('getNode', 0);
-	var checkedNode = treeUtils.getCheckedChildrenNode(node);
 	var checkedIds = [];
-	for (var i = 0; i < checkedNode.length; i++) {
-		checkedIds.push(checkedNode[i].id);
+	if (node.state.checked != 0) {
+		checkedIds.push(node.id);
+		var checkedNode = treeUtils.getCheckedChildrenNode(node);
+		for (var i = 0; i < checkedNode.length; i++) {
+			checkedIds.push(checkedNode[i].id);
+		}
 	}
 	
 	showLoading();
