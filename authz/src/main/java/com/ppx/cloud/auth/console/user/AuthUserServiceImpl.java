@@ -28,7 +28,7 @@ public class AuthUserServiceImpl extends MyDaoSupport {
 		MyCriteria c = createCriteria("and")
 				.addAnd("u.user_name like ?", "%", u.getUserName(), "%");
 		
-		var whereSql = "from auth_user u left join auth_account a on u.user_id = a.user_id where u.user_status >= ?";
+		var whereSql = "from auth_user u left join auth_account a on u.user_id = a.account_id where u.user_status >= ?";
 		var cSql = new StringBuilder("select count(*) ").append(whereSql).append(c);
 		var qSql = new StringBuilder("select u.*, a.login_account, a.account_status ")
 				.append(whereSql).append(c).append(" order by u.user_id");
