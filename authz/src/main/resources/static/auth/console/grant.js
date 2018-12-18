@@ -39,16 +39,15 @@ treeUtils.getNodeType = function(nodeIcon) {
 	return -1;
 }
 treeUtils.decompressNode = function(node, resMap) {
-	var newNode = {id:node.id,text:node.text,icon:node.icon,state:{}};	
-	newNode.state.checked = true;
-	/*
+	var newNode = {id:node.id,text:node.text,icon:node.icon,state:{}};
+	
 	if (!node.id || resMap[node.id] == 1) {
 		// 存在已经选择的节点
 		for (i in resMap) {
-			newNode.state.checked = true;
+			newNode.state.checked = 1;
 			break;
 		}
-	}*/
+	}
 	// 装载时半选状态
 	loadIndeterminate(newNode, node, resMap);
 	if (node.nodes) {
@@ -77,7 +76,7 @@ function initResource() {
 					resMap[r.resIds[i]] = 1;
 				}				
 			} 
-			initTree([treeUtils.decompressNode(r.tree)]);			
+			initTree([treeUtils.decompressNode(r.tree, resMap)]);			
 			refreshHint();		
 		}
 		$('#loading').modal('hide');
@@ -97,45 +96,21 @@ function refreshHint() {
 	$("#viewFolderN").text(count[0]);
 	$("#viewMenuN").text(count[1]);
 	$("#viewActionN").text(count[2]);
-	
-	
-	
-	var treeNode = $("#tree [data-nodeid]");
-	$("#tree [data-nodeid]").each(function(i, o) {
-		if ($(o).css("background-color") == "rgb(255, 255, 253)") {
-			var t = $(o).find(".fa-check-square");
-			t.removeClass("fa-check-square");
-			t.addClass("fa-check-square-o");
-		}
-	})
-	
-	
-//	var o = $("[data-nodeid=1]").find(".fa-check-square-o");
-//	o.removeClass("fa-check-square-o");
-//	o.addClass("fa-check-square");
 }
 
 // 装载时半选状态
-function loadIndeterminate(newNode, node, resMap) {
-	
-	
-	if (!newNode.state.checked) {
+function loadIndeterminate(newNode, resMap) {
+	if (newNode.state.checked == 0) {
 		return;
 	}
 	
-	if (!node.n) {
-		newNode.backColor = "#fffffe";
-		//newNode.color = "white";	
-	}
-	else if (node.n) {
+	if (newNode.nodes) {
 		var no = hasNoChecked(node.n, resMap);
 		if (no) {
-			newNode.backColor = "#fffffd";
-			//newNode.color = "black";	
+			newNode.state.checked = 2;
 		}
 		else {
-			newNode.backColor = "#fffffe";
-			//newNode.color = "white";
+			newNode.state.checked = 1;
 		}
 	}
 } 
@@ -154,30 +129,20 @@ function initTree(tree) {
 	$('#tree').treeview({data:tree,levels:2,showCheckbox:true,highlightSelected:false,
 		onNodeChecked:function(event, node) {
 			var n = $('#tree').treeview('getNode', node.nodeId);
-			n.backColor = "#fffffe";
-			//n.color = "white";
-			
 			var childrenNode = treeUtils.getChildrenNodes(node);
 			for (var i = 0; i < childrenNode.length; i++) {				
 				var node = $('#tree').treeview('getNode', childrenNode[i].nodeId);				
-				node.state.checked = true;
-				node.backColor = "#fffffe";
-				//node.color = "white";
+				node.state.checked = 1;
 			}
 			clickIndeterminate(node);			
 			refreshHint();			
 		},
 		onNodeUnchecked:function(event, node) {
 			var n = $('#tree').treeview('getNode', node.nodeId);
-			n.backColor = "white";
-			//n.color = "black";
-			
 			var childrenNode = treeUtils.getChildrenNodes(node);	
 			for (var i = 0; i < childrenNode.length; i++) {				
 				var node = $('#tree').treeview('getNode', childrenNode[i].nodeId);				
-				node.state.checked = false;
-				node.backColor = "white";
-				// node.color = "black";				
+				node.state.checked = 0;				
 			}			
 			clickIndeterminate(node);		
 			refreshHint();
@@ -188,25 +153,18 @@ function initTree(tree) {
 // onNodeChecked和onNodeUnchecked时半选状态
 function clickIndeterminate(node) {
 	if (node.nodeId == 0) return;
-	
 	var parent = $('#tree').treeview('getParent', node);
-	if (node.state.checked) parent.state.checked = true;
-		
 	var nodeLen = treeUtils.getChildrenNodes(parent).length;
 	var checkLen = treeUtils.getCheckedChildrenNode(parent).length;	
-	if (nodeLen != checkLen) {		
-		parent.backColor = "#fffffd";
-		//parent.color = "black";		
+	if (checkLen == 0) {
+		parent.state.checked = 0;
+	}
+	else if (nodeLen != checkLen) {	
+		parent.state.checked = 2;	
 	}
 	else {
-		parent.backColor = "#fffffe";
-		//parent.color = "black";				
+		parent.state.checked = 1;				
 	}	
-	
-	if (parent.state.checked == false) {
-		parent.backColor = "white";
-		//parent.color = "black";
-	}
 	clickIndeterminate(parent);
 }
 
@@ -229,7 +187,7 @@ function authorize() {
 	
 	showLoading();
 	var para = "accountId=" + $("#grantAccountId").val() + "&resIds=" + checkedIds;
-	$.post(contextPath + "saveAuthorize", para, function(r) {
+	$.post(contextPath + "auto/grant/saveAuthorize", para, function(r) {
 		if (r.result == 0 || r.result == 1) {
 			hideLoading();
 			alertSuccess();

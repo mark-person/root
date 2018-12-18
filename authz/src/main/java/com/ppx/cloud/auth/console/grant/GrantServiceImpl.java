@@ -46,19 +46,25 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 	        return new ArrayList<Integer>(0);
 	    } 
 	     
-	    AuthGrant authGrant = getJdbcTemplate().queryForObject("select * from auth_grant where account_id = ?",
+	    AuthGrant authGrant = getJdbcTemplate().queryForObject("select account_id, group_concat(res_id) res_ids from auth_grant where account_id = ?",
                 BeanPropertyRowMapper.newInstance(AuthGrant.class), accountId);
 	    return authGrant.getResIds();
 	}
 	
 	@Transactional
 	public int saveGrantResIds(Integer accountId, String resIds) {
-	    ehCacheServ.increaseGrantDbVersion();
-
-		String sql = "insert into auth_grant(account_id, res_ids) values(?, ?) on duplicate key update res_ids = ?";
-		resIds = "[" + resIds + "]";
-		getJdbcTemplate().update(sql, accountId, resIds, resIds);
+	    // ehCacheServ.increaseGrantDbVersion();
+		String delSql = "delete from auth_grant where account_id = ?";
+		getJdbcTemplate().update(delSql, accountId);
+		String insertSql = "insert into auth_grant(account_id, res_id) values(?, ?)";
 		
+		var paraList = new ArrayList<Object[]>();
+		String[] resId = resIds.split(",");
+		for (String id : resId) {
+			Object[] obj = {accountId, Integer.parseInt(id)};
+			paraList.add(obj);
+		}
+		getJdbcTemplate().batchUpdate(insertSql, paraList);
 		return 1;
 	}
 	

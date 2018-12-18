@@ -1,6 +1,7 @@
 package com.ppx.cloud.auth.console.grant;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -24,18 +25,16 @@ public class AuthGrant {
         this.accountId = accountId;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getResIds() {
         List<Integer> returnList = new ArrayList<>(0);
         if (StringUtils.isEmpty(resIds)) {
             return returnList;
         }
         else {
-            try {
-                returnList = new ObjectMapper().readValue(resIds, ArrayList.class);
-            } catch (Exception e) {
-                logger.error("AuthGrant.getResIds error", e);
-            }
+        	String[] resId = resIds.split(",");
+        	for (String id : resId) {
+        		returnList.add(Integer.parseInt(id));
+			}
         }
         return returnList;
     }
