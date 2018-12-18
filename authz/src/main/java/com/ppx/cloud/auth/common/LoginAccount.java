@@ -14,6 +14,14 @@ public class LoginAccount  {
 	private Integer userId;
 	
 	private String userName;
+	
+	public boolean isMainAccount() {
+		return accountId == userId;
+	}
+	
+	public boolean isAdmin() {
+		return accountId == -1 ? true : false;
+	}
 
 	public Integer getAccountId() {
 		return accountId;

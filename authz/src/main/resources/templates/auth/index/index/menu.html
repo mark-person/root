@@ -2,9 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <title>DEMO</title>
 
-<link th:replace="common/common::common"/>
-<link rel="stylesheet" th:href="@{/static/auth/menu.css}" />
-<script type="text/javascript" th:src="@{/static/auth/menu.js}"></script>
+<meta charset="UTF-8">
+<link th:replace="common/fragment::common"/>
+<link rel="stylesheet" th:href="@{/static/auth/index/menu.css}" />
+<script type="text/javascript" th:src="@{/static/auth/index/menu.js}"></script>
 <script type="text/javascript" th:inline="javascript">var menu = [[${menu}]];</script>
 
 
@@ -14,18 +15,18 @@
     <div id="topDiv" style="background-color:#EEEEEE;">
     	<a id="toggleId" style="padding-right:20px" href="javascript:toggleMenu()">&lt;</a>
     	
-    	<span th:if="${account.mainAccount}">主帐号：</span>
+    	<span th:if="${account.mainAccount}">用户帐号：</span>
     	<span th:if="${!account.mainAccount}">子帐号：</span>
     	
     	<span th:text="${account.loginAccount}"></span>&nbsp;&nbsp; 
-    	商户名称：<span th:text="${account.merName}"></span>&nbsp;&nbsp;
+    	用户名称：<span th:text="${account.userName}"></span>&nbsp;&nbsp;
     	
     	<a href="javascript:gotoIndex()">首页</a>｜
     	<!-- 管理员不能修改密码 --> 
     	<a th:if="${!account.admin}" href="javascript:editPassword()">修改密码</a><span th:if="${!account.admin}">｜</span>
     	<a href="javascript:logout()">退出</a>&nbsp;&nbsp;
     	
-    	<a th:if="${account.admin}" target="_blank" th:href="@{/monitorView/index}" class="badge" style="color:white;">
+    	<a th:if="${account.admin}" target="_blank" th:href="@{/auto/monitorView/index}" class="badge" style="color:white;">
     		<span class="badge" style="background-color: green;  height:14px;width:14px;display:inline-block;"></span>
     		系统监控
     	</a>
@@ -33,7 +34,7 @@
     
     <div id="iframeDiv">
     	<div id="iframeLoading"><span class="glyphicon glyphicon-info-sign"></span>请稍候...</div>
-		<iframe id="content" th:if="${account.admin}"  th:src="@{/index/adminHome}" onload="iframeLoad()"></iframe>
-		<iframe id="content" th:if="${!account.admin}"  th:src="@{/home/home}" onload="iframeLoad()"></iframe>
+		<iframe id="content" th:if="${account.admin}"  th:src="@{/auto/index/adminHome}" onload="iframeLoad()"></iframe>
+		<iframe id="content" th:if="${!account.admin}"  th:src="@{/auto/home/home}" onload="iframeLoad()"></iframe>
     </div>
 </body>

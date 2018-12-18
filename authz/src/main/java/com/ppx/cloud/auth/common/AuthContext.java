@@ -16,7 +16,8 @@ public class AuthContext {
 	
 	public static LoginAccount getLoginAccount() {
 		LoginAccount a = new LoginAccount();
-		a.setUserId(1);
+		a.setAccountId(-1);
+		a.setUserId(-1);
 		a.setUserName("testUserName");
 		
 		// return threadLocalAccount.get();

@@ -85,7 +85,7 @@ $(function() {
 		var firstBlock = i == 0 ? 'style="display: block;"' : '';
 		var firstOpen = i == 0 ? 'class="open"' : '';
 		
-		var li = $('<li ' + firstOpen + '><div class="link" ' + firstBlock + '><i class="fa fa-mobile"></i>' + menu[i].t + '<i class="fa fa-chevron-down"></i></div></li>');
+		var li = $('<li ' + firstOpen + '><div class="link" ' + firstBlock + '>' + menu[i].t + '<i class="fa fa-chevron-down"></i></div></li>');
 		$("#accordion").append(li);
 		
 		var subLi = '';

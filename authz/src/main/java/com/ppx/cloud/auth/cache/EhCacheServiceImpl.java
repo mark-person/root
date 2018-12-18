@@ -132,12 +132,13 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
         return returnMap;
     }
     
-    @SuppressWarnings("rawtypes")
-    @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadResource'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
+    // @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadResource'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
     public Map loadResource() {
     	Map<Integer, String> returnMap = new HashMap<Integer, String>();
 //        Query query = Query.query(Criteria.where("_id").is(0));
 //        Map map =  mongoTemplate.findOne(query, Map.class, COL_RESOURCE);
+    	
+    	
         return returnMap;
     }
 }

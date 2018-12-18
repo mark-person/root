@@ -1,6 +1,6 @@
 html,body{height:100%}
 
-.fa-chevron-down:before {content:"^";}
+
 .menuSelected {background-color:#b63b4d;}
 #topDiv a,#topDiv a:visited,#topDiv a:link,#topDiv a:hover{color:#0000ea}
 

@@ -25,7 +25,6 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 //	@Autowired
 //    private GrantService grantService;
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getResource() {
 		var returnMap = new HashMap<String, Object>();
