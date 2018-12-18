@@ -3,6 +3,7 @@ package com.ppx.cloud.auth.console.grant;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
@@ -56,15 +57,18 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 	    // ehCacheServ.increaseGrantDbVersion();
 		String delSql = "delete from auth_grant where account_id = ?";
 		getJdbcTemplate().update(delSql, accountId);
-		String insertSql = "insert into auth_grant(account_id, res_id) values(?, ?)";
 		
-		var paraList = new ArrayList<Object[]>();
-		String[] resId = resIds.split(",");
-		for (String id : resId) {
-			Object[] obj = {accountId, Integer.parseInt(id)};
-			paraList.add(obj);
+		if (Strings.isNotEmpty(resIds)) {
+			String insertSql = "insert into auth_grant(account_id, res_id) values(?, ?)";
+			var paraList = new ArrayList<Object[]>();
+			String[] resId = resIds.split(",");
+			for (String id : resId) {
+				Object[] obj = {accountId, Integer.parseInt(id)};
+				paraList.add(obj);
+			}
+			getJdbcTemplate().batchUpdate(insertSql, paraList);
 		}
-		getJdbcTemplate().batchUpdate(insertSql, paraList);
+		
 		return 1;
 	}
 	

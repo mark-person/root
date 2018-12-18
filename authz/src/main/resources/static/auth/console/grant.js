@@ -19,7 +19,7 @@ treeUtils.getCheckedChildrenNode = function(node) {
 	var r = [];
 	var c = this.getChildrenNodes(node);
 	for (var i = 0; i < c.length; i++) {
-		if (c[i].state.checked != 0) {
+		if (c[i].state.checked == 1 || c[i].state.checked == 2) {
 			r.push(c[i]);
 		}
 	}
@@ -41,15 +41,17 @@ treeUtils.getNodeType = function(nodeIcon) {
 treeUtils.decompressNode = function(node, resMap) {
 	var newNode = {id:node.id,text:node.text,icon:node.icon,state:{},nodes:node.nodes};
 	
-	if (!newNode.id || resMap[newNode.id] == 1) {
+	if (!node.id || resMap[node.id] == 1) {
 		// 存在已经选择的节点
 		for (i in resMap) {
 			newNode.state.checked = 1;
 			break;
 		}
 	}
+	
 	// 装载时半选状态
-	loadIndeterminate(newNode, resMap);
+	loadIndeterminate(newNode, node, resMap);
+	
 	if (node.nodes) {
 		newNode.nodes = [];
 		for (var i = 0; i < node.nodes.length; i++) {
@@ -65,17 +67,15 @@ function initResource() {
 	$.post(contextPath + "auto/grant/getAuthorize", "accountId=" + $("#grantAccountId").val(), function(r){
 		if (r.result == -1) {
 			// 刚开始没有数据时
-			var tree = [{text:"资源", icon:"fa fa-home"}];
-			initTree(tree);
+			initTree([{text:"资源", icon:"fa fa-home"}]);
 		}
-		else {		
-			var tree = r.tree;
+		else {
 			var resMap = [];
 			for (var i = 0;r.resIds && i < r.resIds.length; i++) {
 				if (r.resIds[i]) {
 					resMap[r.resIds[i]] = 1;
 				}				
-			} 
+			}
 			initTree([treeUtils.decompressNode(r.tree, resMap)]);			
 			refreshHint();		
 		}
@@ -99,18 +99,18 @@ function refreshHint() {
 }
 
 // 装载时半选状态
-function loadIndeterminate(node, resMap) {
-	if (node.state.checked == 0) {
+function loadIndeterminate(newNode, node, resMap) {
+	if (newNode.state.checked != 1 && newNode.state.checked != 2) {
 		return;
 	}
 	
 	if (node.nodes) {
 		var no = hasNoChecked(node.nodes, resMap);
 		if (no) {
-			node.state.checked = 2;
+			newNode.state.checked = 2;
 		}
 		else {
-			node.state.checked = 1;
+			newNode.state.checked = 1;
 		}
 	}
 } 
@@ -163,7 +163,7 @@ function clickIndeterminate(node) {
 		parent.state.checked = 2;	
 	}
 	else {
-		parent.state.checked = 1;				
+		parent.state.checked = 1;			
 	}	
 	clickIndeterminate(parent);
 }
