@@ -1,9 +1,6 @@
 
-# 
-col_gather
-col_error
-col_error_detail
-col_debug
+#
+根据refer和error=1 参数错误，来打印日志
 
 #
 
