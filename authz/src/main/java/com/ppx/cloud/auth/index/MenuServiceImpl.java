@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthContext;
 import com.ppx.cloud.auth.common.LoginAccount;
@@ -30,63 +31,67 @@ public class MenuServiceImpl  {
     private EhCacheService ehCacheServ;
 	
 	public List<Map<String, Object>> getMenu() {
-		var returnList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		
-		Map map = ehCacheServ.loadResource();
-		if (map == null) return null;
+		returnList = ehCacheServ.loadResource();
 		
-		Map<Integer, String> uriMap = new HashMap<Integer, String>();
-		Map<Integer, Map> resMap = ehCacheServ.loadResouceUri();
-		resMap.forEach((resId, value) -> {
-		    String uri = (String)((List)value.get("uri")).get(0);
-            uriMap.put(resId, uri);
-		});
+		try {
+			String json = new ObjectMapper().writeValueAsString(returnList);
+			System.out.println("99999999999999json:" + json);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		
-		// 读取资源树
-		LinkedHashMap<String, Object> treeMap = (LinkedHashMap<String, Object>)map.get("tree"); 
+		if (returnList.isEmpty()) return returnList;
 		
-		// 允许的菜单
+		
+		
+		
+//		// 读取资源树
+//		LinkedHashMap<String, Object> treeMap = (LinkedHashMap<String, Object>)map.get("tree"); 
+//		
+//		// 允许的菜单
 		LoginAccount account = AuthContext.getLoginAccount();
 		
 		int accountId = account.getAccountId();
-		List<Integer> permitResIdList = grantService.getGrantResIds(accountId);
+		// List<Integer> permitResIdList = grantService.getGrantResIds(accountId);
 		
 		Map<String, Object> test = null;		
 		if (!account.isMainAccount()) {
 			// 不是主帐号则判断是否权限是否主帐号权限	
-			List<Integer> mainPermitResIdList = grantService.getGrantResIds(account.getUserId());
-			test = filterNode(treeMap, uriMap, permitResIdList, mainPermitResIdList);
+//			List<Integer> mainPermitResIdList = grantService.getGrantResIds(account.getUserId());
+//			test = filterNode(treeMap, uriMap, permitResIdList, mainPermitResIdList);
 		}
 		else {
 			// test = filterNode(treeMap, uriMap, permitResIdList, null);
 			
-			var menuList = new ArrayList<Map<String, Object>>();
-			
-			// 菜单项1
-	        Map<String, Object> menuMap = new LinkedHashMap<String, Object>();
-	        menuMap.put("t", "目录001");
-	        menuMap.put("i", -1);
-	        menuMap.put("uri", "/auto/child/child");
-	        menuList.add(menuMap);
-	        
-	        menuMap = new LinkedHashMap<String, Object>();
-	        menuMap.put("t", "菜单001");
-	        menuMap.put("i", -2);
-	        menuMap.put("uri", "/auto/child/grantToChild");
-	        menuList.add(menuMap);
-	        
-	        // 目录项0
-	        Map<String, Object> systemMap = new LinkedHashMap<String, Object>();
-	        systemMap.put("t", "菜单002");
-	        systemMap.put("i", 0);
-	        systemMap.put("n", menuList);
-	        
-	        returnList.add(systemMap);
-	        return returnList;
+//			var menuList = new ArrayList<Map<String, Object>>();
+//			
+//			// 菜单项1
+//	        Map<String, Object> menuMap = new LinkedHashMap<String, Object>();
+//	        menuMap.put("t", "菜单001");
+//	        // menuMap.put("i", -1);
+//	        menuMap.put("uri", "/auto/child/child");
+//	        menuList.add(menuMap);
+//	        
+//	        menuMap = new LinkedHashMap<String, Object>();
+//	        menuMap.put("t", "菜单002");
+//	        // menuMap.put("i", -2);
+//	        menuMap.put("uri", "/auto/child/grantToChild");
+//	        menuList.add(menuMap);
+//	        
+//	        // 目录项0
+//	        Map<String, Object> systemMap = new LinkedHashMap<String, Object>();
+//	        systemMap.put("t", "目录001");
+//	        // systemMap.put("i", 0);
+//	        systemMap.put("n", menuList);
+//	        
+//	        returnList.add(systemMap);
+//	        return returnList;
 		}
 		
-		return (List<Map<String, Object>>)test.get("n");
+		return returnList;
 	}
 	
 	/**

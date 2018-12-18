@@ -26,7 +26,6 @@ public interface EhCacheService {
     @SuppressWarnings("rawtypes")
     Map<Integer, Map> loadResouceUri();
     
-    @SuppressWarnings("rawtypes")
-    Map loadResource();
+    List<Map<String, Object>> loadResource();
     
 }

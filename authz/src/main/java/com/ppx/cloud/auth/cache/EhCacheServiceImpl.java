@@ -1,13 +1,10 @@
 package com.ppx.cloud.auth.cache;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
@@ -133,12 +130,46 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
     }
     
     // @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadResource'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
-    public Map loadResource() {
-    	Map<Integer, String> returnMap = new HashMap<Integer, String>();
-//        Query query = Query.query(Criteria.where("_id").is(0));
-//        Map map =  mongoTemplate.findOne(query, Map.class, COL_RESOURCE);
-    	
-    	
-        return returnMap;
+    public List<Map<String, Object>> loadResource() {
+
+    	var folderList = new ArrayList<Map<String, Object>>();
+
+    		
+		String resSql = "select r.res_id id, r.parent_id pId, r.res_name t, r.res_type type, u.uri_text uri" + 
+				" from auth_res r left join auth_uri_seq u on r.uri_seq = u.uri_seq order by res_prio";
+		List<Map<String, Object>> resList = getJdbcTemplate().queryForList(resSql);
+		
+		for (Map<String, Object> map : resList) {
+			int pId = (int)map.get("pId");
+			if (pId == -1) {
+				folderList.add(map);
+			}
+		}
+		
+		folderList.forEach(f -> {
+			var folderId = (int)f.get("id");
+			var menuList = getMenuList(folderId, resList);
+			if (!menuList.isEmpty()) {
+				f.put("n", menuList);	
+			}		
+		});
+		
+		
+		
+    		
+    		
+        return folderList;
     }
+    
+    private List<Map<String, Object>> getMenuList(int folderId, List<Map<String, Object>> resList) {
+		var returnList = new ArrayList<Map<String, Object>>();
+		resList.forEach(r -> {
+			int pId = (int)r.get("pId");
+			
+			if (pId == folderId) {
+				returnList.add(r);
+			}
+		});
+		return returnList;
+	}
 }
