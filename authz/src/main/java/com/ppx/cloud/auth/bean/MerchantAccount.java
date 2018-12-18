@@ -20,6 +20,7 @@ public class MerchantAccount {
 	private String loginAccount;
 
 	private String loginPassword;
+	
 
 	@Column(readonly = true)
 	private String merName;
