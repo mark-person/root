@@ -5,7 +5,6 @@
 
 <link th:replace="common/fragment::common"/>
 <link th:replace="auth/authFragment::treeview"/>
-
 <script type="text/javascript" th:src="@{/static/auth/console/grant.js}"></script>
 
 
@@ -16,7 +15,6 @@
 #uri .list-group-item {background-color: #428bca;}
 #tree .list-group-item, #uri .list-group-item {padding:3px 8px}
 .indeterminate {color:blue;}
-
 </style>
 
 <script th:inline="javascript">
@@ -29,7 +27,6 @@ $(function() {
 </head>
 
 <body>
-
 <div class="container">
 
 <div id="pageDiv" th:include="common/fragment::page('用户权限管理')">

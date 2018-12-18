@@ -89,7 +89,7 @@ public class ChildController {
 
     public ModelAndView grantToChild() {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("listJson", listChildAccount(new Page(), new AuthAccount()));
+        mv.addObject("list", listChildAccount(new Page(), new AuthAccount()));
         return mv;
     }
 

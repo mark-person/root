@@ -3,42 +3,33 @@
 <head>
 <title></title>
 
-<link th:replace="common/common::common"/>
-<link th:replace="common/common::treeview"/>
-
-<script type="text/javascript" th:src="@{/static/auth/grant.js}"></script>
+<link th:replace="common/fragment::common"/>
+<link th:replace="auth/authFragment::treeview"/>
+<script type="text/javascript" th:src="@{/static/auth/console/grant.js}"></script>
 
 <style>
-.glyphicon-folder-close {color:rgb(242, 221, 122)}
-.glyphicon-th-list {color:black;}
-.glyphicon-wrench {color:green}
-#service li a {height:27px;padding:4px 15px;margin:0px;}
-#service .glyphicon {width:10px;}
+.fa-folder {color:rgb(242, 221, 122)}
+.fa-file {color:black;}
+.fa-cogs {color:green}
 #uri .list-group-item {background-color: #428bca;}
-#tree .list-group-item, #uri .list-group-item {padding-top:4px;height:30px;}
+#tree .list-group-item, #uri .list-group-item {padding:3px 8px}
 .indeterminate {color:blue;}
 </style>
 
 <script th:inline="javascript">
-contextPath = contextPath + "child/";
 $(function() {
-	refreshPage([[${listJson}]]);
+	$("#pageDiv").page({url:contextPath + "auto/child/listChildAccount", data:[[${list}]]});
 });
 
-function queryPage(pageNumber) {
-	showLoading();
-	$("#pageNumber").val(pageNumber);
-	$.post([[@{/child/listChildAccount}]], $("#queryForm").serialize(), function(r) {
-		refreshPage(r);
-		hideLoading();
-	});
-}
+
 
 </script>
 </head>
 
 <body>
-<div th:replace="common/common::pageList('子账号权限')">
+<div class="container">
+
+<div id="pageDiv" th:include="common/fragment::page('子账号权限')">
 <div th:fragment="query">
 	<label>子帐号ID:</label>	
 	<input type="text" class="form-control input-sm" name="accountId" placeholder="请输入子帐号ID" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
@@ -46,34 +37,32 @@ function queryPage(pageNumber) {
 	<input type="text" class="form-control input-sm" name="loginAccount" placeholder="请输入子帐号">			
 	<button type="button" class="btn btn-default btn-sm" onclick="queryPage(1);"><span class="glyphicon glyphicon-search"></span>搜索</button>		
 </div>
-
 <table th:fragment="list">
-<tr>
-	<th>子帐号ID</th>
-	<th>子帐号</th>
-	<th>操作</th>                
-</tr>
+	<thead class="thead-light">
+	<tr>
+		<th>子帐号ID</th>
+		<th>子帐号</th>
+		<th>操作</th>                
+	</tr>
+	</thead>
+	<tbody></tbody>
 </table>
+<table>
+	<tr th:fragment="template">
+ 		<td>{{v.accountId}}</td>
+ 		<td>{{v.loginAccount}}</td>
+ 		<td><a href="#" onclick="grant('{{v.accountId}}', '{{v.loginAccount}}')">授权</a></td>
+	</tr>
+	</table>
 </div>
-<script id="pageTemplate" type="text/html">
-{{each arrayList as v i}}
-<tr>
-  <td>{{v.accountId}}</td>
-  <td>{{v.loginAccount}}</td>
-  <td><a href="#" onclick="grant('{{v.accountId}}', '{{v.loginAccount}}')">授权</a></td>
-</tr>
-{{/each}}
-</script>
 
 <div id="grantModal" class="modal fade" data-backdrop="static" data-keyboard="false">
 <!--size:modal-sm 无 modal-lg -->
 <div class="modal-dialog">
-	<div class="modal-content">
-
+<div class="modal-content">
 	<div class="modal-header">
 		<h5 class="modal-title">授权(子帐号：<span id="grantViewName"></span>)<input type="hidden" id="grantAccountId"></h5>
-		<button type="button" class="close" data-dismiss="modal">&times;</button></div>
-		
+		<button type="button" class="close" data-dismiss="modal">&times;</button>
 	</div>
       	<div class="modal-body" style="width:100%;height:400px;overflow:auto;float:left;padding-top:4px">
 		<div id="tree" style="float:left"></div>
@@ -91,6 +80,7 @@ function queryPage(pageNumber) {
 </div>
 </div>
 
+</div>
 </body>
 </html>
 
