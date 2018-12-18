@@ -35,6 +35,7 @@ public class AuthUserServiceImpl extends MyDaoSupport {
 		c.addPrePara(AuthUtils.ACCOUNT_STATUS_EFFECTIVE);
 		var list = queryPage(AuthUser.class, page, cSql, qSql, c.getParaList());
 
+		
 		return list;
 	}
 
