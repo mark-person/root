@@ -1,7 +1,9 @@
 package com.ppx.cloud.auth.console.grant;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ppx.cloud.auth.bean.Merchant;
 import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.pojo.AuthUser;
 import com.ppx.cloud.common.jdbc.MyCriteria;
@@ -41,14 +42,15 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 	}
 	
 	@Override
-	public List<Integer> getGrantResIds(Integer accountId) {
+	public Set<Integer> getGrantResIds(Integer accountId) {
 	    int c = getJdbcTemplate().queryForObject("select count(*) from auth_grant where account_id = ?", Integer.class, accountId);
 	    if (c == 0) {
-	        return new ArrayList<Integer>(0);
-	    } 
-	     
+	        return new HashSet<Integer>(0);
+	    }
+	    
 	    AuthGrant authGrant = getJdbcTemplate().queryForObject("select account_id, group_concat(res_id) res_ids from auth_grant where account_id = ?",
                 BeanPropertyRowMapper.newInstance(AuthGrant.class), accountId);
+	    
 	    return authGrant.getResIds();
 	}
 	

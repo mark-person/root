@@ -1,15 +1,13 @@
 package com.ppx.cloud.auth.index;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthContext;
 import com.ppx.cloud.auth.common.LoginAccount;
@@ -34,56 +32,21 @@ public class MenuServiceImpl  {
 		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		
 		returnList = ehCacheServ.loadResource();
-		
-		
-		
-		
 		if (returnList.isEmpty()) return returnList;
 		
-		
-		
-		
-//		// 读取资源树
-//		LinkedHashMap<String, Object> treeMap = (LinkedHashMap<String, Object>)map.get("tree"); 
-//		
-//		// 允许的菜单
+
+		// 允许的菜单
 		LoginAccount account = AuthContext.getLoginAccount();
-		
 		int accountId = account.getAccountId();
-		// List<Integer> permitResIdList = grantService.getGrantResIds(accountId);
+		Set<Integer> permitResIdSet = grantService.getGrantResIds(accountId);
 		
-		Map<String, Object> test = null;		
-		if (!account.isMainAccount()) {
-			// 不是主帐号则判断是否权限是否主帐号权限	
-//			List<Integer> mainPermitResIdList = grantService.getGrantResIds(account.getUserId());
-//			test = filterNode(treeMap, uriMap, permitResIdList, mainPermitResIdList);
+		if (account.isMainAccount()) {
+			returnList = filterNode(returnList, permitResIdSet, null);
 		}
 		else {
-			// test = filterNode(treeMap, uriMap, permitResIdList, null);
-			
-//			var menuList = new ArrayList<Map<String, Object>>();
-//			
-//			// 菜单项1
-//	        Map<String, Object> menuMap = new LinkedHashMap<String, Object>();
-//	        menuMap.put("t", "菜单001");
-//	        // menuMap.put("i", -1);
-//	        menuMap.put("uri", "/auto/child/child");
-//	        menuList.add(menuMap);
-//	        
-//	        menuMap = new LinkedHashMap<String, Object>();
-//	        menuMap.put("t", "菜单002");
-//	        // menuMap.put("i", -2);
-//	        menuMap.put("uri", "/auto/child/grantToChild");
-//	        menuList.add(menuMap);
-//	        
-//	        // 目录项0
-//	        Map<String, Object> systemMap = new LinkedHashMap<String, Object>();
-//	        systemMap.put("t", "目录001");
-//	        // systemMap.put("i", 0);
-//	        systemMap.put("n", menuList);
-//	        
-//	        returnList.add(systemMap);
-//	        return returnList;
+			// 不是主帐号则判断是否权限是否主帐号权限	
+			Set<Integer> mainPermitResIdSet = grantService.getGrantResIds(account.getUserId());
+			returnList = filterNode(returnList, permitResIdSet, mainPermitResIdSet);
 		}
 		
 		return returnList;
@@ -92,49 +55,48 @@ public class MenuServiceImpl  {
 	/**
 	 * 当子账号登录时，显示的菜单必须是主账号拥有的
 	 */
-	private Map<String, Object> filterNode(LinkedHashMap<String, Object> treeMap, 
-			Map<Integer, String> uriMap, List<Integer> permitResIdList, List<Integer> mainPermitResIdList) {
+	private List<Map<String, Object>> filterNode(List<Map<String, Object>> resList, 
+			Set<Integer> permitResIdSet, Set<Integer> mainPermitResIdSet) {
+		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 		
-		Map<String, Object> newNode = new LinkedHashMap<String, Object>();
-		String t = (String)treeMap.get("t");
-		Integer i = (Integer)treeMap.get("i");
-		Integer id = (Integer)treeMap.get("id");
-		newNode.put("t", t);
-		newNode.put("i", i);
-		newNode.put("id", id);
-		// 1:菜单
-		if (i == 1) {
-			newNode.put("uri", uriMap.get(id));
-		}
-		
-		List<LinkedHashMap<String, Object>> list = (ArrayList<LinkedHashMap<String, Object>>)treeMap.get("n");
-		if (list == null) {
-			return newNode;
-		}
-		
-		List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
-		for (LinkedHashMap<String, Object> map : list) {
-			Map<String, Object> newMap = filterNode(map, uriMap, permitResIdList, mainPermitResIdList);
-			
-			Integer tmpId = (Integer)newMap.get("id");
-			if (mainPermitResIdList == null) {
-				// 2:操作
-				if ((Integer)newMap.get("i") != 2 && permitResIdList.contains(tmpId)) {	
-					newList.add(newMap);
+		for (Map<String, Object> dirMap : resList) {
+			Integer resId = (Integer)dirMap.get("id");
+			if (mainPermitResIdSet == null) {
+				if (permitResIdSet.contains(resId)) {
+					returnList.add(dirMap);
 				}
 			}
 			else {
-				// 2:操作
-				if ((Integer)newMap.get("i") != 2 && permitResIdList.contains(tmpId) && mainPermitResIdList.contains(tmpId)) {	
-					newList.add(newMap);
+				// 子帐号需要判断主账号权限
+				if (permitResIdSet.contains(resId) && mainPermitResIdSet.contains(resId)) {
+					returnList.add(dirMap);
 				}
 			}
+			
+			var newMenuList = new ArrayList<Map<String, Object>>();
+			@SuppressWarnings("unchecked")
+			var menuList = (List<Map<String, Object>>)dirMap.get("n");
+			if (menuList == null) {
+				continue;
+			}
+			for (Map<String, Object> menuMap : menuList) {
+				Integer menuId = (Integer)menuMap.get("id");
+				if (mainPermitResIdSet == null) {
+					if (permitResIdSet.contains(menuId)) {
+						newMenuList.add(menuMap);
+					}
+				}
+				else {
+					// 子帐号需要判断主账号权限
+					if (permitResIdSet.contains(menuId) && mainPermitResIdSet.contains(menuId)) {
+						newMenuList.add(menuMap);
+					}
+				}
+			}
+			dirMap.put("n", newMenuList);
 		}
-		// 如果空不加
-		if (!newList.isEmpty()) {				
-			newNode.put("n", newList);
-		}
-		return newNode;
+		
+		return returnList;
 	}
 
 }
