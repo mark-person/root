@@ -163,7 +163,7 @@ function addChild() {
 			var icon = treeUtils.getNodeIcon($("#addNodeType").val());
 			var nodes = $('#tree').treeview('getNodes');
 			
-			var childNode = {text:$("#addNodeName").val(),icon:icon,id:nodes.length};	
+			var childNode = {text:$("#addNodeName").val(),icon:icon,id:r.value};	
 			
 			if (!selectNode.nodes) {
 				selectNode.nodes = [];
@@ -190,7 +190,7 @@ function editNode(obj) {
 	
 	
 	$("#editMenuUriDiv").hide();
-	if ($("#editMenuUriDiv").css("display") != "none" && treeUtils.getNodeType(selectNode.icon) == 1)  {
+	if (treeUtils.getNodeType(selectNode.icon) == 1)  {
 		$("#editMenuUriDiv").show();
 		addTypeHead($("#editMenuUri"));
 	}
@@ -199,7 +199,7 @@ function editNode(obj) {
 	
 	action = function() {
 		if (!$("#editNodeForm").valid()) return;
-		if (!validateUri($("#editMenuUri").val())) {
+		if ($("#addMenuUriDiv").css("display") != "none" && !validateUri($("#editMenuUri").val())) {
 			alertWarning("URI不存在");
 			return;
 		}

@@ -9,6 +9,8 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ppx.cloud.auth.common.AuthContext;
+import com.ppx.cloud.auth.common.LoginAccount;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 /**
@@ -42,9 +44,21 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 //		}
 //		
 //		return resMap;
+		LoginAccount account = AuthContext.getLoginAccount();
+		String resSql = "";
+		// 管理员查看所有资源，用户主账号只能查看已经分配的资源(子帐号的userId就是用户主账号)
+		Object[] param = {};
+		if (account.isAdmin()) {
+			resSql = "select res_id id, parent_id pId, res_name text, if (res_type = 0, 'fa fa-folder', if (res_type = 1, 'fa fa-file', 'fa fa-cogs'))"
+				+ " icon from auth_res order by res_prio";
+		}
+		else {
+			resSql = "select res_id id, parent_id pId, res_name text, if (res_type = 0, 'fa fa-folder', if (res_type = 1, 'fa fa-file', 'fa fa-cogs'))"
+					+ " icon from auth_res r where exists(select 1 from auth_grant g where g.account_id = ? and r.res_id = g.res_id) order by res_prio";
+			param = new Object[]{account.getAccountId()};
+		}
+		List<Map<String, Object>> resList = getJdbcTemplate().queryForList(resSql, param);
 		
-		String resSql = "select res_id id, parent_id pId, res_name text, if (res_type = 0, 'fa fa-folder', 'fa fa-file') icon from auth_res order by res_prio";
-		List<Map<String, Object>> resList = getJdbcTemplate().queryForList(resSql);
 		
 		var folderList = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> map : resList) {
@@ -60,6 +74,14 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 			if (!menuList.isEmpty()) {
 				f.put("nodes", menuList);	
 			}		
+			
+			for (Map<String, Object> m : menuList) {
+				var menuId = (int)m.get("id");
+				var actionList = getMenuList(menuId, resList);
+				if (!actionList.isEmpty()) {
+					m.put("nodes", actionList);	
+				}
+			}
 		});
 		
 		
@@ -146,13 +168,14 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 			getJdbcTemplate().update(sql, parentId, resName, c + 1, resType, uriSeq);
 			
 			String insertResUriSql = "insert into auth_res_uri(res_id, uri_seq) value(LAST_INSERT_ID(), ?)";
-			return getJdbcTemplate().update(insertResUriSql, uriSeq);
+			getJdbcTemplate().update(insertResUriSql, uriSeq);
 		}
 		else {
 			String sql = "insert into auth_res(parent_id, res_name, res_prio, res_type)"
 					+ " values(?, ?, ?, ?)";
-			return getJdbcTemplate().update(sql, parentId, resName, c + 1, resType);
+			getJdbcTemplate().update(sql, parentId, resName, c + 1, resType);
 		}
+		return getLastInsertId();
 		
 	}
 	
