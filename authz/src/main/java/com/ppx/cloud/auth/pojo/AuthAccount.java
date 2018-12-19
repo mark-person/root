@@ -33,6 +33,17 @@ public class AuthAccount {
 	private Date modified;
 	
 	private Integer userStatus;
+	
+	private Integer userAccountStatus;
+	
+
+	public Integer getUserAccountStatus() {
+		return userAccountStatus;
+	}
+
+	public void setUserAccountStatus(Integer userAccountStatus) {
+		this.userAccountStatus = userAccountStatus;
+	}
 
 	public Integer getAccountId() {
 		return accountId;

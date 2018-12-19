@@ -34,7 +34,6 @@ public class MenuServiceImpl  {
 		returnList = ehCacheServ.loadResource();
 		if (returnList.isEmpty()) return returnList;
 		
-
 		// 允许的菜单
 		LoginAccount account = AuthContext.getLoginAccount();
 		int accountId = account.getAccountId();
