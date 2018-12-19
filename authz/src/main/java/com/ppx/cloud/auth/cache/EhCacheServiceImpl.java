@@ -67,7 +67,6 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
 //        cache.clear();
     }
 	
-	@SuppressWarnings("rawtypes")
     @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadUriIndex'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
     public Map<String, Integer> loadUriIndex() {
         Map<String, Integer> returnMap = new HashMap<String, Integer>();
@@ -83,7 +82,6 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
     
     
     @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadMenuResourceUri'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Map<String, List<Map>> loadMenuResourceUri() {
         Map<String, List<Map>> returnMap = new HashMap<String, List<Map>>();
         
@@ -114,7 +112,6 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
         return returnMap;
     }
     
-    @SuppressWarnings("rawtypes")
     @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadResouceUri'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
     public Map<Integer, Map> loadResouceUri() {
         Map<Integer, Map> returnMap = new HashMap<Integer, Map>();
@@ -134,7 +131,6 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
 
     	var folderList = new ArrayList<Map<String, Object>>();
 
-    		
 		String resSql = "select r.res_id id, r.parent_id pId, r.res_name t, r.res_type type, u.uri_text uri" + 
 				" from auth_res r left join auth_uri_seq u on r.uri_seq = u.uri_seq order by res_prio";
 		List<Map<String, Object>> resList = getJdbcTemplate().queryForList(resSql);
@@ -153,11 +149,7 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
 				f.put("n", menuList);	
 			}		
 		});
-		
-		
-		
-    		
-    		
+			
         return folderList;
     }
     

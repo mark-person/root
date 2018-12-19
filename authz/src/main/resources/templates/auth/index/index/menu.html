@@ -35,6 +35,6 @@
     <div id="iframeDiv">
     	<div id="iframeLoading"><span class="glyphicon glyphicon-info-sign"></span>请稍候...</div>
 		<iframe id="content" th:if="${account.admin}"  th:src="@{/auto/index/adminHome}" onload="iframeLoad()"></iframe>
-		<iframe id="content" th:if="${!account.admin}"  th:src="@{/auto/home/home}" onload="iframeLoad()"></iframe>
+		<iframe id="content" th:if="${!account.admin}"  th:src="@{/auto/index/home}" onload="iframeLoad()"></iframe>
     </div>
 </body>

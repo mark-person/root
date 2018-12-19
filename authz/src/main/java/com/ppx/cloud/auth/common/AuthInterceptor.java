@@ -6,13 +6,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ppx.cloud.auth.filter.AuthFilterUtils;
 
 
 
 /**
  * 权限拦截器
  * @author mark
- * @date 2018年6月19日
+ * @date 2018年12月19日
  */
 public class AuthInterceptor implements HandlerInterceptor {
 
@@ -23,20 +24,20 @@ public class AuthInterceptor implements HandlerInterceptor {
 		String uri = request.getRequestURI().replace(contextPath, "");
 		
 		// 不拦截登录页
-		if (uri.startsWith("/login/") || uri.equals("/")) {
+		if (uri.startsWith("/auto/login/") || uri.equals("/")) {
 			return true;
 		}
 		
-//		LoginAccount account = AuthFilterUtils.getLoginAccout(request, response, uri);
-//		if (account == null) {
-//			// 跳转到登录页面(ajax请求也可以)
-//			response.sendRedirect(contextPath + "/login/login");
-//			return false;
-//		} else {
-//		    // 为每个请求都加上accountId	
-//		    // CommonContext.setAccountId(account.getAccountId());
-//			AuthContext.setLoginAccount(account);
-//		}
+		LoginAccount account = AuthFilterUtils.getLoginAccout(request, response, uri);
+		if (account == null) {
+			// 跳转到登录页面(ajax请求也可以)
+			response.sendRedirect(contextPath + "/login/login");
+			return false;
+		} else {
+		    // 为每个请求都加上accountId	
+		    // CommonContext.setAccountId(account.getAccountId());
+			AuthContext.setLoginAccount(account);
+		}
 
 		return true;
 	}

@@ -48,14 +48,7 @@ public class LoginController {
 	private final static int ACCOUNT_OR_PASSWORD_ERROR = -1;
 	private final static int ACCOUNT_EXCEPTION = -2;
 	
-	private void createValidateToken(ModelAndView mv, HttpServletResponse response) throws Exception {
-		// 产生验证token到页面和cookie，以便验证合法性，支持分布式
-		String v = UUID.randomUUID().toString();
-		mv.addObject("v", v);
-		Algorithm algorithm = Algorithm.HMAC256(VALIDATE_TOKEN_PASSWORK);
-		String token = JWT.create().withClaim("v", v).sign(algorithm);
-		CookieUtils.setCookie(response, VALIDATE_TOKEN_NAME, token);
-	}
+	
 	
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mv = new ModelAndView();
@@ -63,6 +56,15 @@ public class LoginController {
 		// 清空登录cookie,退出时可调用试方法
 		CookieUtils.cleanCookie(response, AuthUtils.PPXTOKEN);
 		return mv;
+	}
+    
+    private void createValidateToken(ModelAndView mv, HttpServletResponse response) throws Exception {
+		// 产生验证token到页面和cookie，以便验证合法性，支持分布式
+		String v = UUID.randomUUID().toString();
+		mv.addObject("v", v);
+		Algorithm algorithm = Algorithm.HMAC256(VALIDATE_TOKEN_PASSWORK);
+		String token = JWT.create().withClaim("v", v).sign(algorithm);
+		CookieUtils.setCookie(response, VALIDATE_TOKEN_NAME, token);
 	}
 	
 	public Map<?, ?> doLogin(HttpServletRequest request, HttpServletResponse response, 
@@ -110,8 +112,8 @@ public class LoginController {
 			    token = JWT.create().withIssuedAt(new Date())
 			    		.withClaim("accountId", account.getAccountId())
 			    		.withClaim("loginAccount", account.getLoginAccount())
-			    		.withClaim("merId", account.getUserId())
-			    		.withClaim("merName", account.getUserName())
+			    		.withClaim("userId", account.getUserId())
+			    		.withClaim("userName", account.getUserName())
 			    		.withClaim("modified", account.getModified())
 			    		.withClaim("authAll", authCache.getAllVersion())
 			    		.withClaim("authGrant", authCache.getGrantVersion())

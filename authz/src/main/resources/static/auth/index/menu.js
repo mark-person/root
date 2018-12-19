@@ -14,7 +14,7 @@ document.onkeydown = function (e) {
 
 function logout() {
 	var callback = function () {
-		location.href = contextPath + "login/login";
+		location.href = contextPath + "auto/login/login";
 	}
 	confirm("确定退出？", callback);
 }
@@ -26,7 +26,7 @@ function gotoIndex() {
 
 function editPassword() {
 	$(".menuSelected").removeClass("menuSelected");
-	$("#content").attr("src", contextPath + "index/editPassword");
+	$("#content").attr("src", contextPath + "auto/index/editPassword");
 }
 
 function toggleMenu() {

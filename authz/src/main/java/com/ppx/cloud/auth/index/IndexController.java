@@ -29,9 +29,13 @@ public class IndexController {
     @Autowired
     private PasswordServiceImpl passwrodImpl;
     
+    public ModelAndView home(ModelAndView mv) {
+        return mv;
+    }  
+    
     public ModelAndView adminHome(ModelAndView mv) {
         return mv;
-    }   
+    }
 	
     public ModelAndView editPassword(ModelAndView mv) {
 		return mv;

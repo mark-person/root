@@ -10,21 +10,23 @@ $.ajaxSetup({
 	}
 });
 
+
+
 $(function () {
 	var f = '<div style="margin-top:50px">\
-	<form class="bs-example bs-example-form" role="form" style="width:500px;padding-left:80px;margin: 0 auto;">\
-		<div class="input-group" style="width:500px">\
-			<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>\
-			<input type="text" class="form-control" placeholder="请输入您的账号" style="width:300px"\
+	<form style="width:400px;margin: 0 auto;">\
+		<div class="input-group mb-3" style="width:400px">\
+		<div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-user"></i></span></div>\
+			<input type="text" class="form-control" placeholder="请输入您的账号"\
 				id="a" data-toggle="popover" data-content="请输入您的账号！" data-placement="right" data-trigger="manual" value="admin">\
 		</div>\
-		<div class="input-group" style="width:500px;margin-top:10px">\
-			<span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>\
-			<input type="password" class="form-control" placeholder="请输入您的密码" style="width:300px"\
+		<div class="input-group" style="width:400px;margin-top:10px">\
+			<div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-lock"></i></span></div>\
+			<input type="password" class="form-control" placeholder="请输入您的密码" \
 				id="p" data-toggle="popover" data-content="请输入您的密码！" data-placement="right" data-trigger="manual" value="admin">\
 		</div>\
-		<div class="input-group" style="width:500px;margin-top:10px" id="loginBtnDiv">\
-			<button type="button" class="btn btn-primary popover-show"  style="width:340px" onclick="login()"\
+		<div class="input-group" style="margin-top:10px" id="loginBtnDiv">\
+			<button type="button" class="btn btn-primary popover-show"  style="width:400px" onclick="login()"\
 				id="b" data-toggle="popover" data-content="" data-placement="right" data-trigger="manual">登录\
 			</button>\
 		</div>\
@@ -74,9 +76,9 @@ function login() {
 		return n;
 	}
  
-	$.post(contextPath + "login/doLogin", {a:a,p:p,v:v()}, function(r) {
+	$.post(contextPath + "auto/login/doLogin", {a:a,p:p,v:v()}, function(r) {
 		if (r.result === RESULT_SUCCESS) {
-			location.href = contextPath + "index/menu";
+			location.href = contextPath + "auto/index/menu";
 		}
 		else {
 			$('#b').attr("data-content", LOGIN_MSG[r.result]);
