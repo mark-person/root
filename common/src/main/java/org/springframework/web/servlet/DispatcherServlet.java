@@ -1031,10 +1031,21 @@ public class DispatcherServlet extends FrameworkServlet {
 						return;
 					}
 				}
-
+				
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
+				
+//				/** @author mark Map必须使用Get请求 */
+//				if (mappedHandler.getHandler() instanceof HandlerMethod) {
+//					HandlerMethod m = (HandlerMethod)mappedHandler.getHandler();
+//					if (request.getRequestURI().startsWith("/auto/") && isGet) {
+//						if (m.getMethod().getReturnType() == Map.class) {
+//							
+//							return;
+//						}
+//					}
+//				}
 
 				// Actually invoke the handler.
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
@@ -1043,12 +1054,9 @@ public class DispatcherServlet extends FrameworkServlet {
 					return;
 				}
 				
-				System.out.println("................mv:");
-				// ["classpath:/static/favicon.ico"]
 				
 				/** @author mark html的默认路径，添加最后一个参数mappedHandler.getHandler() */
 				applyDefaultViewName(processedRequest, mv, mappedHandler.getHandler());
-				mappedHandler.applyPostHandle(processedRequest, response, mv);
 				
 				
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
@@ -1092,16 +1100,12 @@ public class DispatcherServlet extends FrameworkServlet {
 	private void applyDefaultViewName(HttpServletRequest request, @Nullable ModelAndView mv, Object mappedHandler) throws Exception {
 		
 		
+
 		
 		if (mv != null && !mv.hasView()) {
 			String defaultViewName = getDefaultViewName(request);
-			
-			
 			/** @author mark 自动读取默认的view值  auto/test/list */
 			if ("HandlerMethod".equals(mappedHandler.getClass().getSimpleName())) {
-				
-				
-				
 				HandlerMethod m = (HandlerMethod)mappedHandler;
 				String[] p =  m.getBeanType().getPackage().getName().split("\\.");
 				String serviceName = p[3];

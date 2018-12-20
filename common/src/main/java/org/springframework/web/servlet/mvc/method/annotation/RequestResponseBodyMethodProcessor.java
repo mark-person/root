@@ -19,6 +19,8 @@ package org.springframework.web.servlet.mvc.method.annotation;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.core.Conventions;
@@ -113,9 +115,8 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 	@Override
 	public boolean supportsReturnType(MethodParameter returnType) {
 		
-		/** @author mark Controller的方法返回值为 Map<?, ?> || Map<Object, Object>的，返回JSON */
-		String className = returnType.getParameterType().getSimpleName();
-		if ("MapN".equals(className) || "LinkedHashMap".equals(className) || "HashMap".equals(className) ) {
+		/** @author mark Controller的方法返回值为 Map时,返回JSON */
+		if (returnType.getMethod().getReturnType() == Map.class) {
 			return true;
 		}
 		

@@ -87,6 +87,7 @@ public class ResController {
 	
 	
     public Map<?, ?> getResUri() {
+    
         RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();
         
@@ -100,37 +101,45 @@ public class ResController {
         Set<RequestMappingInfo> set =  map.keySet();
         for (RequestMappingInfo info : set) {
         	
+        	
         	Set<RequestMethod> methodSet = info.getMethodsCondition().getMethods();
-        	for (RequestMappingInfo requestMappingInfo : set) {
-        		requestMappingInfo.getName();
-        		//System.out.println("requestMappingInfo.getName():" + requestMappingInfo);
+        	for (RequestMethod requestMethod : methodSet) {
+        		if (requestMethod == RequestMethod.GET) {
+
+                	System.out.println("....methodSet:" + info.getPatternsCondition() + "|" + requestMethod);
+        		}
 			}
         	
+        		
+        		
+        	
+        				Set<String> uriSet = info.getPatternsCondition().getPatterns();
+                        for (String uri : uriSet) {     
+                            // 监控部分
+                            if (uri.startsWith("/auto/monitorConf/")) continue;
+                            if (uri.startsWith("/auto/monitorView/")) continue;
+                                
+                            // 权限部分
+                            if (uri.startsWith("/auto/grant/")) continue;
+                            if (uri.startsWith("/auto/index/")) continue;
+                            if (uri.startsWith("/auto/login/")) continue;
+                            if (uri.startsWith("/auto/res/")) continue;
+                            
+                            if (uri.startsWith("/error")) continue;
+                            
+                            
+                            if (uri.startsWith("/auto/")) {
+                            	String[] u = uri.split("/");
+                                controllerSet.add("/auto/" + u[2] + "/*");
+                            }
+                            returnList.add(uri.toString());
+                        }
+        			}
+        		
+		
         	
         	
         	
-            Set<String> uriSet = info.getPatternsCondition().getPatterns();
-            for (String uri : uriSet) {     
-                // 监控部分
-                if (uri.startsWith("/auto/monitorConf/")) continue;
-                if (uri.startsWith("/auto/monitorView/")) continue;
-                    
-                // 权限部分
-                if (uri.startsWith("/auto/grant/")) continue;
-                if (uri.startsWith("/auto/index/")) continue;
-                if (uri.startsWith("/auto/login/")) continue;
-                if (uri.startsWith("/auto/res/")) continue;
-                
-                if (uri.startsWith("/error")) continue;
-                
-                
-                if (uri.startsWith("/auto/")) {
-                	String[] u = uri.split("/");
-                    controllerSet.add("/auto/" + u[2] + "/*");
-                }
-                returnList.add(uri.toString());
-            }
-        }
         returnList.addAll(controllerSet);
         return ControllerReturn.success(returnList);
     }

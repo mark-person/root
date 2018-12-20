@@ -282,7 +282,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				registerHandlerMethod(handler, invocableMethod, mapping);
 			});
 			
-			/** @author mark Controller的默认路径auto/controllerName/methodName */
+			/** @author mark Controller的默认路径auto/controllerName/methodName POST GET */
 			if (methods.size() == 0) {
 				Method[] method = userType.getDeclaredMethods();
 				for (Method m : method) {
@@ -292,9 +292,17 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 					String controllerName = String.valueOf(strChar);
 					
 					String methodName = m.getName();
-					RequestMappingInfo info = RequestMappingInfo.paths("/auto/" + controllerName + "/" + methodName)
-								.methods(RequestMethod.GET, RequestMethod.POST).build();
-					registerMapping((T)info, handler, m);
+					
+					if (m.getReturnType() == Map.class) {
+						RequestMappingInfo info = RequestMappingInfo.paths("/auto/" + controllerName + "/" + methodName)
+								.methods(RequestMethod.POST).build();
+						registerMapping((T)info, handler, m);
+					}
+					else {
+						RequestMappingInfo info = RequestMappingInfo.paths("/auto/" + controllerName + "/" + methodName)
+								.methods(RequestMethod.GET).build();
+						registerMapping((T)info, handler, m);
+					}
 				}
 			}
 		}
@@ -580,6 +588,8 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		}
 
 		public void register(T mapping, Object handler, Method method) {
+			
+			
 			this.readWriteLock.writeLock().lock();
 			try {
 				HandlerMethod handlerMethod = createHandlerMethod(handler, method);
