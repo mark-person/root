@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,11 +45,45 @@ public class ResController {
 	}
 	
 	
-		
-	
-	
-	
-	
+	public Map<?, ?> getMenuUri() {
+        RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
+        Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();
+        
+        // 排除监控部分/monitorConf/ /monitorView/ /error
+        List<String> returnList = new ArrayList<String>();
+        returnList.add("/*");
+        returnList.add("/auto/*");
+        
+        Set<String> controllerSet = new HashSet<String>();
+        
+        Set<RequestMappingInfo> set =  map.keySet();
+        for (RequestMappingInfo info : set) {
+        	
+            Set<String> uriSet = info.getPatternsCondition().getPatterns(); 
+            for (String uri : uriSet) {     
+                // 监控部分
+                if (uri.startsWith("/auto/monitorConf/")) continue;
+                if (uri.startsWith("/auto/monitorView/")) continue;
+                    
+                // 权限部分
+                if (uri.startsWith("/auto/grant/")) continue;
+                if (uri.startsWith("/auto/index/")) continue;
+                if (uri.startsWith("/auto/login/")) continue;
+                if (uri.startsWith("/auto/res/")) continue;
+                
+                if (uri.startsWith("/error")) continue;
+                
+                
+                if (uri.startsWith("/auto/")) {
+                	String[] u = uri.split("/");
+                    controllerSet.add("/auto/" + u[2] + "/*");
+                }
+                returnList.add(uri.toString());
+            }
+        }
+        returnList.addAll(controllerSet);
+        return ControllerReturn.success(returnList);
+    }
 	
 	
     public Map<?, ?> getResUri() {
@@ -58,33 +93,44 @@ public class ResController {
         // 排除监控部分/monitorConf/ /monitorView/ /error
         List<String> returnList = new ArrayList<String>();
         returnList.add("/*");
+        returnList.add("/auto/*");
         
         Set<String> controllerSet = new HashSet<String>();
         
         Set<RequestMappingInfo> set =  map.keySet();
         for (RequestMappingInfo info : set) {
+        	
+        	Set<RequestMethod> methodSet = info.getMethodsCondition().getMethods();
+        	for (RequestMappingInfo requestMappingInfo : set) {
+        		requestMappingInfo.getName();
+        		//System.out.println("requestMappingInfo.getName():" + requestMappingInfo);
+			}
+        	
+        	
+        	
+        	
             Set<String> uriSet = info.getPatternsCondition().getPatterns();
-            for (Object uri : uriSet) {     
+            for (String uri : uriSet) {     
                 // 监控部分
-                if (uri.toString().startsWith("/auto/monitorConf/")) continue;
-                if (uri.toString().startsWith("/auto/monitorView/")) continue;
+                if (uri.startsWith("/auto/monitorConf/")) continue;
+                if (uri.startsWith("/auto/monitorView/")) continue;
                     
                 // 权限部分
-                if (uri.toString().startsWith("/grant/")) continue;
-                if (uri.toString().startsWith("/index/")) continue;
-                if (uri.toString().startsWith("/login/")) continue;
-                if (uri.toString().startsWith("/resource/")) continue;
+                if (uri.startsWith("/auto/grant/")) continue;
+                if (uri.startsWith("/auto/index/")) continue;
+                if (uri.startsWith("/auto/login/")) continue;
+                if (uri.startsWith("/auto/res/")) continue;
                 
-                if (uri.toString().startsWith("/error")) continue;
+                if (uri.startsWith("/error")) continue;
                 
-                String[] u = uri.toString().split("/");
-                if (u.length == 3) {
-                    controllerSet.add("/" + u[1] + "/*");
+                
+                if (uri.startsWith("/auto/")) {
+                	String[] u = uri.split("/");
+                    controllerSet.add("/auto/" + u[2] + "/*");
                 }
                 returnList.add(uri.toString());
             }
         }
-     
         returnList.addAll(controllerSet);
         return ControllerReturn.success(returnList);
     }

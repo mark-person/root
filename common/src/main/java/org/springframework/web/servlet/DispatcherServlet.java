@@ -1042,6 +1042,10 @@ public class DispatcherServlet extends FrameworkServlet {
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
+				
+				System.out.println("................mv:");
+				// ["classpath:/static/favicon.ico"]
+				
 				/** @author mark html的默认路径，添加最后一个参数mappedHandler.getHandler() */
 				applyDefaultViewName(processedRequest, mv, mappedHandler.getHandler());
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
@@ -1086,11 +1090,18 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * Do we need view name translation?
 	 */
 	private void applyDefaultViewName(HttpServletRequest request, @Nullable ModelAndView mv, Object mappedHandler) throws Exception {
+		
+		
+		
 		if (mv != null && !mv.hasView()) {
 			String defaultViewName = getDefaultViewName(request);
 			
+			
 			/** @author mark 自动读取默认的view值  auto/test/list */
 			if ("HandlerMethod".equals(mappedHandler.getClass().getSimpleName())) {
+				
+				
+				
 				HandlerMethod m = (HandlerMethod)mappedHandler;
 				String[] p =  m.getBeanType().getPackage().getName().split("\\.");
 				String serviceName = p[3];

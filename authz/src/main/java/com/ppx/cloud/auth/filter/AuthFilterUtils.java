@@ -140,6 +140,9 @@ public class AuthFilterUtils {
     private static LoginAccount filterUri(HttpServletRequest request, String uri, LoginAccount account) {
         AuthFilterServiceImpl filterService = ApplicationUtils.context.getBean(AuthFilterServiceImpl.class);
 
+        // 提示:/*所有权限；/auto/*以/auto/开头权限；/auto/test/*以/auto/test/*开头权限
+        
+        // 去掉支持带一个参数功能，防止参数攻击
         uri = uri.replaceFirst("/auto", "");
         // 大中小权限 /* /uriItem/* /uriItem1/uriItem2 /uriItem1/uriItem2?q=1
         List<String> testUriList = new ArrayList<String>(4);
