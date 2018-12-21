@@ -46,6 +46,8 @@ public class ResController {
 	}
 	
 	public Map<?, ?> getResUri() {
+		List<String> menuList = new ArrayList<String>();
+		
         RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();
         
@@ -59,6 +61,9 @@ public class ResController {
             Set<String> uriSet = info.getPatternsCondition().getPatterns(); 
             for (String uri : uriSet) {  
                 if (!filterUri(uri)) {
+                	if (isMenu(info) ) {
+                		menuList.add(uri);
+                	}
                 	if (uri.startsWith("/auto/")) {
                     	String[] u = uri.split("/");
                         controllerSet.add("/auto/" + u[2] + "/*");
@@ -68,13 +73,7 @@ public class ResController {
             }
         }
         returnList.addAll(controllerSet);
-        
-        List<String> menuList = getMenuList();
-        
-        Map<?, ?> returnMap = ControllerReturn.success(returnList);
-//        returnMap.put("", "dfd");
-//        returnMap.put("menuList", menuList);
-        return returnMap;
+        return ControllerReturn.success(returnList, Map.of("menuList", menuList));
     }
 	
 	private boolean filterUri(String uri) {
@@ -94,30 +93,14 @@ public class ResController {
         return false;
 	}
 	
-    private List<String> getMenuList() {
-        RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
-        Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();
-        
-        // 排除监控部分/monitorConf/ /monitorView/ /error
-        List<String> returnList = new ArrayList<String>();
-        Set<String> controllerSet = new HashSet<String>();
-        Set<RequestMappingInfo> set =  map.keySet();
-        for (RequestMappingInfo info : set) {
-        	Set<RequestMethod> methodSet = info.getMethodsCondition().getMethods();
-        	if (methodSet.contains(RequestMethod.GET)) {
-        		Set<String> uriSet = info.getPatternsCondition().getPatterns();
-                for (String uri : uriSet) {
-                	if (!filterUri(uri)) {
-                        returnList.add(uri.toString());
-                	}
-                }
-        	}
-        }
-        	
-        returnList.addAll(controllerSet);
-        return returnList;
-    }
-    
+	private boolean isMenu(RequestMappingInfo info) {
+		Set<RequestMethod> methodSet = info.getMethodsCondition().getMethods();
+    	if (methodSet.contains(RequestMethod.GET)) {
+    		return true;
+    	}
+    	return false;
+	}
+	
     // >>>>>>>>>>>>>>>....new
     public Map<?, ?> insertRes(@RequestParam int parentId, @RequestParam String resName,
     		@RequestParam int resType, String menuUri) {

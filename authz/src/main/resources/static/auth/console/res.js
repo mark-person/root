@@ -2,6 +2,7 @@
 var typeHeadSource = ['/加载中...稍后请重新打开'];
 var typeHeadSourceMap = [];
 
+var typeHeadMenu = ['/加载中...稍后请重新打开'];
 var typeHeadMenuMap = [];
 
 $(function() {
@@ -12,6 +13,11 @@ $(function() {
 		typeHeadSource = r.arrayList;
 		for (var i in typeHeadSource) {
 			typeHeadSourceMap[typeHeadSource[i]] = 1;
+		}
+		
+		typeHeadMenu = r.menuList;
+		for (var i in typeHeadMenu) {
+			typeHeadMenuMap[typeHeadMenu[i]] = 1;
 		}
 	});
 });
@@ -135,7 +141,7 @@ function addChild() {
 		$("#addNodeType").append('<option value="1" selected>菜单</option>');	
 		noteTypeChange(1);
 		$("#addMenuUriDiv").show();
-		addTypeHead($("#addMenuUri"));
+		addMenuHead($("#addMenuUri"));
 	}
 	else if (nodeType == 1) {
 		$("#addNodeType").append('<option value="2" selected>操作</option>');	
@@ -257,6 +263,10 @@ function removeNode() {
 //>>>>>>>>>>>>>>>>>>>>URI begin
 function addTypeHead(jObj) {
 	jObj.typeahead({items:10,source:typeHeadSource});
+}
+
+function addMenuHead(jObj) {
+	jObj.typeahead({items:10,source:typeHeadMenu});
 }
 
 function validateUri(uri) { 
