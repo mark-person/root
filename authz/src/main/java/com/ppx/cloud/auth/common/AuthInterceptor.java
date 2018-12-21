@@ -24,14 +24,13 @@ public class AuthInterceptor implements HandlerInterceptor {
 		String uri = request.getRequestURI().replace(contextPath, "");
 		
 		// 不拦截登录页
-		if (uri.startsWith("/auto/login/") || uri.equals("/")) {
+		if (uri.startsWith("/auto/login/")) {
 			return true;
 		}
-		
 		LoginAccount account = AuthFilterUtils.getLoginAccout(request, response, uri);
 		if (account == null) {
 			// 跳转到登录页面(ajax请求也可以)
-			response.sendRedirect(contextPath + "/login/login");
+			response.sendRedirect(contextPath + "/auto/login/login");
 			return false;
 		} else {
 		    // 为每个请求都加上accountId	

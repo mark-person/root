@@ -56,14 +56,14 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		
 		folderList.forEach(f -> {
 			var folderId = (int)f.get("id");
-			var menuList = getMenuList(folderId, resList);
+			var menuList = getChildList(folderId, resList);
 			if (!menuList.isEmpty()) {
 				f.put("nodes", menuList);	
 			}		
 			
 			for (Map<String, Object> m : menuList) {
 				var menuId = (int)m.get("id");
-				var actionList = getMenuList(menuId, resList);
+				var actionList = getChildList(menuId, resList);
 				if (!actionList.isEmpty()) {
 					m.put("nodes", actionList);	
 				}
@@ -79,12 +79,11 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		return returnMap;
 	}
 	
-	private List<Map<String, Object>> getMenuList(int folderId, List<Map<String, Object>> resList) {
+	private List<Map<String, Object>> getChildList(int parentId, List<Map<String, Object>> resList) {
 		var returnList = new ArrayList<Map<String, Object>>();
 		resList.forEach(r -> {
 			int pId = (int)r.get("pId");
-			
-			if (pId == folderId) {
+			if (pId == parentId) {
 				returnList.add(r);
 			}
 		});

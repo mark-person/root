@@ -4,7 +4,7 @@ package com.ppx.cloud.auth.common;
 /**
  * 分配权限上下文
  * @author mark
- * @date 2018年6月20日
+ * @date 2018年12月21日
  */
 public class AuthContext {
 	
@@ -15,13 +15,7 @@ public class AuthContext {
 	}
 	
 	public static LoginAccount getLoginAccount() {
-		LoginAccount a = new LoginAccount();
-		a.setAccountId(1);
-		a.setUserId(1);
-		a.setUserName("testUserName");
-		
-		// return threadLocalAccount.get();
-		return a;
+		return threadLocalAccount.get();
 	}
 	
 }

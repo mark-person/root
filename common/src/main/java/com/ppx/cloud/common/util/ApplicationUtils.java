@@ -7,10 +7,12 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 @Configuration
@@ -28,13 +30,24 @@ public class ApplicationUtils {
     @Value("${server.port}")
     private String serverPort;
     
+    @Autowired
+    private Environment env;
+    
+    private static Environment staticEnv;
+    
     private static String staticServerPort;
     
     @Bean
     public Object initApplicationUtils() {
     	ApplicationUtils.staticServerPort = serverPort;
+    	ApplicationUtils.staticEnv = env;
     	return null;
     }
+    
+    public static Environment getEnv() {
+    	return ApplicationUtils.staticEnv;
+    }
+    
     
     /**
      * 取得服务ID, ip:port组成

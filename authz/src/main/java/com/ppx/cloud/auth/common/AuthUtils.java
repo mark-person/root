@@ -1,5 +1,6 @@
 package com.ppx.cloud.auth.common;
 
+import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 
 /**
@@ -18,7 +19,7 @@ public class AuthUtils {
 	public static final int ACCOUNT_STATUS_INEFFECTIVE = 2;
 	
 	public static String getJwtPassword() {
-		return System.getProperty("jwt.password") + "PASS";
+		return ApplicationUtils.getEnv().getProperty("jwt.password") + "PASS";
 	}
 	
 	public static String getMD5Password(String p) {

@@ -147,10 +147,7 @@ function addChild() {
 		$("#addNodeType").append('<option value="2" selected>操作</option>');	
 		noteTypeChange(2);
 	}
-	
-	
 	$('#addChild').modal('show');
-	
 	action = function() {
 		if (!$("#addChildForm").valid()) return;
 		
@@ -160,9 +157,6 @@ function addChild() {
 		}
 		
 		var selectNode = $('#tree').treeview('getSelected')[0];
-		
-		
-		// insertRes(  parentId,  String resName, resType
 		showLoading();
 		var param = {parentId:selectNode.id,resName:$("#addNodeName").val(),resType:$("#addNodeType").val(),menuUri:$("#addMenuUri").val()};
 		$.post(contextPath + "auto/res/insertRes", param, function(r){

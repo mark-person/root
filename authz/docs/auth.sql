@@ -71,8 +71,7 @@ create table auth_cache (
   grant_version int(11) not null comment '分配权限缓存版本',
   primary key (cache_type)
 ) comment='权限缓存';
-
-
+insert into auth_cache(cache_type, all_version, grant_version) values('version', 1, 1);
 
 
 

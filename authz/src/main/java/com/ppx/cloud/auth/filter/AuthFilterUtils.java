@@ -99,7 +99,7 @@ public class AuthFilterUtils {
         }
 
         // 修改密码后原token无效,帐号置无效后token无效 >>>>>>>>>>>>>
-        int validateSecond = Integer.parseInt(System.getProperty("jwt.validateSecond"));
+        int validateSecond = Integer.parseInt(ApplicationUtils.getEnv().getProperty("jwt.validateSecond"));
 
         if (System.currentTimeMillis() - jwt.getIssuedAt().getTime() >= validateSecond * 1000) {
             // 重新检验,并重新生成token

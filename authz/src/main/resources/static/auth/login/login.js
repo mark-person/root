@@ -77,11 +77,11 @@ function login() {
 	}
  
 	$.post(contextPath + "auto/login/doLogin", {a:a,p:p,v:v()}, function(r) {
-		if (r.result === RESULT_SUCCESS) {
+		if (r.value === RESULT_SUCCESS) {
 			location.href = contextPath + "auto/index/menu";
 		}
 		else {
-			$('#b').attr("data-content", LOGIN_MSG[r.result]);
+			$('#b').attr("data-content", LOGIN_MSG[r.value]);
 			$('#b').popover('show');
 			$("#b").attr("disabled", false);
 			$("#b").text("登录");

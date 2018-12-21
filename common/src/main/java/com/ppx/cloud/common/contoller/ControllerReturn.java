@@ -17,11 +17,11 @@ public class ControllerReturn {
 	
 	private static final String value = "value";
 	
-	public static final Map<Object, Object> SUCCESS = Map.of(result, 1, msg, "SUCCESS");
+	public static final Map<Object, Object> SUCCESS = Map.of(result, 1, msg, "SUCCESS", value, 1);
 	
-	public static final Map<Object, Object> EXISTS = Map.of(result, 0, msg, "EXISTS");
+	public static final Map<Object, Object> EXISTS = Map.of(result, 1, msg, "EXISTS", value, 0);
 	
-	public static final Map<Object, Object> ERROR = Map.of(result, -1, msg, "ERROR");
+	public static final Map<Object, Object> ERROR = Map.of(result, -1, msg, "ERROR", value, -1);
 	
 	public static Map<Object, Object> error(Object... object) {
 		if (object == null || object.length == 0) {
