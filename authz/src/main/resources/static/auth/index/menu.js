@@ -13,10 +13,9 @@ document.onkeydown = function (e) {
 }*/
 
 function logout() {
-	var callback = function () {
-		location.href = contextPath + "auto/login/login";
-	}
-	confirm("确定退出？", callback);
+	confirm("确定退出？", function() {
+		location.href = contextPath + "auto/login/loginout";
+	});
 }
 
 function gotoIndex() {

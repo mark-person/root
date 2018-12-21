@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.ppx.cloud.auth.common.AuthUtils;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
+import com.ppx.cloud.common.util.ApplicationUtils;
 
 /**
  * 登录
@@ -19,13 +20,9 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
 @Service
 public class LoginServiceImpl extends MyDaoSupport {
 	
-	@Value("${admin.password}")
-	private String adminPassword;
-	
 	public AuthAccount getLoginAccount(String a, String p) {
-	    
-		//String adminPassword = System.getProperty("admin.password");
-		System.out.println("9999999adminPassword:" + adminPassword);
+		
+		String adminPassword = ApplicationUtils.getEnv().getProperty("admin.password");
 		
 		// 超级管理员
 		if (AuthUtils.ADMIN_ACCOUNT.equals(a) && Objects.equals(adminPassword, p)) {

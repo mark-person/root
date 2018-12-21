@@ -49,14 +49,14 @@ public class LoginController {
 
 	public ModelAndView login(ModelAndView mv, HttpServletResponse response) throws Exception {
 		createValidateToken(mv, response);
-		// 清空登录cookie,退出时可调用试方法
-		CookieUtils.cleanCookie(response, AuthUtils.PPXTOKEN);
 		return mv;
 	}
 
-	public Map<?, ?> loginout(HttpServletResponse response) {
+	public ModelAndView loginout(ModelAndView mv, HttpServletResponse response) throws Exception {
+		// 清空登录cookie
 		CookieUtils.cleanCookie(response, AuthUtils.PPXTOKEN);
-		return ControllerReturn.SUCCESS;
+		mv.setViewName("auth/login/login/login");
+		return login(mv, response);
 	}
 
 	public Map<?, ?> doLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam String a,
