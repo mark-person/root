@@ -30,20 +30,6 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	@Override
 	public Map<String, Object> getResource() {
 		var returnMap = new HashMap<String, Object>();
-//		Query query = Query.query(Criteria.where("_id").is(0));
-//		LinkedHashMap<String, Object> resMap = mongoTemplate.findOne(query, LinkedHashMap.class, COL_RESOURCE);	
-//		
-//		LoginAccount account = AuthContext.getLoginAccount();
-//		if (!account.isAdmin()) {
-//			// 管理员查看所有资源，商户主账号只能查看已经分配的资源(子帐号的merId就是商户主账号)
-//			List<Integer> permitResIdList = grantService.getGrantResIds(account.getMerId());		
-//			Map<String, Object> returnMap = new LinkedHashMap<String, Object>();
-//			returnMap.put("_id", 0);
-//			returnMap.put("tree", filterNode((LinkedHashMap<String, Object>)resMap.get("tree"), permitResIdList));
-//			return returnMap;
-//		}
-//		
-//		return resMap;
 		LoginAccount account = AuthContext.getLoginAccount();
 		String resSql = "";
 		// 管理员查看所有资源，用户主账号只能查看已经分配的资源(子帐号的userId就是用户主账号)
@@ -89,11 +75,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		var rootMap = new HashMap<String, Object>(resMap);
 		
 		rootMap.put("nodes", folderList);
-		
-		
 		returnMap.put("tree", rootMap);
-		
-		
 		return returnMap;
 	}
 	
@@ -108,46 +90,6 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		});
 		return returnList;
 	}
-	
-
-	
-		
-
-
-	
-	
-	
-	
-	
-	/**
-	 * 根据permitResIdList,过滤掉没有分配的资源
-	 */
-	private Map<String, Object> filterNode(LinkedHashMap<String, Object> treeMap, List<Integer> permitResIdList) {
-		
-		Map<String, Object> newNode = new LinkedHashMap<String, Object>();
-		newNode.put("t", treeMap.get("t"));
-		newNode.put("i", treeMap.get("i"));
-		newNode.put("id", treeMap.get("id"));
-		
-		@SuppressWarnings("unchecked")
-		List<LinkedHashMap<String, Object>> list = (ArrayList<LinkedHashMap<String, Object>>)treeMap.get("n");
-		if (list != null) {
-			List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
-			for (LinkedHashMap<String, Object> map : list) {
-				Map<String, Object> newMap = filterNode(map, permitResIdList);
-				Integer tmpId = (Integer)newMap.get("id");
-				if (permitResIdList.contains(tmpId)) {					
-					newList.add(newMap);
-				}
-			}
-			if (!newList.isEmpty()) {				
-				newNode.put("n", newList);
-			}
-		}
-		return newNode;
-	}
-	
-	
 	
 	// >>>>>>>>>>>>>>>>>>>>>>>>.new
 	@Transactional
@@ -175,8 +117,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 					+ " values(?, ?, ?, ?)";
 			getJdbcTemplate().update(sql, parentId, resName, c + 1, resType);
 		}
-		return getLastInsertId();
-		
+		return getLastInsertId();		
 	}
 	
 	public int updateRes(int id, String resName) {

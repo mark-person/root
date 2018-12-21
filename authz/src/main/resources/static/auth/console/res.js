@@ -2,6 +2,8 @@
 var typeHeadSource = ['/加载中...稍后请重新打开'];
 var typeHeadSourceMap = [];
 
+var typeHeadMenuMap = [];
+
 $(function() {
 	initTree([res.tree]);
 	

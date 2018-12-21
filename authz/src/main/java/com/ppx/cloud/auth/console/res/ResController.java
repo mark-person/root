@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.HandlerMethod;
@@ -37,114 +38,85 @@ public class ResController {
 	}
 	
 	public Map<Object, Object> getResource() {
-		Map map = impl.getResource();
+		Map<String, Object> map = impl.getResource();
 		if (map == null) {
 			return ControllerReturn.success(-1);
 		}
 		return ControllerReturn.success(map);
 	}
 	
-	
-	public Map<?, ?> getMenuUri() {
+	public Map<?, ?> getResUri() {
         RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();
         
-        // 排除监控部分/monitorConf/ /monitorView/ /error
         List<String> returnList = new ArrayList<String>();
         returnList.add("/*");
         returnList.add("/auto/*");
-        
         Set<String> controllerSet = new HashSet<String>();
         
         Set<RequestMappingInfo> set =  map.keySet();
         for (RequestMappingInfo info : set) {
-        	
             Set<String> uriSet = info.getPatternsCondition().getPatterns(); 
-            for (String uri : uriSet) {     
-                // 监控部分
-                if (uri.startsWith("/auto/monitorConf/")) continue;
-                if (uri.startsWith("/auto/monitorView/")) continue;
-                    
-                // 权限部分
-                if (uri.startsWith("/auto/grant/")) continue;
-                if (uri.startsWith("/auto/index/")) continue;
-                if (uri.startsWith("/auto/login/")) continue;
-                if (uri.startsWith("/auto/res/")) continue;
-                
-                if (uri.startsWith("/error")) continue;
-                
-                
-                if (uri.startsWith("/auto/")) {
-                	String[] u = uri.split("/");
-                    controllerSet.add("/auto/" + u[2] + "/*");
+            for (String uri : uriSet) {  
+                if (!filterUri(uri)) {
+                	if (uri.startsWith("/auto/")) {
+                    	String[] u = uri.split("/");
+                        controllerSet.add("/auto/" + u[2] + "/*");
+                    }
+                    returnList.add(uri.toString());
                 }
-                returnList.add(uri.toString());
             }
         }
         returnList.addAll(controllerSet);
-        return ControllerReturn.success(returnList);
+        
+        List<String> menuList = getMenuList();
+        
+        Map<?, ?> returnMap = ControllerReturn.success(returnList);
+//        returnMap.put("", "dfd");
+//        returnMap.put("menuList", menuList);
+        return returnMap;
     }
 	
+	private boolean filterUri(String uri) {
+		 // 排除监控部分/monitorConf/ /monitorView/ /error
+		 // 监控部分
+        if (uri.startsWith("/auto/monitorConf/")) return true;
+        if (uri.startsWith("/auto/monitorView/")) return true;
+            
+        // 权限部分
+        if (uri.startsWith("/auto/grant/")) return true;
+        if (uri.startsWith("/auto/index/")) return true;
+        if (uri.startsWith("/auto/login/")) return true;
+        if (uri.startsWith("/auto/res/")) return true;
+        
+        if (uri.startsWith("/error")) return true;
+        
+        return false;
+	}
 	
-    public Map<?, ?> getResUri() {
-    
+    private List<String> getMenuList() {
         RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();
         
         // 排除监控部分/monitorConf/ /monitorView/ /error
         List<String> returnList = new ArrayList<String>();
-        returnList.add("/*");
-        returnList.add("/auto/*");
-        
         Set<String> controllerSet = new HashSet<String>();
-        
         Set<RequestMappingInfo> set =  map.keySet();
         for (RequestMappingInfo info : set) {
-        	
-        	
         	Set<RequestMethod> methodSet = info.getMethodsCondition().getMethods();
-        	for (RequestMethod requestMethod : methodSet) {
-        		if (requestMethod == RequestMethod.GET) {
-
-                	System.out.println("....methodSet:" + info.getPatternsCondition() + "|" + requestMethod);
-        		}
-			}
-        	
-        		
-        		
-        	
-        				Set<String> uriSet = info.getPatternsCondition().getPatterns();
-                        for (String uri : uriSet) {     
-                            // 监控部分
-                            if (uri.startsWith("/auto/monitorConf/")) continue;
-                            if (uri.startsWith("/auto/monitorView/")) continue;
-                                
-                            // 权限部分
-                            if (uri.startsWith("/auto/grant/")) continue;
-                            if (uri.startsWith("/auto/index/")) continue;
-                            if (uri.startsWith("/auto/login/")) continue;
-                            if (uri.startsWith("/auto/res/")) continue;
-                            
-                            if (uri.startsWith("/error")) continue;
-                            
-                            
-                            if (uri.startsWith("/auto/")) {
-                            	String[] u = uri.split("/");
-                                controllerSet.add("/auto/" + u[2] + "/*");
-                            }
-                            returnList.add(uri.toString());
-                        }
-        			}
-        		
-		
-        	
-        	
+        	if (methodSet.contains(RequestMethod.GET)) {
+        		Set<String> uriSet = info.getPatternsCondition().getPatterns();
+                for (String uri : uriSet) {
+                	if (!filterUri(uri)) {
+                        returnList.add(uri.toString());
+                	}
+                }
+        	}
+        }
         	
         returnList.addAll(controllerSet);
-        return ControllerReturn.success(returnList);
+        return returnList;
     }
-    
-    
     
     // >>>>>>>>>>>>>>>....new
     public Map<?, ?> insertRes(@RequestParam int parentId, @RequestParam String resName,
