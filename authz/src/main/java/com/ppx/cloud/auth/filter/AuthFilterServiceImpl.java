@@ -46,12 +46,13 @@ public class AuthFilterServiceImpl extends MyDaoSupport {
 		return map.get(uri);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
     private List<Integer> getUriIndexes(Set<Integer> resIds) {		
 		List<Integer> returnList = new ArrayList<Integer>();
-		Map<Integer, Map> map = ehCacheServ.loadResouceUri();
+		Map<Integer, List<Integer>> map = ehCacheServ.loadResouceUri();
 		for (Integer resId : resIds) {
-		    returnList.addAll((List<Integer>)map.get(resId).get("uriIndex"));
+			if (map.get(resId) != null) {
+				returnList.addAll(map.get(resId));
+			}
         }
 		return returnList;
 	}

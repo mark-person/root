@@ -20,11 +20,9 @@ public interface EhCacheService {
     
     Map<String, Integer> loadUriIndex();
     
-    @SuppressWarnings("rawtypes")
     Map<String, List<Map>> loadMenuResourceUri();
     
-    @SuppressWarnings("rawtypes")
-    Map<Integer, Map> loadResouceUri();
+    Map<Integer, List<Integer>> loadResouceUri();
     
     List<Map<String, Object>> loadResource();
     

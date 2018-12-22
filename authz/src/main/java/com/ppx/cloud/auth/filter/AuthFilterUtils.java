@@ -143,18 +143,14 @@ public class AuthFilterUtils {
         // 提示:/*所有权限；/auto/*以/auto/开头权限；/auto/test/*以/auto/test/*开头权限
         
         // 去掉支持带一个参数功能，防止参数攻击
-        uri = uri.replaceFirst("/auto", "");
+        // uri = uri.replaceFirst("/auto", "");
         // 大中小权限 /* /uriItem/* /uriItem1/uriItem2 /uriItem1/uriItem2?q=1
         List<String> testUriList = new ArrayList<String>(4);
-
-        String queryString = request.getQueryString();
-        if (!StringUtils.isEmpty(queryString)) {
-            // 只支持带一参数的
-            testUriList.add(uri + "?" + queryString.split("&")[0]);
-        }
         testUriList.add(uri);
-        testUriList.add("/" + uri.split("/")[1] + "/*");
+        testUriList.add("/auto/" + uri.split("/")[2] + "/*");
+        testUriList.add("/auto/*");
         testUriList.add("/*");
+        System.out.println("xxxxxxxxxx:" + testUriList);
 
         boolean missUri = true;
         for (String testUri : testUriList) {
