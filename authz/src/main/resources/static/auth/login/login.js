@@ -11,6 +11,21 @@ $.ajaxSetup({
 });
 
 
+function testAdminLogin() {
+	$("#a").val("admin");
+	$("#p").val("admin");
+	$("#b").click();
+}
+function testUserLogin() {
+	$("#a").val("user");
+	$("#p").val("user");
+	$("#b").click();
+}
+function testChildLogin() {
+	$("#a").val("child");
+	$("#p").val("child");
+	$("#b").click();
+}
 
 $(function () {
 	var f = '<div style="margin-top:50px">\
@@ -30,6 +45,12 @@ $(function () {
 				id="b" data-toggle="popover" data-content="" data-placement="right" data-trigger="manual">登录\
 			</button>\
 		</div>\
+		<div class="input-group" style="margin-top:10px; display:inline-flex;justify-content:space-between" id="loginBtnDiv">\
+			<button type="button" class="btn btn-primary" onclick="testAdminLogin()">admin登录\
+			<button type="button" class="btn btn-primary" onclick="testUserLogin()">user登录\
+			<button type="button" class="btn btn-primary" onclick="testChildLogin()">child登录\
+		</button>\
+	</div>\
 	</form>\
 	</div>';
 	$("body").html(f);

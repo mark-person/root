@@ -180,16 +180,11 @@ function addChild() {
 }
 
 function editNode(obj) {
-	
 	var menuUri = $(obj).parent().next().attr("data-uri");
-	
-	
 	var selectNode = $('#tree').treeview('getSelected')[0];
 	$("#updateNodeGlyphicon").attr("class", selectNode.icon);
 	$("#updateNodeName").val(selectNode.text);
 	$("#editMenuUri").val(menuUri);
-	
-	
 	
 	$("#editMenuUriDiv").hide();
 	if (treeUtils.getNodeType(selectNode.icon) == 1)  {
@@ -198,10 +193,9 @@ function editNode(obj) {
 	}
 	
 	$("#editNode").modal("show");
-	
 	action = function() {
 		if (!$("#editNodeForm").valid()) return;
-		if ($("#addMenuUriDiv").css("display") != "none" && !validateUri($("#editMenuUri").val())) {
+		if ($("#editMenuUriDiv").css("display") != "none" && !validateUri($("#editMenuUri").val())) {
 			alertWarning("URI不存在");
 			return;
 		}

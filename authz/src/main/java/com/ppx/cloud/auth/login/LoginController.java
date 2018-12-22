@@ -1,5 +1,6 @@
 package com.ppx.cloud.auth.login;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -49,14 +50,14 @@ public class LoginController {
 
 	public ModelAndView login(ModelAndView mv, HttpServletResponse response) throws Exception {
 		createValidateToken(mv, response);
+		// TODO清缓存
 		return mv;
 	}
 
-	public ModelAndView loginout(ModelAndView mv, HttpServletResponse response) throws Exception {
+	public void loginout(HttpServletResponse response) throws Exception {
 		// 清空登录cookie
 		CookieUtils.cleanCookie(response, AuthUtils.PPXTOKEN);
-		mv.setViewName("auth/login/login/login");
-		return login(mv, response);
+		response.sendRedirect("/auto/login/login");
 	}
 
 	public Map<?, ?> doLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam String a,
