@@ -10,8 +10,6 @@ $(function() {
 	$("#pageDiv").page({url:contextPath + "auto/child/list", data:[[${list}]]});
 });
 
-
-
 function add() {
 	$('#addForm')[0].reset();
 	$('#add').modal('show');
@@ -20,13 +18,13 @@ function add() {
 		if (!$("#addForm").valid()) return;
 		showLoading();
 		$.post([[@{/auto/child/insertChild}]], $("#addForm").serialize(), function(r) {
-			if (r.result == 1) {
+			if (r.value == 1) {
 				$('#add').modal('hide');
 				queryPage(1);
 				alertSuccess();
 			}
-			else if (r.result == 0) {
-				alertWarning("帐号已经存在！");
+			else if (r.value == 0) {
+				alertWarning("子帐号已经存在！");
 				hideLoading();
 			}
 		});
@@ -46,13 +44,13 @@ function editAccount(id) {
 		if (!$("#editAccountForm").valid()) return;
 		showLoading();
 		$.post([[@{/child/updateAccount}]], $("#editAccountForm").serialize(), function(r) {
-			if (r.result == 1) {
+			if (r.value == 1) {
 				$('#editAccount').modal('hide');
 				queryPage(1);
 				alertSuccess();
 			}
-			else if (r.result == 0) {
-				alertWarning("商户帐号已经存在！");
+			else if (r.value == 0) {
+				alertWarning("子帐号已经存在！");
 				hideLoading();
 			}
 		});
@@ -72,7 +70,7 @@ function editPassword(id) {
 		if (!$("#editPasswordForm").valid()) return;
 		showLoading();
 		$.post([[@{/auto/child/updatePassword}]], $("#editPasswordForm").serialize(), function(r) {
-			if (r.result == 1) {
+			if (r.value == 1) {
 				$('#editPassword').modal('hide');
 				$("#pageDiv").query();
 				alertSuccess();
@@ -112,7 +110,7 @@ function disable(id) {
 	confirm("确定禁用'" + id + "'?", function() {
 		showLoading();
 		$.post([[@{/auto/child/disable}]], {id:id}, function(r) {
-			r.result === SUCCESS ? $("#pageDiv").query() : alertDanger("error return");
+			r.value === SUCCESS ? $("#pageDiv").query() : alertDanger("error return");
 		});
 	});
 }
@@ -121,7 +119,7 @@ function enable(id) {
 	confirm("确定解禁'" + id + "''?", function() {
 		showLoading();
 		$.post([[@{/auto/child/enable}]], {id:id}, function(r) {
-			r.result === SUCCESS ? $("#pageDiv").query() : alertDanger("error return");
+			r.value === SUCCESS ? $("#pageDiv").query() : alertDanger("error return");
 		});
 	});
 }
@@ -130,8 +128,7 @@ function enable(id) {
 </head>
 
 <body>
-
-<div class="container">
+<div class="container-fluid">
 
 <div id="pageDiv" th:include="common/fragment::page('子账号管理')">
 	<div th:fragment="query">
@@ -142,10 +139,10 @@ function enable(id) {
 	<table th:fragment="list">
 		<thead class="thead-light">
 		<tr>
-			<th>帐号ID</th>
-			<th>子账号</th> 
-			<th>账号状态</th>
-			<th>操作</th>
+			<th class="w-id">帐号ID</th>
+			<th class="w-id">子账号</th> 
+			<th class="w-id">账号状态</th>
+			<th class="w-action">操作</th>
 		</tr>
 		</thead>
 		<tbody></tbody>

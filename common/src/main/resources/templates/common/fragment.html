@@ -48,11 +48,11 @@
 	<input type="hidden" name="pageNumber">
 	<input type="hidden" name="orderName">
 	<input type="hidden" name="orderType">
-	<div class="p-2 form-inline" style="min-width: 992px;">
-		<h5 class="form-check-label" th:if="${title != ''}"><i class="fa fa-list"></i><span th:text="${title}" style="padding:.250rem"></span></h5>
+	<div class="form-inline" style="min-width: 992px;margin:0.375rem">
+		<h5 class="form-check-label" th:if="${title != ''}"><i class="fa fa-list"></i><span th:text="${title}" style="padding-right:0.500rem"></span></h5>
 		<div th:include="::query" class="input-group-sm form-inline" style="flex-wrap: nowrap"></div>
 	</div>
-	<table class="table table-bordered table-hover table-sm" style="margin-bottom:0.5rem" th:include="::list"></table>
+	<table class="table table-bordered table-hover table-sm" style="margin-bottom:0.5rem;" th:include="::list"></table>
 	<script type="text/html">{{each arrayList as v i}}<tr th:replace="::template"></tr>{{/each}}</script>
 	<ul class="pagination float-left pagination-sm" style="display: none;"></ul>
   	<ul class="pagination pagination-sm" style="display: none;">

@@ -171,8 +171,7 @@ function enable(obj, id) {
 </head>
 
 <body>
-
-<div class="">
+<div class="container-fluid">
 
 <div id="pageDiv" th:include="common/fragment::page('用户管理')">
 	<div th:fragment="query">
@@ -185,8 +184,8 @@ function enable(obj, id) {
 		<thead class="thead-light">
 		<tr>
 			<th class="w-id">用户ID</th>
+			<th class="w-id">用户账号</th>
 			<th class="w-id">用户名称</th> 
-			<th class="w-id">用户账号</th> 
 			<th class="w-id">用户状态</th>
 			<th class="w-action">操作</th>
 		</tr>
@@ -196,8 +195,8 @@ function enable(obj, id) {
 	<table>
 		<tr th:fragment="template">
 			<td>{{v.userId}}</td>
+			<td class="w-id">{{v.loginAccount}}</td>
 			<td class="w-id">{{v.userName}}</td>
-		 	<td class="w-id">{{v.loginAccount}}</td>
 			<td class="w-id">
 				{{getAccountStatus(v.accountStatus)}}
 				{{if v.accountStatus == 1}}

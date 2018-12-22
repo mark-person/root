@@ -18,6 +18,9 @@
 </style>
 
 <script th:inline="javascript">
+
+var controllerPath = contextPath + "auto/grant/";
+
 $(function() {
 	$("#pageDiv").page({url:contextPath + "auto/grant/listUser", data:[[${list}]]});
 });
@@ -27,7 +30,7 @@ $(function() {
 </head>
 
 <body>
-<div class="container">
+<div class="container-fluid">
 
 <div id="pageDiv" th:include="common/fragment::page('用户权限管理')">
 	<div th:fragment="query">
@@ -41,10 +44,10 @@ $(function() {
 	<table th:fragment="list">
 	<thead class="thead-light">
 	<tr>
-		<th>用户主账号ID</th>
-		<th>用户主账号</th> 
-		<th>用户名称</th> 
-		<th>操作</th>                
+		<th class="w-id">用户账号ID</th>
+		<th class="w-id">用户账号</th> 
+		<th class="w-id">用户名称</th> 
+		<th class="w-action">操作</th>                
 	</tr>
 	</thead>
 	<tbody></tbody>

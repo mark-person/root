@@ -17,6 +17,9 @@
 </style>
 
 <script th:inline="javascript">
+
+var controllerPath = contextPath + "auto/child/";
+
 $(function() {
 	$("#pageDiv").page({url:contextPath + "auto/child/listChildAccount", data:[[${list}]]});
 });s
@@ -25,7 +28,7 @@ $(function() {
 </head>
 
 <body>
-<div class="container">
+<div class="container-fluid">
 
 <div id="pageDiv" th:include="common/fragment::page('子账号权限')">
 <div th:fragment="query">
@@ -38,9 +41,9 @@ $(function() {
 <table th:fragment="list">
 	<thead class="thead-light">
 	<tr>
-		<th>子帐号ID</th>
-		<th>子帐号</th>
-		<th>操作</th>                
+		<th class="w-id">子帐号ID</th>
+		<th class="w-id">子帐号</th>
+		<th class="w-action">操作</th>                
 	</tr>
 	</thead>
 	<tbody></tbody>

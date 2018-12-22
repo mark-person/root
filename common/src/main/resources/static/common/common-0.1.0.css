@@ -14,7 +14,7 @@ html{
 .w-id {min-width:4.375rem}
 .w-date {min-width:6.875rem}
 .w-time {min-width:10.625rem}
-.w-action {min-width:17.5rem}
+.w-action {min-width:13.125rem} /*17.5rem*/
 .w-title {min-width:9.375rem}
 .w-number {min-width:4.375rem}
 
