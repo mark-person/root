@@ -206,8 +206,8 @@ var Page = function(obj) {
 
 
 // 增删改begin >>>>>>
-var SUCCESS = 1;
-var EXIST = 0;
+var SUCCESS = 0;
+var EXISTS = 4000;
 function add(callback) {
 	$('#addForm')[0].reset();
 	$('#add').modal('show');
@@ -215,13 +215,13 @@ function add(callback) {
 		if (!$("#addForm").valid()) return;
 		showLoading();
 		$.post(controllerPath + "insert", $("#addForm").serialize(), function(r) {
-			if (r.result === SUCCESS) {
+			if (r.errcode === SUCCESS) {
 				$("#pageDiv").query();
 				$('#add').modal('hide');
 				alertSuccess();
 			}
-			else if (r.result === EXIST) {
-				alertWarning(EXIST_MSG);
+			else if (r.errcode === EXISTS) {
+				alertWarning(r.errmsg);
 				hideLoading();
 			}
 			callback ? callback(r) : null;
@@ -232,22 +232,22 @@ function edit(id, getCallback, updateCallback) {
 	showLoading();
 	$.post(controllerPath + "get", {id:id}, function(r) {
 		hideLoading();
+		$('#edit').find("script").attr("id", "editTemplate");
+		$("#editForm").html(template("editTemplate", r));
 		$('#edit').modal('show');
-		$("#editTemplate").nextAll().remove();
-		$("#editTemplate").parent().append(template("editTemplate", r));
 		getCallback ? getCallback(r) : null;
 	});
 	action = function() {
 		if (!$("#editForm").valid()) return;
 		showLoading();
 		$.post(controllerPath + "update", $("#editForm").serialize(), function(r) {
-			if (r.result === SUCCESS) {
+			if (r.errcode === SUCCESS) {
 				$('#edit').modal('hide');
 				$("#pageDiv").query();
 				alertSuccess();
 			}
-			else if (r.result === EXIST) {
-				alertWarning(EXIST_MSG);
+			else if (r.errcode === EXISTS) {
+				alertWarning(r.errmsg);
 				hideLoading();
 			}
 			updateCallback ? updateCallback(r) : null;
@@ -258,7 +258,7 @@ function remove(id) {
 	confirm(id, function() {
 		showLoading();
 		$.post(controllerPath + "delete", {id:id}, function(r) {
-			r.result == SUCCESS ? $("#pageDiv").query() : alertDanger("error return " + r.result);
+			r.errcode == SUCCESS ? $("#pageDiv").query() : alertDanger("error return " + r.result);
 		});
 	});
 }

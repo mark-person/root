@@ -7,10 +7,12 @@
 
 <script type="text/javascript" th:inline="javascript">
 var controllerPath = contextPath + "auto/test/";
-var EXIST_MSG = "XXX已经存在";
 $(function() {
 	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
 });
+
+
+
 </script>
 </head>
 
@@ -27,13 +29,11 @@ $(function() {
 	<table th:fragment="list">
 		<thead class="thead-light">
 		<tr>
-			<th class="w-id">序号</th>
 			<th class="w-id sorting-desc" data-order-name="t.test_id">ID</th>
-			<th class="w-title">SQL_ID</th>
-			<th class="w-id" data-order-name="t.test_name">出参</th>
-			<th class="w-date">入参</th>
+			<th class="w-title" data-order-name="t.test_name">测试名称</th>
+			<th class="w-date">测试日期</th>
 			<th class="w-time">创建时间</th>
-			<th class="w-time">function</th>
+			<th class="w-time">测试值</th>
 			<th class="w-action">操作</th>
 		</tr>
 		</thead>
@@ -41,9 +41,7 @@ $(function() {
 	</table>
 	<table>
 		<tr th:fragment="template">
-			<td>{{i+1}}</td>
 			<td>{{v.testId}}</td>
-			<td>{{v.testName}}</td>
 			<td>{{v.testName}}</td>
 			<td>{{v.testDate}}</td>
 			<td>{{v.testTime}}</td>
@@ -59,33 +57,33 @@ $(function() {
 
 <div th:fragment="add" th:replace="common/fragment::modal('add', '新增', '')">
 	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>testName：</label>
+		<label class="col-4"><i class="required">*</i>测试名称：</label>
 		<div class="col-7"><input type="text" name="testName" class="form-control" required maxlength="16"></div>
 	</div>
 	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>testValue：</label>
+		<label class="col-4"><i class="required">*</i>测试值：</label>
 		<div class="col-7"><input type="text" name="testValue" class="form-control" required number=true maxlength="7"></div>
 	</div>	
 	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>testDate：</label>
+		<label class="col-4"><i class="required">*</i>测试日期：</label>
 		<div class="col-7"><input type="text" name="testDate" class="form-control" onclick="WdatePicker()"></div>
 	</div>
 </div>
 
 
 <div th:fragment="edit" th:replace="common/fragment::modalTemplate('edit', '修改', '')">
-	<input type="hidden" name="testId" value="{{test.testId}}">
+	<input type="hidden" name="testId" value="{{pojo.testId}}">
 	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>testName：</label>
-		<div class="col-7"><input type="text" name="testName" class="form-control" required maxlength="16" value="{{test.testName}}"></div>
+		<label class="col-4"><i class="required">*</i>测试名称：</label>
+		<div class="col-7"><input type="text" name="testName" class="form-control" required maxlength="16" value="{{pojo.testName}}"></div>
 	</div>
 	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>testNumber：</label>
-		<div class="col-7"><input type="text" name="testValue" class="form-control" required number=true maxlength="7" value="{{test.testValue}}"></div>
+		<label class="col-4"><i class="required">*</i>测试值：</label>
+		<div class="col-7"><input type="text" name="testValue" class="form-control" required number=true maxlength="7" value="{{pojo.testValue}}"></div>
 	</div>	
 	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>testDate：</label>
-		<div class="col-7"><input type="text" name="testDate" class="form-control" onclick="WdatePicker()"></div>
+		<label class="col-4"><i class="required">*</i>测试日期：</label>
+		<div class="col-7"><input type="text" name="testDate" class="form-control" onclick="WdatePicker()" value="{{pojo.testDate}}"></div>
 	</div>
 </div>
 

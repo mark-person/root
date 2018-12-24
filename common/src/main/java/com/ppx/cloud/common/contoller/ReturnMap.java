@@ -38,9 +38,9 @@ public class ReturnMap {
 	
 	private static final int ERRCODE_ERROR = -1;
 	
-	public static final Map<String, Object> SUCCESS = Map.of(ERRMSG_TITLE, ERRCODE_SUCCESS);
+	public static final Map<String, Object> SUCCESS = Map.of(ERRCODE_TITLE, ERRCODE_SUCCESS);
 	
-	public static final Map<String, Object> ERROR = Map.of(ERRMSG_TITLE, ERRCODE_ERROR, ERRMSG_TITLE, "ERROR");
+	public static final Map<String, Object> ERROR = Map.of(ERRCODE_TITLE, ERRCODE_ERROR, ERRMSG_TITLE, "ERROR");
 	
 	public static Map<String, Object> of() {
 		return SUCCESS;
@@ -51,20 +51,25 @@ public class ReturnMap {
 	 * @param val
 	 * @return
 	 */
-	public static Map<String, Object> of(int val) {
+	public static Map<String, Object> exists(int val, String existsMsg) {
 		if (val == 0) {
-			return Map.of(ERRCODE_TITLE, EXISTS_CODE, ERRMSG_TITLE, "EXISTS");
+			return Map.of(ERRCODE_TITLE, EXISTS_CODE, ERRMSG_TITLE, existsMsg + "已经存在");
 		}
 		else if (val == 1) {
 			return Map.of(ERRCODE_TITLE, 0);
 		}
 		else {
-			throw new RuntimeException("only access value 0 or 1, current value:" + val);
+			throw new RuntimeException("value must be 0 or 1, current value:" + val);
 		}
 	}
-	// 4001~4009
+	// 自定义:4001~4009
 	public static Map<String, Object> of(int errcode, String errmsg) {
-		return Map.of(ERRCODE_TITLE, errcode, ERRCODE_TITLE, errmsg);
+		if (errcode >= 4001 && errcode <= 4009) {
+			return Map.of(ERRCODE_TITLE, errcode, ERRCODE_TITLE, errmsg);
+		}
+		else {
+			throw new RuntimeException("errcode must be from 4001-4009, current errcode:" + errcode);
+		}
 	}
 	
 	public static Map<String, Object> of(Page page, List<?> list) {
@@ -73,6 +78,10 @@ public class ReturnMap {
 	
 	public static Map<String, Object> of(Page page, List<?> list, String k, Object v) {
 		return Map.of(ERRCODE_TITLE, ERRCODE_SUCCESS, "page", page, "list", list, k, v);
+	}
+	
+	public static Map<String, Object> of(Page page, List<?> list, String k1, Object v1, String k2, Object v2) {
+		return Map.of(ERRCODE_TITLE, ERRCODE_SUCCESS, "page", page, "list", list, k1, v1, k2, v2);
 	}
 	
 	public static Map<String, Object> of(String k, Object v) {

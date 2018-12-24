@@ -40,7 +40,7 @@ public class TestServiceImpl extends MyDaoSupport {
 	public Map<String, Object> insert(Test pojo) {
         // 后面带不允许重名的字段（该字段需要建索引）
 		int r = insertEntity(pojo, "test_name");
-        return ReturnMap.of(r);
+        return ReturnMap.exists(r, "测试名称");
     }
 	
 	public Test get(Integer id) {
@@ -52,12 +52,12 @@ public class TestServiceImpl extends MyDaoSupport {
     public Map<String, Object> update(Test bean) {
         // 后面带不允许重名的字段（该字段需要建索引）
         int r = updateEntity(bean, "test_name");
-        return ReturnMap.of(r);
+        return ReturnMap.exists(r, "测试名称");
     }
     
     public Map<String, Object> delete(Integer id) {
-        int r = getJdbcTemplate().update("delete from test where test_id = ?", id);
-        return ReturnMap.of(r);
+        getJdbcTemplate().update("delete from test where test_id = ?", id);
+        return ReturnMap.of();
     }
 
 }
