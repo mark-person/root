@@ -21,6 +21,7 @@ import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthUtils;
 import com.ppx.cloud.auth.common.LoginAccount;
 import com.ppx.cloud.auth.pojo.AuthAccount;
+import com.ppx.cloud.common.exception.CustomException;
 import com.ppx.cloud.common.exception.security.PermissionUrlException;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.CookieUtils;
@@ -181,10 +182,10 @@ public class AuthFilterUtils {
 
         if (missUri) {
             // 从数据库找不到对应uri,资源对应的uri找不到
-            throw new PermissionUrlException("Unauthorized.miss uri:" + uri);
+            throw new PermissionUrlException(CustomException.PERMIT_URI, "Unauthorized.miss uri:" + uri);
         } else {
             // 帐号没有该URI的权限
-            throw new PermissionUrlException("Unauthorized.forbiddens:" + uri);
+            throw new PermissionUrlException(CustomException.PERMIT_URI, "Unauthorized.forbiddens:" + uri);
         }
     }
     

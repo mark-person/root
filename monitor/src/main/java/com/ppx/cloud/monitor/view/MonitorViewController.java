@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
@@ -61,7 +62,7 @@ public class MonitorViewController {
 	}
 	public Map<?, ?> listAccess(Page page, String date, String beginTime, String endTime, String serviceId, String uriText) {
 		List<Map<String, Object>> list = impl.listAccess(page, date, beginTime, endTime, serviceId, uriText);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	public Map<?, ?> getAccess(String accessId) {
 		return impl.getAccess(accessId);
@@ -75,7 +76,7 @@ public class MonitorViewController {
 	}
 	public Map<?, ?> listError(Page page, String serviceId) {
 		List<Map<String, Object>> list = impl.listError(page, serviceId);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	public Map<?, ?> getError(String accessId) {
 		return ControllerReturn.success(impl.getDebug(accessId));

@@ -125,7 +125,6 @@ public class AccessQueueConsumer {
 				impl.insertResponse(a);
 			} else {
 				// 异常处理
-				
 				impl.insertError(a.getThrowable(), accessId, a);
 			}
 

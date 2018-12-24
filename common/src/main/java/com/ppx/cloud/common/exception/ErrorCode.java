@@ -14,12 +14,13 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.util.NestedServletException;
 
 import com.ppx.cloud.common.exception.custom.LoginException;
-import com.ppx.cloud.common.exception.custom.NotFoundException;
+import com.ppx.cloud.common.exception.custom.IllegalRequestException;
 import com.ppx.cloud.common.exception.security.PermissionParamsException;
 import com.ppx.cloud.common.exception.security.PermissionResubmitException;
 import com.ppx.cloud.common.exception.security.PermissionUrlException;
 
 
+// 0:成功 -1:系统忙(500错误) 4000:存在 400x业务逻辑；403?:权限；404?: 4040 no found 参数 uri长度、不合法等
 
 /**
  * 分类异常，不是所有的异常都要全部信息
@@ -36,7 +37,7 @@ import com.ppx.cloud.common.exception.security.PermissionUrlException;
 public class ErrorCode {
     private static Map<Class<?>, Integer> errorMap = new HashMap<Class<?>, Integer>();
    
-    // 防止攻击打印大量错误日志
+    // 防止攻击打印大量错误日志，
     public final static int IGNORE_ERROR = 0;
     // java.lang异常
     private final static int JAVA_LANG_ERROR = 1;
@@ -53,7 +54,7 @@ public class ErrorCode {
         errorMap.put(LoginException.class, IGNORE_ERROR);
         
         // 404
-        errorMap.put(NotFoundException.class, IGNORE_ERROR);
+        errorMap.put(IllegalRequestException.class, IGNORE_ERROR);
         // 找到uri，参数缺少    
         errorMap.put(MissingServletRequestParameterException.class, IGNORE_ERROR);
         // 找到uri和参数，参数类型不匹配

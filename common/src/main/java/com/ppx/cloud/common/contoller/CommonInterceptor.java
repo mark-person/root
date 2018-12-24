@@ -1,6 +1,5 @@
 package com.ppx.cloud.common.contoller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,10 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ppx.cloud.common.exception.CustomException;
 import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
-import com.ppx.cloud.common.exception.custom.NotFoundException;
-import com.ppx.cloud.common.exception.security.PermissionUrlException;
+import com.ppx.cloud.common.exception.custom.IllegalRequestException;
 
 
 /**
@@ -25,20 +24,25 @@ public class CommonInterceptor implements HandlerInterceptor {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+    	String uri = request.getRequestURI();
+    	if (uri.length() > 64) {
+    		throw new IllegalRequestException(CustomException.URI_OUT_OF_LENGTH, "uri length must less than 64");
+    	}
     	// 不支持uri带.的请求，权限不好控制且不好统计
-        if (request.getRequestURI().indexOf(".") > 0) {
-        	throw new PermissionUrlException("uri not supppot .");
+        if (uri.indexOf(".") > 0) {
+        	throw new IllegalRequestException(CustomException.URI_EXISTS_DOT, "uri not supppot .");
         }
         
     	// org.thymeleaf.exceptions.TemplateInputException
     	Exception errorException = (Exception) request.getAttribute("javax.servlet.error.exception");
     	if (errorException != null && errorException.getMessage().indexOf("org.thymeleaf.exceptions") > -1) {
     		try (PrintWriter printWriter = response.getWriter()) {
+    			// TODO 改成一个方法，并显示系统忙和代码
                 printWriter.write("<script>document.write('template error:" + errorException.getMessage() + "')</script>");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-    		return true;
+    		return false;
     	}
     	
         // 判断是否为404
@@ -68,7 +72,7 @@ public class CommonInterceptor implements HandlerInterceptor {
             String type = "Not Found";
             Exception exception = (Exception) request.getAttribute("javax.servlet.error.exception");
             if (exception == null) {
-                exception = new NotFoundException();
+                exception = new IllegalRequestException(CustomException.URI_NOT_FOUND, "not found");
             } else {
                 ErrorBean c = ErrorCode.getErroCode(exception);
                 type = c.getInfo();

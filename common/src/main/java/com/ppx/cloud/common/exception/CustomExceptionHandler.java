@@ -46,6 +46,7 @@ public class CustomExceptionHandler implements HandlerExceptionResolver {
             response.setStatus(403);
         }
 
+        // 
         String accept = request.getHeader("accept");
         if (accept != null && accept.indexOf("text/html") >= 0) {
             ControllerReturn.returnErrorHtml(response, error.getCode(), error.getInfo() + "|" + request.getAttribute("marker"));
