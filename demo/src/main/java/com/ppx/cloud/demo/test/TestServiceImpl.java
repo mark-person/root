@@ -1,10 +1,12 @@
 package com.ppx.cloud.demo.test;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.page.Page;
 
@@ -35,9 +37,10 @@ public class TestServiceImpl extends MyDaoSupport {
 		return list;
 	}
 	
-	public int insert(Test pojo) {
+	public Map<String, Object> insert(Test pojo) {
         // 后面带不允许重名的字段（该字段需要建索引）
-        return insertEntity(pojo, "test_name");
+		int r = insertEntity(pojo, "test_name");
+        return ReturnMap.of(r);
     }
 	
 	public Test get(Integer id) {
@@ -46,13 +49,15 @@ public class TestServiceImpl extends MyDaoSupport {
         return pojo;
     }
     
-    public int update(Test bean) {
+    public Map<String, Object> update(Test bean) {
         // 后面带不允许重名的字段（该字段需要建索引）
-        return updateEntity(bean, "test_name");
+        int r = updateEntity(bean, "test_name");
+        return ReturnMap.of(r);
     }
     
-    public int delete(Integer id) {
-        return getJdbcTemplate().update("delete from test where test_id = ?", id);
+    public Map<String, Object> delete(Integer id) {
+        int r = getJdbcTemplate().update("delete from test where test_id = ?", id);
+        return ReturnMap.of(r);
     }
 
 }

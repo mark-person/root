@@ -2,18 +2,13 @@ package com.ppx.cloud.demo.test;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tomcat.util.threads.TaskThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
-import com.ppx.cloud.common.util.ApplicationUtils;
-import com.ppx.cloud.monitor.pojo.AccessLog;
 
 @Controller
 public class TestController {
@@ -27,23 +22,23 @@ public class TestController {
 	}
 	
 	public Map<?, ?> list(Page page, Test pojo) {
-		return ControllerReturn.success(page, impl.list(page, pojo));
+		return ReturnMap.of(page, impl.list(page, pojo));
 	}
 	 
     public Map<?, ?> insert(Test pojo) {
-        return ControllerReturn.success(impl.insert(pojo));
+        return impl.insert(pojo);
     }
     
     public Map<?, ?> get(@RequestParam Integer id) {
-        return ControllerReturn.success(impl.get(id));
+        return ReturnMap.of("pojo", impl.get(id));
     }
     
     public Map<?, ?> update(Test pojo) {
-        return ControllerReturn.success(impl.update(pojo));
+        return impl.update(pojo);
     }
     
     public Map<?, ?> delete(@RequestParam Integer id) {
-        return ControllerReturn.success(impl.delete(id));
+        return impl.delete(id);
     }
 
 	
