@@ -17,7 +17,7 @@ import com.ppx.cloud.common.exception.custom.LoginException;
 import com.ppx.cloud.common.exception.custom.IllegalRequestException;
 import com.ppx.cloud.common.exception.security.PermissionParamsException;
 import com.ppx.cloud.common.exception.security.PermissionResubmitException;
-import com.ppx.cloud.common.exception.security.PermissionUrlException;
+import com.ppx.cloud.common.exception.security.PermissionUriException;
 
 
 // 0:成功 -1:系统忙(500错误) 4000:存在 400x业务逻辑；403?:权限；404?: 4040 no found 参数 uri长度、不合法等
@@ -65,13 +65,13 @@ public class ErrorCode {
         // 重复提交异常
         errorMap.put(PermissionResubmitException.class, IGNORE_ERROR);
         // 权限异常,超权url时报的异常
-        errorMap.put(PermissionUrlException.class, IGNORE_ERROR);
+        errorMap.put(PermissionUriException.class, IGNORE_ERROR);
         // 权限异常,参数超权的报的异常，如修改不是自己数据时报的异常（开发人员需要关注）
         errorMap.put(PermissionParamsException.class, IGNORE_ERROR);
         // 需要接收json参数 如：@RequestBody Test test
         errorMap.put(HttpMessageNotReadableException.class, IGNORE_ERROR);
         // URI不合法，太长等等
-        errorMap.put(PermissionUrlException.class, IGNORE_ERROR);
+        errorMap.put(PermissionUriException.class, IGNORE_ERROR);
         
         
         // 数据库连接不上(如没有启动，或死掉)

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.exception.security.PermissionParamsException;
-import com.ppx.cloud.common.exception.security.PermissionUrlException;
+import com.ppx.cloud.common.exception.security.PermissionUriException;
 
 
 
@@ -41,7 +41,7 @@ public class CustomExceptionHandler implements HandlerExceptionResolver {
         // 
         response.setStatus(500);
                 
-        if (PermissionUrlException.class.getSimpleName().equals(error.getInfo())
+        if (PermissionUriException.class.getSimpleName().equals(error.getInfo())
                 || PermissionParamsException.class.getSimpleName().equals(error.getInfo())) {
             response.setStatus(403);
         }
