@@ -12,6 +12,7 @@ import com.ppx.cloud.auth.console.grant.GrantServiceImpl;
 import com.ppx.cloud.auth.console.res.ResServiceImpl;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
 
 /**
@@ -45,36 +46,30 @@ public class ChildController {
 
     
     public Map<?, ?> getChild(@RequestParam Integer id) {
-        AuthAccount bean = impl.getChild(id);
-        return ControllerReturn.success(bean);
+        return ReturnMap.of("pojo", impl.getChild(id));
     }
 
    
     public Map<?, ?> updateAccount(AuthAccount bean) {
-        int r = impl.updateAccount(bean);
-        return ControllerReturn.success(r);
+        return impl.updateAccount(bean);
     }
 
    
     public Map<?, ?> updatePassword(@RequestParam Integer accountId,
             @RequestParam String loginPassword) {
-        int r = impl.updatePassword(accountId, loginPassword);
-        return ControllerReturn.success(r);
+        return impl.updatePassword(accountId, loginPassword);
     }
 
     public Map<?, ?> deleteChild(Integer id) {
-        int r = impl.deleteChild(id);
-        return ControllerReturn.success(r);
+        return impl.deleteChild(id);
     }
     
     public Map<?, ?> disable(Integer id) {
-        int r = impl.disable(id);
-        return ControllerReturn.success(r);
+    	return impl.disable(id);
     }
     
     public Map<?, ?> enable(Integer id) {
-        int r = impl.enable(id);
-        return ControllerReturn.success(r);
+    	return impl.enable(id);
     }
     
     

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.util.ApplicationUtils;
 
 @Controller
@@ -77,7 +78,7 @@ public class UploadImgController {
 					inputStream.close();
 					System.out.println("command:" + command + "||" + cmdResult);
 					if (!StringUtils.isEmpty(cmdResult)) {
-						return ControllerReturn.error(cmdResult);
+						return ReturnMap.error("", , cmdResult);
 					}
 				} catch (Exception e) {
 					return ControllerReturn.error(e.getMessage());
@@ -91,7 +92,7 @@ public class UploadImgController {
 			}
 		}
 		
-		return ControllerReturn.success(returnList);
+		return ReturnMap.of("list", returnList);
 	}
 
 }

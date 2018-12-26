@@ -10,8 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ppx.cloud.common.contoller.ControllerReturn;
-import com.ppx.cloud.common.exception.CustomException;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.exception.security.PermissionParamsException;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.demo.product.cat.CategoryService;
@@ -35,7 +34,7 @@ public class ProductController {
 	}
 
 	public Map<?, ?> list(Page page, Product pojo) {
-		return ControllerReturn.success(page, impl.list(page, pojo));
+		return ReturnMap.of(page, impl.list(page, pojo));
 	}
 
 	public ModelAndView addProduct(@RequestParam Integer u) {
@@ -51,7 +50,7 @@ public class ProductController {
 
 	public Map<?, ?> insert(Product pojo, HttpServletRequest request) {
 		pojo.setUserAgent(getUserAgent(request));
-		return ControllerReturn.success(impl.insert(pojo));
+		return impl.insert(pojo);
 	}
 	
 	private String getUserAgent(HttpServletRequest request) {

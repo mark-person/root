@@ -38,7 +38,7 @@ public class MonitorViewController {
 	
 	public Map<?, ?> listAllService(Page page) {	
 		List<Map<String, Object>> list = impl.listAllService(page);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	
 	public ModelAndView startup() {
@@ -49,7 +49,7 @@ public class MonitorViewController {
 	}
 	public Map<?, ?> listStartup(Page page, String serviceId) {
 		List<Map<String, Object>> list = impl.listStartup(page, serviceId);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	
 	public ModelAndView access() {
@@ -79,7 +79,7 @@ public class MonitorViewController {
 		return ReturnMap.of(page, list);
 	}
 	public Map<?, ?> getError(String accessId) {
-		return ControllerReturn.success(impl.getDebug(accessId));
+		return ReturnMap.of("pojo", impl.getDebug(accessId));
 	}
 	
 	public ModelAndView gather() {
@@ -90,7 +90,7 @@ public class MonitorViewController {
 	}
 	public Map<?, ?> listGather(Page page, String serviceId) {
 		List<Map<String, Object>> list = impl.listGather(page, serviceId);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	
 	
@@ -101,7 +101,7 @@ public class MonitorViewController {
 	}
 	public Map<?, ?> listStatUri(Page page, String uri) {
 		List<Map<String, Object>> list = impl.listStatUri(page, uri);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 
 	public ModelAndView statSql(ModelAndView mv) {
@@ -110,7 +110,7 @@ public class MonitorViewController {
 	}
 	public Map<?, ?> listStatSql(Page page, String sql) {
 		List<Map<String, Object>> list = impl.listStatSql(page, sql);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	
 	public ModelAndView statResponse(ModelAndView mv) {
@@ -119,7 +119,7 @@ public class MonitorViewController {
 	}
 	public Map<?, ?> listStatResponse(Page page, String serviceId) {
 		List<Map<String, Object>> list = impl.listStatResponse(page, serviceId);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	
 	public ModelAndView statWarning(ModelAndView mv) {
@@ -128,7 +128,7 @@ public class MonitorViewController {
 	}
 	public Map<?, ?> listStatWarning(Page page, String serviceId) {
 		List<Map<String, Object>> list = impl.listStatWarning(page, serviceId);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	
 	public ModelAndView debug(ModelAndView mv) {
@@ -139,9 +139,9 @@ public class MonitorViewController {
 	public Map<?, ?> listDebug(Page page, String serviceId, String date, String beginTime, String endTime,
 			String uri, String marker) {
 		List<Map<String, Object>> list = impl.listDebug(page, serviceId, date, beginTime, endTime, uri, marker);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	public Map<?, ?> getDebug(String accessId) {
-		return ControllerReturn.success(impl.getDebug(accessId));
+		return ReturnMap.of("pojo", impl.getDebug(accessId));
 	}
 }

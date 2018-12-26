@@ -45,9 +45,9 @@ public class ReturnMap {
 	
 	private static final int ERRCODE_ERROR = -1;
 	
-	public static final Map<String, Object> SUCCESS = Map.of(ERRCODE_TITLE, ERRCODE_SUCCESS);
+	private static final Map<String, Object> SUCCESS = Map.of(ERRCODE_TITLE, ERRCODE_SUCCESS);
 	
-	public static final Map<String, Object> ERROR = Map.of(ERRCODE_TITLE, ERRCODE_ERROR, ERRMSG_TITLE, "ERROR");
+	private static final Map<String, Object> ERROR = Map.of(ERRCODE_TITLE, ERRCODE_ERROR, ERRMSG_TITLE, "ERROR");
 	
 	public static Map<String, Object> of() {
 		return SUCCESS;

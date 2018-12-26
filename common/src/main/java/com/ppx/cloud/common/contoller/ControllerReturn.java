@@ -11,82 +11,82 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ControllerReturn {
 	
-	private static final String result = "result";
-	
-	private static final String msg = "msg";
-	
-	private static final String value = "value";
-	
-	public static final Map<Object, Object> SUCCESS = Map.of(result, 1, msg, "SUCCESS", value, 1);
-	
-	public static final Map<Object, Object> EXISTS = Map.of(result, 1, msg, "EXISTS", value, 0);
-	
-	public static final Map<Object, Object> ERROR = Map.of(result, -1, msg, "ERROR", value, -1);
-	
-	public static Map<Object, Object> error(Object... object) {
-		if (object == null || object.length == 0) {
-			return ERROR;
-		}
-		if (object.length == 1) {
-			if ("1".equals(object[0].toString())) {
-				return ERROR;
-			}
-			else if (object[0].getClass() == String.class || object[0].getClass().getSuperclass() == Number.class
-					|| object[0].getClass() == Boolean.class) {
-				return Map.of(result, -1, msg, "ERROR", value, object[0]);
-			}
-		}
-		
-		Map<Object, Object> r = new LinkedHashMap<Object, Object>(object.length + 2);
-		r.putAll(ERROR);
-		for (Object obj : object) {
-			if (obj instanceof Map) {
-                r.putAll((Map<?, ?>)obj);
-            }
-			else if (obj != null) {
-				// 第一个字母变小写
-				char[] strChar = obj.getClass().getSimpleName().toCharArray();
-				strChar[0] += 32;
-				String key = String.valueOf(strChar);
-				r.put(key, obj);
-			}
-		}
-		return r;
-	}
-	
-	public static Map<Object, Object> success(Object... object) {
-		if (object == null || object.length == 0) {
-			return SUCCESS;
-		}
-		if (object.length == 1) {
-			if ("1".equals(object[0].toString())) {
-				return SUCCESS;
-			}
-			else if ("0".equals(object[0].toString())) {
-				return EXISTS;
-			}
-			else if (object[0].getClass() == String.class || object[0].getClass().getSuperclass() == Number.class
-					|| object[0].getClass() == Boolean.class) {
-				return Map.of(result, 1, msg, "SUCCESS", value, object[0]);
-			}
-		}
-		
-		Map<Object, Object> r = new LinkedHashMap<Object, Object>(object.length + 2);
-		r.putAll(SUCCESS);
-		for (Object obj : object) {
-			if (obj instanceof Map) {
-                r.putAll((Map<?, ?>)obj);
-            }
-			else if (obj != null) {
-				// 第一个字母变小写
-				char[] strChar = obj.getClass().getSimpleName().toCharArray();
-				strChar[0] += 32;
-				String key = String.valueOf(strChar);
-				r.put(key, obj);
-			}
-		}
-		return r;
-	}
+//	private static final String result = "result";
+//	
+//	private static final String msg = "msg";
+//	
+//	private static final String value = "value";
+//	
+//	public static final Map<Object, Object> SUCCESS = Map.of(result, 1, msg, "SUCCESS", value, 1);
+//	
+//	public static final Map<Object, Object> EXISTS = Map.of(result, 1, msg, "EXISTS", value, 0);
+//	
+//	public static final Map<Object, Object> ERROR = Map.of(result, -1, msg, "ERROR", value, -1);
+//	
+//	public static Map<Object, Object> error(Object... object) {
+//		if (object == null || object.length == 0) {
+//			return ERROR;
+//		}
+//		if (object.length == 1) {
+//			if ("1".equals(object[0].toString())) {
+//				return ERROR;
+//			}
+//			else if (object[0].getClass() == String.class || object[0].getClass().getSuperclass() == Number.class
+//					|| object[0].getClass() == Boolean.class) {
+//				return Map.of(result, -1, msg, "ERROR", value, object[0]);
+//			}
+//		}
+//		
+//		Map<Object, Object> r = new LinkedHashMap<Object, Object>(object.length + 2);
+//		r.putAll(ERROR);
+//		for (Object obj : object) {
+//			if (obj instanceof Map) {
+//                r.putAll((Map<?, ?>)obj);
+//            }
+//			else if (obj != null) {
+//				// 第一个字母变小写
+//				char[] strChar = obj.getClass().getSimpleName().toCharArray();
+//				strChar[0] += 32;
+//				String key = String.valueOf(strChar);
+//				r.put(key, obj);
+//			}
+//		}
+//		return r;
+//	}
+//	
+//	public static Map<Object, Object> success(Object... object) {
+//		if (object == null || object.length == 0) {
+//			return SUCCESS;
+//		}
+//		if (object.length == 1) {
+//			if ("1".equals(object[0].toString())) {
+//				return SUCCESS;
+//			}
+//			else if ("0".equals(object[0].toString())) {
+//				return EXISTS;
+//			}
+//			else if (object[0].getClass() == String.class || object[0].getClass().getSuperclass() == Number.class
+//					|| object[0].getClass() == Boolean.class) {
+//				return Map.of(result, 1, msg, "SUCCESS", value, object[0]);
+//			}
+//		}
+//		
+//		Map<Object, Object> r = new LinkedHashMap<Object, Object>(object.length + 2);
+//		r.putAll(SUCCESS);
+//		for (Object obj : object) {
+//			if (obj instanceof Map) {
+//                r.putAll((Map<?, ?>)obj);
+//            }
+//			else if (obj != null) {
+//				// 第一个字母变小写
+//				char[] strChar = obj.getClass().getSimpleName().toCharArray();
+//				strChar[0] += 32;
+//				String key = String.valueOf(strChar);
+//				r.put(key, obj);
+//			}
+//		}
+//		return r;
+//	}
 	
 	
 //	/**

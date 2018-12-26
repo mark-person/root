@@ -1,10 +1,12 @@
 package com.ppx.cloud.demo.product;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.page.Page;
 
@@ -32,7 +34,7 @@ public class ProductServiceImpl extends MyDaoSupport {
 	
 	
 	@Transactional
-	public int insert(Product pojo) {
+	public Map<String, Object> insert(Product pojo) {
 		String[] imgSrc = pojo.getImgSrc().split(",");
 		pojo.setMainImgSrc(imgSrc[0]);
 		insertEntity(pojo);
@@ -46,7 +48,6 @@ public class ProductServiceImpl extends MyDaoSupport {
 			insertEntity(img);
 		}
 		
-		
-        return 1;
+        return ReturnMap.of();
     }
 }

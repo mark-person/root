@@ -2,6 +2,7 @@ package com.ppx.cloud.auth.console.user;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ppx.cloud.auth.common.AuthUtils;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.auth.pojo.AuthUser;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyCriteria;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.page.Page;
@@ -79,41 +81,44 @@ public class AuthUserServiceImpl extends MyDaoSupport {
 		return pojo;
 	}
 
-	public int updateAuthUser(AuthUser pojo) {
-		return updateEntity(pojo, "user_name");
+	public Map<String, Object> updateAuthUser(AuthUser pojo) {
+		int r = updateEntity(pojo, "user_name");
+		return ReturnMap.exists(r, "用户名称已经存在");
 	}
 	
-	public int updateAuthAccount(AuthAccount pojo) {
+	public Map<String, Object> updateAuthAccount(AuthAccount pojo) {
 		pojo.setModified(new Date());
-		return updateEntity(pojo, "login_account");
+		int r = updateEntity(pojo, "login_account");
+		return ReturnMap.exists(r, "登录帐号已经存在");
 	}
 	
-	public int updateAuthUserPassword(Integer userId, String userPassword) {
+	public Map<String, Object> updateAuthUserPassword(Integer userId, String userPassword) {
 		String sql = "update auth_account set login_password = ?, modified = now() where account_id = ?";
-		return getJdbcTemplate().update(sql, AuthUtils.getMD5Password(userPassword), userId);
+		getJdbcTemplate().update(sql, AuthUtils.getMD5Password(userPassword), userId);
+		return ReturnMap.of();
 	}
 
 	@Transactional
-	public int deleteAuthUser(Integer userId) {
+	public Map<String, Object> deleteAuthUser(Integer userId) {
     	getJdbcTemplate().update("update auth_user set user_status = ? where user_id = ?", 0, userId);
     	getJdbcTemplate().update("update auth_account set account_status = ? where account_id = ?", 0, userId);
-		return 1;
+    	return ReturnMap.of();
 	}
 	
-	public int disable(Integer userId) {
+	public Map<String, Object> disable(Integer userId) {
 	    getJdbcTemplate().update("update auth_user set user_status = ? where user_id = ?"
 	            , AuthUtils.ACCOUNT_STATUS_INEFFECTIVE, userId);
 	    getJdbcTemplate().update("update auth_account set account_status = ? where account_id = ?"
 	            , AuthUtils.ACCOUNT_STATUS_INEFFECTIVE, userId);
-	    return 1;
+	    return ReturnMap.of();
     }
 	
-	public int enable(Integer userId) {
+	public Map<String, Object> enable(Integer userId) {
         getJdbcTemplate().update("update auth_user set user_status = ? where user_id = ?"
                 , AuthUtils.ACCOUNT_STATUS_EFFECTIVE, userId);
         getJdbcTemplate().update("update auth_account set account_status = ? where account_id = ?"
                 , AuthUtils.ACCOUNT_STATUS_EFFECTIVE, userId);
-        return 1;
+        return ReturnMap.of();
     }
 	
 }

@@ -1,6 +1,5 @@
 package com.ppx.cloud.auth.console.user;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.auth.pojo.AuthUser;
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
 
 
@@ -31,47 +31,46 @@ public class AuthUserController {
 		return mv;
 	}
 	
-	public Map<Object, Object> listJson(Page page, AuthUser pojo) {
+	public Map<?, ?> listJson(Page page, AuthUser pojo) {
 		var list = impl.listAuthUser(page, pojo);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	
-	public Map<Object, Object> insertAuthUser(AuthUser bean) {
+	public Map<?, ?> insertAuthUser(AuthUser bean) {
 		int r = impl.insertAuthUser(bean);
 		return ControllerReturn.success(r);
 	}
 	
-	public Map<Object, Object> getAuthUser(@RequestParam Integer id) {
+	public Map<?, ?> getAuthUser(@RequestParam Integer id) {
 		return ControllerReturn.success(impl.getAuthUser(id));
 	}
 	
-	public Map<Object, Object> getAuthAccount(@RequestParam Integer id) {
+	public Map<?, ?> getAuthAccount(@RequestParam Integer id) {
 		return ControllerReturn.success(impl.getAuthAccount(id));
 	}
 	
-	public Map<Object, Object> updateAuthUser(AuthUser pojo) {
-		return ControllerReturn.success(impl.updateAuthUser(pojo));
+	public Map<?, ?> updateAuthUser(AuthUser pojo) {
+		return impl.updateAuthUser(pojo);
 	}
 	
-	public Map<Object, Object> updateAuthAccount(AuthAccount pojo) {
-		return ControllerReturn.success(impl.updateAuthAccount(pojo));
+	public Map<?, ?> updateAuthAccount(AuthAccount pojo) {
+		return impl.updateAuthAccount(pojo);
 	}
 	
-	public Map<Object, Object> updateAuthUserPassword(@RequestParam Integer userId, @RequestParam String userPassword) {
-		int r = impl.updateAuthUserPassword(userId, userPassword);
-		return ControllerReturn.success(r);
+	public Map<?, ?> updateAuthUserPassword(@RequestParam Integer userId, @RequestParam String userPassword) {
+		return impl.updateAuthUserPassword(userId, userPassword);
 	}
 	
-	public Map<Object, Object> deleteAuthUser(Integer id) {
-		return ControllerReturn.success(impl.deleteAuthUser(id));
+	public Map<?, ?> deleteAuthUser(Integer id) {
+		return impl.deleteAuthUser(id);
 	}
 	
-    public Map<Object, Object> disable(Integer id) {
-        return ControllerReturn.success(impl.disable(id));
+    public Map<?, ?> disable(Integer id) {
+        return impl.disable(id);
     }
 	
-    public Map<Object, Object> enable(Integer id) {
-        return ControllerReturn.success(impl.enable(id));
+    public Map<?, ?> enable(Integer id) {
+        return impl.enable(id);
     }
 
 }
