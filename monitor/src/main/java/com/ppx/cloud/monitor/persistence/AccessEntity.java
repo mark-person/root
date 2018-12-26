@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ppx.cloud.common.exception.ErrorBean;
-import com.ppx.cloud.common.exception.ErrorCode;
+import com.ppx.cloud.common.exception.ErrorPojo;
+import com.ppx.cloud.common.exception.ErrorUtils;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 
@@ -23,7 +23,7 @@ public class AccessEntity {
     private Date b;
     private int s;
     private String ip;
-    private ErrorBean e;
+    private ErrorPojo e;
     private int mem;
     private String key;
     private Integer aid;
@@ -78,11 +78,11 @@ public class AccessEntity {
         this.str = str;
     }
 
-    public ErrorBean getE() {
+    public ErrorPojo getE() {
         return e;
     }
 
-    public void setE(ErrorBean e) {
+    public void setE(ErrorPojo e) {
         this.e = e;
     }
     
@@ -171,8 +171,8 @@ public class AccessEntity {
         
         // 访问日志里异常处理
         if (a.getThrowable() != null) {
-            ErrorBean error = ErrorCode.getErroCode(a.getThrowable());
-            error.setInfo(a.getThrowable().getClass().getSimpleName());
+            ErrorPojo error = ErrorUtils.getErroCode(a.getThrowable());
+            error.setErrmsg(a.getThrowable().getClass().getSimpleName());
             entity.setE(error);
         }
         

@@ -16,8 +16,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mysql.cj.xdevapi.Row;
 import com.mysql.cj.xdevapi.SqlResult;
 import com.ppx.cloud.common.config.ObjectMappingCustomer;
-import com.ppx.cloud.common.exception.ErrorBean;
-import com.ppx.cloud.common.exception.ErrorCode;
+import com.ppx.cloud.common.exception.ErrorPojo;
+import com.ppx.cloud.common.exception.ErrorUtils;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.jdbc.nosql.MyUpdate;
 import com.ppx.cloud.common.util.ApplicationUtils;
@@ -264,20 +264,20 @@ public class PersistenceImpl extends PersistenceSupport {
 	}
 
 	public void insertError(Throwable throwable, Integer accessId,  AccessLog a) {
-		ErrorBean errorBean = ErrorCode.getErroCode(throwable);
+		ErrorPojo errorBean = ErrorUtils.getErroCode(throwable);
 
 		String errorSql = "insert into error(accessId, serviceId, errorTime, errorCode, errorMsg) values(?, ?, ?, ?, ?)";
 		// 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情
-		if (errorBean.getCode() == ErrorCode.IGNORE_ERROR) {
+		if (errorBean.getErrcode() == ErrorUtils.ERROR_LEVEL_IGNORE) {
 			// 出错时，记录输入参数
 			List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), 
-					a.getBeginTime(), errorBean.getCode(), errorBean.getInfo() + ";param|injson:" + a.getParams() + "|" + a.getInJson());
+					a.getBeginTime(), errorBean.getErrcode(), errorBean.getErrmsg() + ";param|injson:" + a.getParams() + "|" + a.getInJson());
 			t.sql(errorSql, bindValue);
 
 		} else {
 			// 出错时，记录输入参数
 			List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), 
-					a.getBeginTime(), errorBean.getCode(), errorBean.getInfo());
+					a.getBeginTime(), errorBean.getErrcode(), errorBean.getErrmsg());
 			t.sql(errorSql, bindValue);
 			
 			var debug = AccessLogUtils.getDebugMap(a);

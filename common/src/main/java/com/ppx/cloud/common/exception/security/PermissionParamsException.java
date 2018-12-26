@@ -1,6 +1,7 @@
 package com.ppx.cloud.common.exception.security;
 
 import com.ppx.cloud.common.exception.CustomException;
+import com.ppx.cloud.common.exception.ErrorCode;
 
 /**
  * 不允许参数值，预防超权
@@ -11,7 +12,7 @@ import com.ppx.cloud.common.exception.CustomException;
 public class PermissionParamsException extends CustomException {
 		
 	public PermissionParamsException(String errmsg) {
-		super(CustomException.PERMISSION_PARAMS, errmsg);
+		super(ErrorCode.PERMISSION_PARAMS, errmsg);
 	}
 	
 }

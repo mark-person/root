@@ -1,6 +1,7 @@
 package com.ppx.cloud.common.exception.security;
 
 import com.ppx.cloud.common.exception.CustomException;
+import com.ppx.cloud.common.exception.ErrorCode;
 
 
 /**
@@ -12,7 +13,7 @@ import com.ppx.cloud.common.exception.CustomException;
 public class PermissionResubmitException extends CustomException {
 
 	public PermissionResubmitException(String errmsg) {
-		super(CustomException.PERMISSION_RESUBMIT, "resubmit forbidden");
+		super(ErrorCode.PERMISSION_RESUBMIT, "resubmit forbidden");
 	}
 	
 	

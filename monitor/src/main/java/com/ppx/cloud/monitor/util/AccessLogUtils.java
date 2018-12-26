@@ -11,8 +11,8 @@ import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
-import com.ppx.cloud.common.exception.ErrorBean;
-import com.ppx.cloud.common.exception.ErrorCode;
+import com.ppx.cloud.common.exception.ErrorPojo;
+import com.ppx.cloud.common.exception.ErrorUtils;
 import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
@@ -78,8 +78,8 @@ public class AccessLogUtils {
 		}
 
 		if (a.getThrowable() != null) {
-			ErrorBean error = ErrorCode.getErroCode(a.getThrowable());
-			infoList.add("Exception[" + error.getCode() + "]" + error.getInfo() + ":" + a.getThrowable().getMessage());
+			ErrorPojo error = ErrorUtils.getErroCode(a.getThrowable());
+			infoList.add("Exception[" + error.getErrcode() + "]" + error.getErrmsg() + ":" + a.getThrowable().getMessage());
 		}
 
 		if (a.getLog() != null) {

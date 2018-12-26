@@ -9,8 +9,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.exception.CustomException;
-import com.ppx.cloud.common.exception.ErrorBean;
 import com.ppx.cloud.common.exception.ErrorCode;
+import com.ppx.cloud.common.exception.ErrorPojo;
+import com.ppx.cloud.common.exception.ErrorUtils;
 import com.ppx.cloud.common.exception.custom.IllegalRequestException;
 
 
@@ -26,11 +27,11 @@ public class CommonInterceptor implements HandlerInterceptor {
             throws Exception {
     	String uri = request.getRequestURI();
     	if (uri.length() > 64) {
-    		throw new IllegalRequestException(CustomException.URI_OUT_OF_LENGTH, "uri length must less than 64");
+    		throw new IllegalRequestException(ErrorCode.URI_OUT_OF_LENGTH, "uri length must less than 64");
     	}
     	// 不支持uri带.的请求，权限不好控制且不好统计
         if (uri.indexOf(".") > 0) {
-        	throw new IllegalRequestException(CustomException.URI_EXISTS_DOT, "uri not supppot .");
+        	throw new IllegalRequestException(ErrorCode.URI_EXISTS_DOT, "uri not supppot .");
         }
         
     	// org.thymeleaf.exceptions.TemplateInputException
@@ -72,10 +73,10 @@ public class CommonInterceptor implements HandlerInterceptor {
             String type = "Not Found";
             Exception exception = (Exception) request.getAttribute("javax.servlet.error.exception");
             if (exception == null) {
-                exception = new IllegalRequestException(CustomException.URI_NOT_FOUND, "not found");
+                exception = new IllegalRequestException(ErrorCode.URI_NOT_FOUND, "not found");
             } else {
-                ErrorBean c = ErrorCode.getErroCode(exception);
-                type = c.getInfo();
+                ErrorPojo c = ErrorUtils.getErroCode(exception);
+                type = c.getErrmsg();
             }
             
             returnWebResponse(request, response, statusCode, type + ":" + requestUri);

@@ -24,6 +24,7 @@ import com.ppx.cloud.common.exception.security.PermissionUriException;
  * @date 2018年10月28日
  */
 @ControllerAdvice
+// 如果使用了监控功能，则会在MonitorExceptionHandler里继承CustomExceptionHandler
 @ConditionalOnMissingClass({"com.ppx.cloud.monitor.exception.MonitorExceptionHandler"})
 public class CustomExceptionHandler implements HandlerExceptionResolver {
 
@@ -31,27 +32,28 @@ public class CustomExceptionHandler implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object object,
             Exception exception) {
         
-        ErrorBean error = ErrorCode.getErroCode(exception);
+    	// // 0:成功 -1:系统忙(500错误) 4000:存在 400x其它业务逻辑；403?:权限；404?: 4040 no found 参数 uri长度、不合法等
+        ErrorPojo error = ErrorUtils.getErroCode(exception);
         
         // errorCode=ErrorCode.IGNORE_ERROR的异常，不需要修改后端代码，不打印
-        if (error.getCode() != ErrorCode.IGNORE_ERROR) {
+        if (error.getErrcode() != ErrorUtils.ERROR_LEVEL_IGNORE) {
            exception.printStackTrace();
         }
         
         // 
         response.setStatus(500);
                 
-        if (PermissionUriException.class.getSimpleName().equals(error.getInfo())
-                || PermissionParamsException.class.getSimpleName().equals(error.getInfo())) {
+        if (PermissionUriException.class.getSimpleName().equals(error.getErrmsg())
+                || PermissionParamsException.class.getSimpleName().equals(error.getErrmsg())) {
             response.setStatus(403);
         }
 
         // 
         String accept = request.getHeader("accept");
         if (accept != null && accept.indexOf("text/html") >= 0) {
-            ControllerReturn.returnErrorHtml(response, error.getCode(), error.getInfo() + "|" + request.getAttribute("marker"));
+            ControllerReturn.returnErrorHtml(response, error.getErrcode(), error.getErrmsg() + "|" + request.getAttribute("marker"));
         } else {
-            ControllerReturn.returnErrorJson(response, error.getCode(), error.getInfo() + "|" + request.getAttribute("marker"));
+            ControllerReturn.returnErrorJson(response, error.getErrcode(), error.getErrmsg() + "|" + request.getAttribute("marker"));
         }
 
        

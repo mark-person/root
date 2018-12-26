@@ -7,8 +7,8 @@ import java.util.Set;
 import org.springframework.util.StringUtils;
 
 import com.ppx.cloud.common.exception.CustomException;
+import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.exception.custom.IllegalRequestException;
-import com.ppx.cloud.common.exception.security.PermissionParamsException;
 
 
 public class Page {
@@ -66,7 +66,7 @@ public class Page {
 
     public void setPageSize(int pageSize) {
 		if (pageSize > MAX_PAGE_SIZE) {
-			throw new IllegalRequestException(CustomException.PARAM_OUT_OF_PAGE_SIZE, "pageSize:" + pageSize);
+			throw new IllegalRequestException(ErrorCode.PARAM_OUT_OF_PAGE_SIZE, "pageSize:" + pageSize);
 		}
 		this.pageSize = pageSize;
 	}
@@ -89,7 +89,7 @@ public class Page {
 
 	public String getOrderName() {
 		if (!StringUtils.isEmpty(orderName) && !permitOrderNameSet.contains(orderName)) {
-			throw new IllegalRequestException(CustomException.PARAM_OUT_OF_ORDER, "getOrderName:" + orderName);
+			throw new IllegalRequestException(ErrorCode.PARAM_OUT_OF_ORDER, "getOrderName:" + orderName);
 		}
 		return orderName;
 	}
@@ -108,7 +108,7 @@ public class Page {
 			this.orderType = orderType;
 		}
 		else {
-			throw new IllegalRequestException(CustomException.PARAM_OUT_OF_ORDER, "setOrderType:" + orderType);
+			throw new IllegalRequestException(ErrorCode.PARAM_OUT_OF_ORDER, "setOrderType:" + orderType);
 		}
 	}
 
