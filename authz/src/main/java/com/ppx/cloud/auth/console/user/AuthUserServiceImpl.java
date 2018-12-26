@@ -42,10 +42,7 @@ public class AuthUserServiceImpl extends MyDaoSupport {
 	}
 
 	@Transactional
-	public int insertAuthUser(AuthUser pojo) {
-	    final int ACCOUNT_EXIST = -1;
-	    final int USER_NAME_EXIST = -2;
-	    
+	public Map<String, Object> insertAuthUser(AuthUser pojo) {
 		AuthAccount account = new AuthAccount();
 		account.setUserId(-1);
 		account.setLoginAccount(pojo.getLoginAccount());
@@ -53,7 +50,7 @@ public class AuthUserServiceImpl extends MyDaoSupport {
 		account.setLoginPassword(pw);
 		int accountR = insertEntity(account, "login_account");
 		if (accountR == 0) {
-			return ACCOUNT_EXIST;
+			return ReturnMap.of(4001, "账号已经存在");
 		}
 		
 		int userId = getLastInsertId();
@@ -63,10 +60,11 @@ public class AuthUserServiceImpl extends MyDaoSupport {
 			// 名称导致保存失败，刚删除上面插入的账号
 		    String delSql = "delete from auth_account where account_id = ?";
 		    getJdbcTemplate().update(delSql, userId);
-            return USER_NAME_EXIST;
+            return ReturnMap.of(4002, "用户名已经存在");
 		}
 		
-		return getJdbcTemplate().update("update auth_account set user_id = ? where account_id = ?", userId, userId);
+		getJdbcTemplate().update("update auth_account set user_id = ? where account_id = ?", userId, userId);
+		return ReturnMap.of();
 	}
 
 	public AuthUser getAuthUser(Integer id) {

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.util.ApplicationUtils;
 
 
@@ -37,12 +38,13 @@ public class ResController {
 		return mv;
 	}
 	
-	public Map<Object, Object> getResource() {
-		Map<String, Object> map = impl.getResource();
-		if (map == null) {
-			return ControllerReturn.success(-1);
+	public Map<?, ?> getResource() {
+		Map<String, Object> resMap = impl.getResource();
+		if (resMap == null) {
+			return ReturnMap.of(4001, "资源为空");
 		}
-		return ControllerReturn.success(map);
+		resMap.putAll(ReturnMap.of());
+		return resMap;
 	}
 	
 	public Map<?, ?> getResUri() {
@@ -51,9 +53,9 @@ public class ResController {
         RequestMappingHandlerMapping r = ApplicationUtils.context.getBean(RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> map = r.getHandlerMethods();
         
-        List<String> returnList = new ArrayList<String>();
-        returnList.add("/*");
-        returnList.add("/auto/*");
+        List<String> resList = new ArrayList<String>();
+        resList.add("/*");
+        resList.add("/auto/*");
         Set<String> controllerSet = new HashSet<String>();
         
         Set<RequestMappingInfo> set =  map.keySet();
@@ -68,12 +70,13 @@ public class ResController {
                     	String[] u = uri.split("/");
                         controllerSet.add("/auto/" + u[2] + "/*");
                     }
-                    returnList.add(uri.toString());
+                    resList.add(uri.toString());
                 }
             }
         }
-        returnList.addAll(controllerSet);
-        return ControllerReturn.success(returnList, Map.of("menuList", menuList));
+        resList.addAll(controllerSet);
+        
+        return ReturnMap.of("list", resList, "menuList", menuList);
     }
 	
 	private boolean filterUri(String uri) {
@@ -104,34 +107,34 @@ public class ResController {
     // >>>>>>>>>>>>>>>....new
     public Map<?, ?> insertRes(@RequestParam int parentId, @RequestParam String resName,
     		@RequestParam int resType, String menuUri) {
-    	return ControllerReturn.success(impl.insertRes(parentId, resName, resType, menuUri));
+    	return ReturnMap.of("resId", impl.insertRes(parentId, resName, resType, menuUri));
     }
     
     public Map<?, ?> updateRes(@RequestParam int id, @RequestParam String resName) {
-    	return ControllerReturn.success(impl.updateRes(id, resName));
+    	return impl.updateRes(id, resName);
     }
     
     public Map<?, ?> deleteRes(@RequestParam int id) {
-    	return ControllerReturn.success(impl.deleteRes(id));
+    	return impl.deleteRes(id);
     }
     
     public Map<?, ?> updateResPrio(String ids) {
-    	return ControllerReturn.success(impl.updateResPrio(ids));
+    	return impl.updateResPrio(ids);
     }
     
     public Map<?, ?> insertUri(@RequestParam Integer resId, @RequestParam String uri, Integer menuId) {
     	impl.insertUri(resId, uri, menuId);
-		return ControllerReturn.success(getUri(resId));
+		return getUri(resId);
 	}	
     
     public Map<?, ?> getUri(@RequestParam Integer resId) {
 		List<Map<String, Object>> list = impl.getUri(resId);	
-		return ControllerReturn.success(list);
+		return ReturnMap.of("list", list);
+				
 	}
     
-    public Map<Object, Object> deleteUri(@RequestParam int resId, @RequestParam int uriSeq) {
-		impl.deleteUri(resId, uriSeq);
-		return ControllerReturn.success();
+    public Map<?, ?> deleteUri(@RequestParam int resId, @RequestParam int uriSeq) {
+		return impl.deleteUri(resId, uriSeq);
 	}
     
     

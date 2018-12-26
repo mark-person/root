@@ -50,8 +50,8 @@ public class ChildServiceImpl extends MyDaoSupport {
 		account.setUserId(userId);
 		account.setLoginAccount(bean.getLoginAccount());
 		account.setLoginPassword(AuthUtils.getMD5Password(bean.getLoginPassword()));
-
-		return insertEntity(account, "login_account");
+		int r = insertEntity(account, "login_account");
+		return ReturnMap.exists(r, "账号");
 	}
 
 	public AuthAccount getChild(Integer id) {

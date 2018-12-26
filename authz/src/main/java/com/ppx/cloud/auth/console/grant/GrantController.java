@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ppx.cloud.auth.console.res.ResService;
 import com.ppx.cloud.auth.pojo.AuthUser;
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
 
 
@@ -34,25 +35,21 @@ public class GrantController {
 		return mv;
 	}
 	
-	public Map<Object, Object> listUser(Page page, AuthUser user) {
+	public Map<?, ?> listUser(Page page, AuthUser user) {
 		List<AuthUser> list = impl.listUser(page, user);
-		return ControllerReturn.success(list, page);
+		return ReturnMap.of(page, list);
 	}
 	
-	public Map<Object, Object> getAuthorize(@RequestParam Integer accountId) {
+	public Map<?, ?> getAuthorize(@RequestParam Integer accountId) {
 	    Map<?, ?> resMap = resourceServ.getResource();
         if (resMap == null) {
-            return ControllerReturn.success(-1);
+            return ReturnMap.of(4001, "资源为空");
         }
-        Map<Object, Object> returnMap = ControllerReturn.success(resMap);
-        
-		returnMap.put("resIds", impl.getGrantResIds(accountId));
-		return returnMap;
+        return ReturnMap.of("resIds", impl.getGrantResIds(accountId));
 	}
 	
-	public Map<Object, Object> saveAuthorize(@RequestParam Integer accountId, @RequestParam String resIds) {
-		long r = impl.saveGrantResIds(accountId, resIds);
-		return ControllerReturn.success(r);
+	public Map<?, ?> saveAuthorize(@RequestParam Integer accountId, @RequestParam String resIds) {
+		return impl.saveGrantResIds(accountId, resIds);
 	}
 
 }

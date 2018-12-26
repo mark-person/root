@@ -37,16 +37,15 @@ public class AuthUserController {
 	}
 	
 	public Map<?, ?> insertAuthUser(AuthUser bean) {
-		int r = impl.insertAuthUser(bean);
-		return ControllerReturn.success(r);
+		return impl.insertAuthUser(bean);
 	}
 	
 	public Map<?, ?> getAuthUser(@RequestParam Integer id) {
-		return ControllerReturn.success(impl.getAuthUser(id));
+		return ReturnMap.of("pojo", impl.getAuthUser(id));
 	}
 	
 	public Map<?, ?> getAuthAccount(@RequestParam Integer id) {
-		return ControllerReturn.success(impl.getAuthAccount(id));
+		return ReturnMap.of("pojo", impl.getAuthAccount(id));
 	}
 	
 	public Map<?, ?> updateAuthUser(AuthUser pojo) {

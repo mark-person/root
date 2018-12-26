@@ -76,12 +76,11 @@ public class UploadImgController {
 					String cmdResult = new BufferedReader(new InputStreamReader(inputStream, "GBK")).lines()
 							.collect(Collectors.joining(System.lineSeparator()));
 					inputStream.close();
-					System.out.println("command:" + command + "||" + cmdResult);
 					if (!StringUtils.isEmpty(cmdResult)) {
-						return ReturnMap.error("", , cmdResult);
+						return ReturnMap.of(4001, "convert执行结果出错:" +cmdResult);
 					}
 				} catch (Exception e) {
-					return ControllerReturn.error(e.getMessage());
+					return ReturnMap.of(4002, "转换命令出错:" + e.getMessage());
 				}
 				returnList.add(IDEA_MODULE + dateFolder + MAIN + imgFileName);
 			}

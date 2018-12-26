@@ -22,6 +22,7 @@ import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthUtils;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.exception.custom.LoginException;
 import com.ppx.cloud.common.util.CookieUtils;
 
@@ -43,10 +44,6 @@ public class LoginController {
 	private final static String VALIDATE_TOKEN_PASSWORK = "FSSBBA";
 	private final static String VALIDATE_TOKEN_NAME = "FSSBBIl1UgzbN7N443T";
 	private final static String VALIDATE_JS_PASSWORK = "DhefwqGPrzGxEp9hPaoag";
-
-	private final static int LOGIN_SUCCESS = 1;
-	private final static int ACCOUNT_OR_PASSWORD_ERROR = -1;
-	private final static int ACCOUNT_EXCEPTION = -2;
 
 	public ModelAndView login(ModelAndView mv, HttpServletResponse response) throws Exception {
 		createValidateToken(mv, response);
@@ -86,10 +83,10 @@ public class LoginController {
 
 		AuthAccount account = impl.getLoginAccount(a, p);
 		if (account == null) {
-			return ControllerReturn.success(ACCOUNT_OR_PASSWORD_ERROR);
+			return ReturnMap.of(4001, "用户名或密码有误");
 		} else if (account.getAccountStatus() != AuthUtils.ACCOUNT_STATUS_EFFECTIVE
 				|| account.getUserAccountStatus() != AuthUtils.ACCOUNT_STATUS_EFFECTIVE) {
-			return ControllerReturn.success(ACCOUNT_EXCEPTION);
+			return ReturnMap.of(4002, "账号异常");
 		} else {
 			// 帐号和密码正确，则在cookie上生成一个token, grantAll, grantAuth
 			String token = "";
@@ -108,7 +105,7 @@ public class LoginController {
 				CookieUtils.setCookie(response, AuthUtils.PPXTOKEN, token);
 
 				impl.updateLastLogin(account.getAccountId());
-				return ControllerReturn.success(LOGIN_SUCCESS);
+				return ReturnMap.of();
 			} catch (Exception e) {
 				throw new LoginException("系统登录异常" + e.getClass().getSimpleName());
 			}

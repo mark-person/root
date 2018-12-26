@@ -35,13 +35,12 @@ public class ChildController {
   
     public Map<?, ?> list(Page page, AuthAccount child) {
         List<AuthAccount> list = impl.listChild(page, child);
-        return ControllerReturn.success(list, page);
+        return ReturnMap.of(page, list);
     }
 
     
     public Map<?, ?> insertChild(AuthAccount bean) {
-        int r = impl.insertChild(bean);
-        return ControllerReturn.success(r);
+        return impl.insertChild(bean);
     }
 
     
@@ -90,22 +89,19 @@ public class ChildController {
 
     public Map<?, ?> listChildAccount(Page page, AuthAccount child) {
         List<AuthAccount> list = impl.listChild(page, child);
-        return ControllerReturn.success(list, page);
+        return ReturnMap.of(page, list);
     }
 
     public Map<?, ?> getAuthorize(@RequestParam Integer accountId) {
         Map<?, ?> resMap = resourceImpl.getResource();
         if (resMap == null) {
-            return ControllerReturn.success(-1);
+            return ReturnMap.of(4001, "资源为空");
         }
-        Map<Object, Object> returnMap = ControllerReturn.success(resMap);
-        returnMap.put("resIds", grantImpl.getGrantResIds(accountId));
-        return returnMap;
+        return ReturnMap.of("resIds", grantImpl.getGrantResIds(accountId));
     }
 
     public Map<?, ?> saveAuthorize(@RequestParam Integer accountId, @RequestParam String resIds) {
-        long r = grantImpl.saveGrantResIds(accountId, resIds);
-        return ControllerReturn.success(r);
+        return grantImpl.saveGrantResIds(accountId, resIds);
     }
     
 

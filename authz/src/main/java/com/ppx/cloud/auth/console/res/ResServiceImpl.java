@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ppx.cloud.auth.common.AuthContext;
 import com.ppx.cloud.auth.common.LoginAccount;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 /**
@@ -116,26 +117,28 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 					+ " values(?, ?, ?, ?)";
 			getJdbcTemplate().update(sql, parentId, resName, c + 1, resType);
 		}
-		return getLastInsertId();		
+		return getLastInsertId();	
 	}
 	
-	public int updateRes(int id, String resName) {
+	public Map<String, Object> updateRes(int id, String resName) {
 		String sql = "update auth_res set res_name = ? where res_id = ?";
-		return getJdbcTemplate().update(sql, resName, id);
+		getJdbcTemplate().update(sql, resName, id);
+		return ReturnMap.of();
 	}
 	
 	@Transactional
-	public int deleteRes(int id) {
+	public Map<String, Object> deleteRes(int id) {
 		String deleteUriSeq = "delete from auth_res_uri where res_id in (select res_id from auth_res where parent_id = ?) or res_id = ?";
 		getJdbcTemplate().update(deleteUriSeq, id, id);
 		
 		String pSql = "delete from auth_res where parent_id = ?";
 		getJdbcTemplate().update(pSql, id);
 		String sql = "delete from auth_res where res_id = ?";
-		return getJdbcTemplate().update(sql, id);
+		getJdbcTemplate().update(sql, id);
+		return ReturnMap.of();
 	}
 	
-	public int updateResPrio(String ids) {
+	public Map<String, Object> updateResPrio(String ids) {
 		String[] id = ids.split(",");
 		List<Object[]> paramList = new ArrayList<Object[]>();
 		for (int i = 0; i < id.length; i++) {
@@ -144,11 +147,11 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		}
 		String sql = "update auth_res set res_prio = ? where res_id = ?";
 		getJdbcTemplate().batchUpdate(sql, paramList);
-		return 1;
+		return ReturnMap.of();
 	}
 	
 	@Transactional
-	public int insertUri(Integer resId, String uri, Integer menuId) {
+	public Map<String, Object> insertUri(Integer resId, String uri, Integer menuId) {
 		String insertSeqSql = "insert ignore into auth_uri_seq(uri_text) values(?)";
 		getJdbcTemplate().update(insertSeqSql, uri);
 		
@@ -156,7 +159,8 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		int uriSeq = getJdbcTemplate().queryForObject(seqSql, Integer.class, uri);
 		
 		String insertResUriSql = "insert into auth_res_uri(res_id, uri_seq) value(?, ?)";
-		return getJdbcTemplate().update(insertResUriSql, resId, uriSeq);
+		getJdbcTemplate().update(insertResUriSql, resId, uriSeq);
+		return ReturnMap.of();
 	}
 	
 	public List<Map<String, Object>> getUri(int resId) {
@@ -165,9 +169,10 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		return getJdbcTemplate().queryForList(sql, resId, resId);
 	}
 	
-	public int deleteUri(int resId, int uriSeq) {
+	public Map<String, Object> deleteUri(int resId, int uriSeq) {
 		String sql = "delete from auth_res_uri where res_id = ? and uri_seq = ?";
-		return getJdbcTemplate().update(sql, resId, uriSeq);
+		getJdbcTemplate().update(sql, resId, uriSeq);
+		return ReturnMap.of();
 	}
 	
 	

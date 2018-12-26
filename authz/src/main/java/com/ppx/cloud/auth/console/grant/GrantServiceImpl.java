@@ -3,6 +3,7 @@ package com.ppx.cloud.auth.console.grant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.util.Strings;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.pojo.AuthUser;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyCriteria;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.page.Page;
@@ -55,7 +57,7 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 	}
 	
 	@Transactional
-	public int saveGrantResIds(Integer accountId, String resIds) {
+	public Map<String, Object> saveGrantResIds(Integer accountId, String resIds) {
 	    // ehCacheServ.increaseGrantDbVersion();
 		String delSql = "delete from auth_grant where account_id = ?";
 		getJdbcTemplate().update(delSql, accountId);
@@ -71,7 +73,7 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 			getJdbcTemplate().batchUpdate(insertSql, paraList);
 		}
 		
-		return 1;
+		return ReturnMap.of();
 	}
 	
 	
