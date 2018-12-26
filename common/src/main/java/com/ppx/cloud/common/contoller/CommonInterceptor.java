@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ppx.cloud.common.exception.CustomException;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.exception.ErrorPojo;
 import com.ppx.cloud.common.exception.ErrorUtils;
@@ -22,6 +21,8 @@ import com.ppx.cloud.common.exception.custom.IllegalRequestException;
  * @date 2018年11月12日
  */
 public class CommonInterceptor implements HandlerInterceptor {
+	
+	
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -37,12 +38,7 @@ public class CommonInterceptor implements HandlerInterceptor {
     	// org.thymeleaf.exceptions.TemplateInputException
     	Exception errorException = (Exception) request.getAttribute("javax.servlet.error.exception");
     	if (errorException != null && errorException.getMessage().indexOf("org.thymeleaf.exceptions") > -1) {
-    		try (PrintWriter printWriter = response.getWriter()) {
-    			// TODO 改成一个方法，并显示系统忙和代码
-                printWriter.write("<script>document.write('template error:" + errorException.getMessage() + "')</script>");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    		ReturnMap.thymeleafError(response, errorException);
     		return false;
     	}
     	
@@ -74,12 +70,9 @@ public class CommonInterceptor implements HandlerInterceptor {
             Exception exception = (Exception) request.getAttribute("javax.servlet.error.exception");
             if (exception == null) {
                 exception = new IllegalRequestException(ErrorCode.URI_NOT_FOUND, "not found");
-            } else {
-                ErrorPojo c = ErrorUtils.getErroCode(exception);
-                type = c.getErrmsg();
             }
-            
-            returnWebResponse(request, response, statusCode, type + ":" + requestUri);
+            ErrorPojo c = ErrorUtils.getErroCode(exception);
+            returnResponse(request, response, c.getErrcode(), c.getErrlevel(), c.getErrmsg());
             return false;
         }
         
@@ -95,13 +88,14 @@ public class CommonInterceptor implements HandlerInterceptor {
     }
     
     
-    private void returnWebResponse(HttpServletRequest request, HttpServletResponse response, 
-            Integer statusCode, String msg) {
+    private void returnResponse(HttpServletRequest request, HttpServletResponse response, 
+    		int errcode, int errlevel, String errmsg) {
         String accept = request.getHeader("accept");
         if (accept != null && accept.indexOf("text/html") >= 0) {
-            ControllerReturn.returnErrorHtml(response, statusCode, msg);
+            ReturnMap.errorHtml(response, errcode, errlevel, errmsg);
+            
         } else {
-            ControllerReturn.returnErrorJson(response, statusCode, msg);
+        	ReturnMap.errorJson(response, errcode, errlevel, errmsg);
         }
     }
 }

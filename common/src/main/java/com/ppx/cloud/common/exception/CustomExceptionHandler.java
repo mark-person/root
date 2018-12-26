@@ -10,6 +10,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ControllerReturn;
+import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.exception.security.PermissionParamsException;
 import com.ppx.cloud.common.exception.security.PermissionUriException;
 
@@ -32,15 +33,12 @@ public class CustomExceptionHandler implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object object,
             Exception exception) {
         
-    	// // 0:成功 -1:系统忙(500错误) 4000:存在 400x其它业务逻辑；403?:权限；404?: 4040 no found 参数 uri长度、不合法等
         ErrorPojo error = ErrorUtils.getErroCode(exception);
         
         // errorCode=ErrorCode.IGNORE_ERROR的异常，不需要修改后端代码，不打印
         if (error.getErrcode() != ErrorUtils.ERROR_LEVEL_IGNORE) {
            exception.printStackTrace();
         }
-        
-        // 
         response.setStatus(500);
                 
         if (PermissionUriException.class.getSimpleName().equals(error.getErrmsg())
@@ -51,9 +49,9 @@ public class CustomExceptionHandler implements HandlerExceptionResolver {
         // 
         String accept = request.getHeader("accept");
         if (accept != null && accept.indexOf("text/html") >= 0) {
-            ControllerReturn.returnErrorHtml(response, error.getErrcode(), error.getErrmsg() + "|" + request.getAttribute("marker"));
+        	ReturnMap.errorHtml(response, error.getErrcode(), error.getErrlevel(), error.getErrmsg() + "|" + request.getAttribute("marker"));
         } else {
-            ControllerReturn.returnErrorJson(response, error.getErrcode(), error.getErrmsg() + "|" + request.getAttribute("marker"));
+        	ReturnMap.errorJson(response, error.getErrcode(), error.getErrlevel(), error.getErrmsg() + "|" + request.getAttribute("marker"));
         }
 
        

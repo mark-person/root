@@ -18,6 +18,12 @@ public class TestController {
 	private TestServiceImpl impl;
 
 	public ModelAndView test(ModelAndView mv) {
+		
+		String s = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
+		for (int i = 0; i < 10000000L; i++) {
+			s += s;
+		}
+		
 		mv.addObject("list", list(new Page(), new Test()));
 		return mv;
 	}

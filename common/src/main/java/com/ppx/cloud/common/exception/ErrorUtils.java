@@ -24,16 +24,12 @@ import com.ppx.cloud.common.exception.security.PermissionUriException;
 
 /**
  * 分类异常，不是所有的异常都要全部信息
- *  9:紧急异常，需要紧急处理，打印
- *  0:不需要修改后端代码，不打印
- *  1:java异常，需要修改，打印
- *  2:jdbc部分异常，需要修改，打印
- *  3:模板错误
- *  -1:未知异常，打印
- * @author dengxz
- * @date 2017年4月1日
+ * 0:不需要修改后端代码，不打印
+ * 9:紧急异常，需要紧急处理，打印
+ * 1:java.lang, jdbc, thymeleaf等异常，  局部异常
+ * @author mark
+ * @date 2018年12月26日
  */
-
 public class ErrorUtils {
 	
 	
@@ -75,6 +71,8 @@ public class ErrorUtils {
         // URI不合法，太长等等
         errorMap.put(PermissionUriException.class, ERROR_LEVEL_IGNORE);
         
+       
+        
         
         // 数据库连接不上(如没有启动，或死掉)
         errorMap.put(CannotGetJdbcConnectionException.class, ERROR_LEVEL_CRITICAL);
@@ -97,14 +95,19 @@ public class ErrorUtils {
 		else if (e instanceof NestedServletException) {
 			String msg = e.getMessage();
 			// 判断是否内存溢出
-			// e.getMessage().indexOf("java.lang.OutOfMemoryError");
+			if (msg.indexOf("OutOfMemoryError") >= 0) {
+				return new ErrorPojo(ErrorCode.ERROR_OUT_OF_MEMORY, msg, ERROR_LEVEL_CRITICAL);
+			}
+			if (msg.indexOf("NoClassDefFoundError") >= 0) {
+				return new ErrorPojo(ErrorCode.ERROR_LANG, msg, ERROR_LEVEL_CRITICAL);
+			}
 			
 			// 判断是否找不到类
 			// e.getMessage().indexOf("java.lang.NoClassDefFoundError");
-			if (msg.indexOf("org.thymeleaf.exceptions.TemplateProcessingException") >= 0) {
-				return new ErrorPojo(ErrorCode.ERROR_TEMPLATE, "TemplateProcessingException", ERROR_LEVEL_NORMAL);
+			if (msg.indexOf("org.thymeleaf.exceptions") >= 0) {
+				return new ErrorPojo(ErrorCode.ERROR_TEMPLATE, msg, ERROR_LEVEL_NORMAL);
 			}
-			return new ErrorPojo(ErrorCode.ERROR_UNKNOWN, msg, ERROR_LEVEL_NORMAL);
+			return new ErrorPojo(ErrorCode.ERROR_UNKNOWN, msg, ERROR_LEVEL_UNKNOWN);
 		}
 		
 		if ("java.lang".equals(e.getClass().getPackage().getName())) {
@@ -119,7 +122,9 @@ public class ErrorUtils {
 			// 必须栏插入空值，重复数据，Integer field返回int
 			return new ErrorPojo(ErrorCode.ERROR_DAO, e.getClass().getSimpleName(), ERROR_LEVEL_NORMAL);
 		}
-		
+		else if ("org.thymeleaf.exceptions".equals(e.getClass().getPackage().getName())) {
+			return new ErrorPojo(ErrorCode.ERROR_TEMPLATE, e.getClass().getSimpleName(), ERROR_LEVEL_NORMAL);
+		}
 		return new ErrorPojo(ErrorCode.ERROR_UNKNOWN , e.getClass().getSimpleName(), ERROR_LEVEL_UNKNOWN);
 	}
 }

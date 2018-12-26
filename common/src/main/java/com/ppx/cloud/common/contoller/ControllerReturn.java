@@ -89,50 +89,50 @@ public class ControllerReturn {
 	}
 	
 	
-	/**
-         * 返回错误(HMTL格式)
-     * 
-     * @param response
-     * @param errorCode
-     * @param errorInfo
-     */
-    public static void returnErrorHtml(HttpServletResponse response, Integer errorCode, String errorInfo) {
-    	response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
-        try (PrintWriter printWriter = response.getWriter()) {
-            printWriter.write("[" + errorCode + "]" + "System Message[" + errorInfo + "]");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//	/**
+//         * 返回错误(HMTL格式)
+//     * 
+//     * @param response
+//     * @param errorCode
+//     * @param errorInfo
+//     */
+//    public static void returnErrorHtml(HttpServletResponse response, Integer errorCode, String errorInfo) {
+//    	response.setCharacterEncoding("UTF-8");
+//        response.setContentType("text/html");
+//        try (PrintWriter printWriter = response.getWriter()) {
+//            printWriter.write("[" + errorCode + "]" + "System Message[" + errorInfo + "]");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    /**
+//     * 返回错误(JSON格式)
+//     * 
+//     * @param response
+//     * @param errorCode
+//     * @param errorInfo
+//     */
+//    public static void returnErrorJson(HttpServletResponse response, Integer errorCode, String errorInfo) {
+//        response.setCharacterEncoding("UTF-8");
+//        response.setContentType("application/json");
+//        Map<Object, Object> map = ControllerReturn.error(errorCode, errorInfo);
+//        try (PrintWriter printWriter = response.getWriter()) {
+//            String returnJson = new ObjectMapper().writeValueAsString(map);
+//            printWriter.write(returnJson);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    /**
-     * 返回错误(JSON格式)
-     * 
-     * @param response
-     * @param errorCode
-     * @param errorInfo
-     */
-    public static void returnErrorJson(HttpServletResponse response, Integer errorCode, String errorInfo) {
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        Map<Object, Object> map = ControllerReturn.error(errorCode, errorInfo);
-        try (PrintWriter printWriter = response.getWriter()) {
-            String returnJson = new ObjectMapper().writeValueAsString(map);
-            printWriter.write(returnJson);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void returnJson(HttpServletResponse response, String json) {
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        try (PrintWriter printWriter = response.getWriter()) {
-            printWriter.write(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void returnJson(HttpServletResponse response, String json) {
+//        response.setCharacterEncoding("UTF-8");
+//        response.setContentType("application/json");
+//        try (PrintWriter printWriter = response.getWriter()) {
+//            printWriter.write(json);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 	
 }

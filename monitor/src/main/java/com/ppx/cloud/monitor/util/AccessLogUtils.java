@@ -79,7 +79,7 @@ public class AccessLogUtils {
 
 		if (a.getThrowable() != null) {
 			ErrorPojo error = ErrorUtils.getErroCode(a.getThrowable());
-			infoList.add("Exception[" + error.getErrcode() + "]" + error.getErrmsg() + ":" + a.getThrowable().getMessage());
+			infoList.add("Exception[" + error.getErrcode() + "][" + error.getErrlevel() + "]" + error.getErrmsg() + ":" + a.getThrowable().getMessage());
 		}
 
 		if (a.getLog() != null) {

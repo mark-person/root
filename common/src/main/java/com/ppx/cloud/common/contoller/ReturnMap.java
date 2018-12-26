@@ -3,9 +3,16 @@
  */
 package com.ppx.cloud.common.contoller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ppx.cloud.common.exception.ErrorPojo;
+import com.ppx.cloud.common.exception.ErrorUtils;
 import com.ppx.cloud.common.page.Page;
 
 /**
@@ -102,11 +109,59 @@ public class ReturnMap {
 		return ERROR;
 	}
 	
-	public static Map<String, Object> error(int errcode, String errmsg) {
+	public static Map<String, Object> error(int errcode, int errlevel, String errmsg) {
 		// 0:成功 -1:系统忙(500错误) 4000:存在 400x业务逻辑；403?:权限；404?: 4040 no found 参数 uri长度、不合法等
-		return Map.of(ERRCODE_TITLE, errcode, ERRCODE_TITLE, errmsg);
+		return Map.of(ERRCODE_TITLE, ERRCODE_ERROR, ERRCODE_TITLE, "System busy[" + errcode + "][" + errlevel + "]" + errmsg);
 	}
 	
 	
+	
+	
+	
+	public static void thymeleafError(HttpServletResponse response, Exception errorException) {
+		try (PrintWriter printWriter = response.getWriter()) {
+			// TODO 改成一个方法，并显示系统忙和代码
+			ErrorPojo c = ErrorUtils.getErroCode(errorException);
+            printWriter.write("<script>document.write('System busy[" +  c.getErrcode() + "][" + c.getErrlevel() + "]')</script>");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+	
+	/**
+     * 返回错误(HMTL格式)
+	 * 
+	 * @param response
+	 * @param errorCode
+	 * @param errorInfo
+	 */
+	public static void errorHtml(HttpServletResponse response, int errcode, int errlevel, String errmsg) {
+		response.setCharacterEncoding("UTF-8");
+	    response.setContentType("text/html");
+	    try (PrintWriter printWriter = response.getWriter()) {
+	        printWriter.write("System busi[" + errcode + "][" + errlevel + "]" + errmsg);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	/**
+     * 返回错误(JSON格式)
+     * 
+     * @param response
+     * @param errorCode
+     * @param errorInfo
+     */
+    public static void errorJson(HttpServletResponse response, int errcode, int errlevel, String errmsg) {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        Map<String, Object> map = error(errcode, errlevel, errmsg);
+        try (PrintWriter printWriter = response.getWriter()) {
+            String returnJson = new ObjectMapper().writeValueAsString(map);
+            printWriter.write(returnJson);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 		
 }

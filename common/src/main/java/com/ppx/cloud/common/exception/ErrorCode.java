@@ -25,13 +25,17 @@ public interface ErrorCode {
 
 	// 错误
 	public final static int ERROR_IGNORE = 5000;
-	public final static int ERROR_INIT = 5001;
-	public final static int ERROR_UPDATE_NO_PK = 5002;
-	public final static int ERROR_LOGIN = 5003;
-	public final static int ERROR_TEMPLATE = 5004;
-	public final static int ERROR_JDBC = 5005;
-	public final static int ERROR_DAO = 5006;
-	public final static int ERROR_LANG = 5006;
+	public final static int ERROR_OUT_OF_MEMORY = 5001;
+	public final static int ERROR_NO_CLASS_DEF = 5002;
+	public final static int ERROR_INIT = 5010;
+	public final static int ERROR_UPDATE_NO_PK = 5011;
+	public final static int ERROR_LOGIN = 5012;
+	public final static int ERROR_TEMPLATE = 5005;
+	public final static int ERROR_JDBC = 5006;
+	public final static int ERROR_DAO = 5007;
+	public final static int ERROR_LANG = 5008;
+	
+	
 	
 	public final static int ERROR_UNKNOWN = 5009;
 }

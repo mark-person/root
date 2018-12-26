@@ -264,20 +264,20 @@ public class PersistenceImpl extends PersistenceSupport {
 	}
 
 	public void insertError(Throwable throwable, Integer accessId,  AccessLog a) {
-		ErrorPojo errorBean = ErrorUtils.getErroCode(throwable);
+		ErrorPojo errorPojo = ErrorUtils.getErroCode(throwable);
 
-		String errorSql = "insert into error(accessId, serviceId, errorTime, errorCode, errorMsg) values(?, ?, ?, ?, ?)";
+		String errorSql = "insert into error(accessId, serviceId, errorTime, errorCode, errorLevel, errorMsg) values(?, ?, ?, ?, ?, ?)";
 		// 类型为IGNORE_ERROR的异常，打印输入，一般不需要修改代码，不打印详情
-		if (errorBean.getErrcode() == ErrorUtils.ERROR_LEVEL_IGNORE) {
+		if (errorPojo.getErrcode() == ErrorUtils.ERROR_LEVEL_IGNORE) {
 			// 出错时，记录输入参数
 			List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), 
-					a.getBeginTime(), errorBean.getErrcode(), errorBean.getErrmsg() + ";param|injson:" + a.getParams() + "|" + a.getInJson());
+					a.getBeginTime(), errorPojo.getErrcode(), errorPojo.getErrlevel(), errorPojo.getErrmsg() + ";param|injson:" + a.getParams() + "|" + a.getInJson());
 			t.sql(errorSql, bindValue);
 
 		} else {
 			// 出错时，记录输入参数
 			List<Object> bindValue = Arrays.asList(accessId, ApplicationUtils.getServiceId(), 
-					a.getBeginTime(), errorBean.getErrcode(), errorBean.getErrmsg());
+					a.getBeginTime(), errorPojo.getErrcode(), errorPojo.getErrlevel(), errorPojo.getErrmsg());
 			t.sql(errorSql, bindValue);
 			
 			var debug = AccessLogUtils.getDebugMap(a);
