@@ -1,6 +1,5 @@
 package com.ppx.cloud.auth.login;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -21,7 +20,6 @@ import com.ppx.cloud.auth.cache.AuthCache;
 import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthUtils;
 import com.ppx.cloud.auth.pojo.AuthAccount;
-import com.ppx.cloud.common.contoller.ControllerReturn;
 import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.exception.custom.LoginException;
 import com.ppx.cloud.common.util.CookieUtils;
