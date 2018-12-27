@@ -15,6 +15,21 @@ public class TestController {
 
 	@Autowired
 	private TestServiceImpl impl;
+	
+	public ModelAndView t1(ModelAndView mv) {
+		return mv;
+	}
+	
+	public ModelAndView t2(ModelAndView mv) {
+		try {
+			Thread.sleep(5*1000);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+		return mv;
+	}
 
 	public ModelAndView test(ModelAndView mv) {
 		mv.addObject("list", list(new Page(), new Test()));
