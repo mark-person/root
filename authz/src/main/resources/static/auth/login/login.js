@@ -67,11 +67,6 @@ $(function () {
 	
 });
 
-var RESULT_SUCCESS = 1;
-var LOGIN_MSG = [];
-LOGIN_MSG[-1] = "账号或密码错误";
-LOGIN_MSG[-2] = "账号异常";
-
 function login() {
 	var a = $.trim($('#a').val());
 	var p = $.trim($('#p').val());
@@ -98,11 +93,11 @@ function login() {
 	}
  
 	$.post(contextPath + "auto/login/doLogin", {a:a,p:p,v:v()}, function(r) {
-		if (r.value === RESULT_SUCCESS) {
+		if (r.errcode === 0) {
 			location.href = contextPath + "auto/index/menu";
 		}
 		else {
-			$('#b').attr("data-content", LOGIN_MSG[r.value]);
+			$('#b').attr("data-content", r.errmsg);
 			$('#b').popover('show');
 			$("#b").attr("disabled", false);
 			$("#b").text("登录");

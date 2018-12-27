@@ -11,15 +11,13 @@ $(function() {
 	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
 });
 
-
-
 </script>
 </head>
 
 <body>
 <div class="container-fluid">
 
-<div id="pageDiv" th:xinclude="common/fragment::page('基本信息')">
+<div id="pageDiv" th:include="common/fragment::page('基本信息')">
 	<div th:fragment="query">
 		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
 		<label>名称：</label>

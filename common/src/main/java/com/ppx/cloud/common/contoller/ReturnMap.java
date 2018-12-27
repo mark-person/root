@@ -72,7 +72,7 @@ public class ReturnMap {
 	// 自定义:4001~4009
 	public static Map<String, Object> of(int errcode, String errmsg) {
 		if (errcode >= 4001 && errcode <= 4009) {
-			return Map.of(ERRCODE_TITLE, errcode, ERRCODE_TITLE, errmsg);
+			return Map.of(ERRCODE_TITLE, errcode, ERRMSG_TITLE, errmsg);
 		}
 		else {
 			throw new RuntimeException("errcode must be from 4001-4009, current errcode:" + errcode);
@@ -111,7 +111,7 @@ public class ReturnMap {
 	
 	public static Map<String, Object> error(int errcode, int errlevel, String errmsg) {
 		// 0:成功 -1:系统忙(500错误) 4000:存在 400x业务逻辑；403?:权限；404?: 4040 no found 参数 uri长度、不合法等
-		return Map.of(ERRCODE_TITLE, ERRCODE_ERROR, ERRCODE_TITLE, "System busy[" + errcode + "][" + errlevel + "]" + errmsg);
+		return Map.of(ERRCODE_TITLE, ERRCODE_ERROR, ERRMSG_TITLE, "System busy[" + errcode + "-" + errlevel + "]" + errmsg);
 	}
 	
 	
@@ -122,7 +122,7 @@ public class ReturnMap {
 		try (PrintWriter printWriter = response.getWriter()) {
 			// TODO 改成一个方法，并显示系统忙和代码
 			ErrorPojo c = ErrorUtils.getErroCode(errorException);
-            printWriter.write("<script>document.write('System busy[" +  c.getErrcode() + "][" + c.getErrlevel() + "]')</script>");
+            printWriter.write("<script>document.write('[-1]System busy[" +  c.getErrcode() + "-" + c.getErrlevel() + "]" + errorException.getMessage() + "')</script>");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,7 +139,7 @@ public class ReturnMap {
 		response.setCharacterEncoding("UTF-8");
 	    response.setContentType("text/html");
 	    try (PrintWriter printWriter = response.getWriter()) {
-	        printWriter.write("System busi[" + errcode + "][" + errlevel + "]" + errmsg);
+	        printWriter.write("[-1]System busi[" + errcode + "-" + errlevel + "]" + errmsg);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }

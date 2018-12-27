@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,17 +17,12 @@ public class TestController {
 	private TestServiceImpl impl;
 
 	public ModelAndView test(ModelAndView mv) {
-		
-		String s = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
-		for (int i = 0; i < 10000000L; i++) {
-			s += s;
-		}
-		
 		mv.addObject("list", list(new Page(), new Test()));
 		return mv;
 	}
 	
 	public Map<?, ?> list(Page page, Test pojo) {
+		int i = 1 / 0;
 		return ReturnMap.of(page, impl.list(page, pojo));
 	}
 	 
