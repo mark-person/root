@@ -1,14 +1,17 @@
 
 
-
-CREATE TABLE `test` (
-  `test_id` int(11) NOT NULL auto_increment,
-  `test_name` varchar(45) DEFAULT NULL,
-  `test_date` date DEFAULT NULL,
-  `test_time` timestamp NULL DEFAULT NULL,
-  `test_value` decimal(7,2) DEFAULT NULL,
-  PRIMARY KEY (`test_id`)
+create table test (
+  test_id 		int not null auto_increment,
+  test_name 	varchar(32) not null,
+  test_date 	date default null,
+  test_value 	decimal(7,2) default null,
+  test_type		tinyint,
+  created		timestamp not null default current_timestamp,
+  primary key (test_id)
 );
+/** invisible，这样优化器就会忽略这个索引，但是索引依然存在于引擎内部 */
+ALTER TABLE test ADD INDEX idx_test_name (test_name ASC) VISIBLE;
+
 
 
 create table login_user

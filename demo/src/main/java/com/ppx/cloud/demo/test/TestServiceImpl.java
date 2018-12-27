@@ -24,8 +24,8 @@ public class TestServiceImpl extends MyDaoSupport {
 		//  mysql8支持order by和字查询count(*)优化，不支持left join优化
 		var c = createCriteria("where").addAnd("t.test_name like ?", "%", pojo.getTestName(), "%");
 		
-		String[] id = {"1", "2"};// "1,2,3"
-		c.addAnd("t.test_id in ?", id);
+		//String[] id = {"1", "2"};// "1,2,3"
+		//c.addAnd("t.test_id in ?", id);
 		 
 		page.addDefaultOrderName("t.test_id").addPermitOrderName("t.test_name").addUnique("t.test_id");
 		

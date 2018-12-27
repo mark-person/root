@@ -1,5 +1,6 @@
 package com.ppx.cloud.demo.test;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,16 @@ public class TestController {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
-		
 		return mv;
 	}
 
 	public ModelAndView test(ModelAndView mv) {
 		mv.addObject("list", list(new Page(), new Test()));
+		
+		var m0 = Map.of("typeId", 0, "typeName", "type0");
+		var m1 = Map.of("typeId", 1, "typeName", "type1");
+		mv.addObject("listType", Arrays.asList(m0, m1)); 
+		
 		return mv;
 	}
 	

@@ -206,8 +206,6 @@ var Page = function(obj) {
 
 
 // 增删改begin >>>>>>
-var SUCCESS = 0;
-var EXISTS = 4000;
 function add(callback) {
 	$('#addForm')[0].reset();
 	$('#add').modal('show');
@@ -215,12 +213,12 @@ function add(callback) {
 		if (!$("#addForm").valid()) return;
 		showLoading();
 		$.post(controllerPath + "insert", $("#addForm").serialize(), function(r) {
-			if (r.errcode === SUCCESS) {
+			if (r.errcode === 0) {
 				$("#pageDiv").query();
 				$('#add').modal('hide');
 				alertSuccess();
 			}
-			else if (r.errcode === EXISTS) {
+			else {
 				alertWarning(r.errmsg);
 				hideLoading();
 			}
@@ -241,12 +239,12 @@ function edit(id, getCallback, updateCallback) {
 		if (!$("#editForm").valid()) return;
 		showLoading();
 		$.post(controllerPath + "update", $("#editForm").serialize(), function(r) {
-			if (r.errcode === SUCCESS) {
+			if (r.errcode === 0) {
 				$('#edit').modal('hide');
 				$("#pageDiv").query();
 				alertSuccess();
 			}
-			else if (r.errcode === EXISTS) {
+			else {
 				alertWarning(r.errmsg);
 				hideLoading();
 			}
@@ -258,7 +256,7 @@ function remove(id) {
 	confirm(id, function() {
 		showLoading();
 		$.post(controllerPath + "delete", {id:id}, function(r) {
-			r.errcode == SUCCESS ? $("#pageDiv").query() : alertDanger("error return " + r.result);
+			r.errcode === 0 ? $("#pageDiv").query() : alertDanger("error return " + r.result);
 		});
 	});
 }

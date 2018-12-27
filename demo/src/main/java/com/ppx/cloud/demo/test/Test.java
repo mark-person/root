@@ -29,9 +29,11 @@ public class Test {
 	@DateTimeFormat(pattern=DateUtils.DATE_PATTERN)
 	private Date testDate;
 	
-	private Date testTime;
-	
 	private Float testValue;
+	
+	private Integer testType;
+	
+	private Date created;
 
 	public Integer getTestId() {
 		return testId;
@@ -57,14 +59,6 @@ public class Test {
 		this.testDate = testDate;
 	}
 
-	public Date getTestTime() {
-		return testTime;
-	}
-
-	public void setTestTime(Date testTime) {
-		this.testTime = testTime;
-	}
-
 	public Float getTestValue() {
 		return testValue;
 	}
@@ -72,6 +66,23 @@ public class Test {
 	public void setTestValue(Float testValue) {
 		this.testValue = testValue;
 	}
+
+	public Integer getTestType() {
+		return testType;
+	}
+
+	public void setTestType(Integer testType) {
+		this.testType = testType;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+	
 	
 	
 	
