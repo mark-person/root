@@ -3,7 +3,7 @@ $.ajaxSetup({
 	error: function(r, textStatus, errorThrown) {
 		var msg = "";
 		if (r.responseJSON) {
-			msg = "[" + r.responseJSON.errorCode + "]" + r.responseJSON.errorInfo;
+			msg = "[" + r.responseJSON.errcode + "]" + r.responseJSON.errmsg;
 		}
 		$('#loading').modal('hide');
 		alertDanger("error:" + r.status + "|" + this.url + "|" + msg);
