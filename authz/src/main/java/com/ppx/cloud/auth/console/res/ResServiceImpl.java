@@ -133,6 +133,12 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 			String seqSql = "select uri_seq from auth_uri_seq where uri_text = ?";
 			int uriSeq = getJdbcTemplate().queryForObject(seqSql, Integer.class, menuUri);
 			
+			String deleteResUriSql = "delete from auth_res_uri where res_id = ? and uri_seq = (select uri_seq from auth_res where res_id = ?)";
+			getJdbcTemplate().update(deleteResUriSql, id, id);
+			
+			String insertResUriSql = "insert into auth_res_uri(res_id, uri_seq) value(?, ?)";
+			getJdbcTemplate().update(insertResUriSql, id, uriSeq);
+			
 			String sql = "update auth_res set res_name = ?, uri_seq = ? where res_id = ?";
 			getJdbcTemplate().update(sql, resName, uriSeq, id);
 		}
