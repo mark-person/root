@@ -155,7 +155,7 @@ function addChild() {
 			var icon = treeUtils.getNodeIcon($("#addNodeType").val());
 			var nodes = $('#tree').treeview('getNodes');
 			
-			var childNode = {text:$("#addNodeName").val(),icon:icon,id:r.value};	
+			var childNode = {text:$("#addNodeName").val(),icon:icon,id:r.resId};	
 			
 			if (!selectNode.nodes) {
 				selectNode.nodes = [];
