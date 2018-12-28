@@ -36,15 +36,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.SerializableString;
-import com.fasterxml.jackson.core.io.CharacterEscapes;
-import com.fasterxml.jackson.core.io.SerializedString;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.ppx.cloud.common.config.ObjectMappingCustomer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.exceptions.ConfigurationException;
@@ -54,6 +45,15 @@ import org.thymeleaf.util.DateUtils;
 import org.unbescape.json.JsonEscape;
 import org.unbescape.json.JsonEscapeLevel;
 import org.unbescape.json.JsonEscapeType;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.SerializableString;
+import com.fasterxml.jackson.core.io.CharacterEscapes;
+import com.fasterxml.jackson.core.io.SerializedString;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.ppx.cloud.common.config.ObjectMapperCustomer;
 
 
 /**
@@ -158,14 +158,14 @@ public final class StandardJavaScriptSerializer implements IStandardJavaScriptSe
             super();
 
             /** @author mark json改成跟异步调用统一, 注释掉this.mapper = new ObjectMapper();和this.mapper.setDateFormat... */
-            this.mapper = new ObjectMappingCustomer();
+            this.mapper = new ObjectMapperCustomer();
             // this.mapper = new ObjectMapper();
             
             this.mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             this.mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
             this.mapper.enable(JsonGenerator.Feature.ESCAPE_NON_ASCII);
             this.mapper.getFactory().setCharacterEscapes(new JacksonThymeleafCharacterEscapes());
-            this.mapper.setDateFormat(new JacksonThymeleafISO8601DateFormat());
+          	//  this.mapper.setDateFormat(new JacksonThymeleafISO8601DateFormat());
 
             /*
              * Now try to (conditionally) initialize support for Jackson serialization of JSR310 (java.time) objects,

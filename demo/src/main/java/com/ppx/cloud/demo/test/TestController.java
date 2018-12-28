@@ -1,6 +1,7 @@
 package com.ppx.cloud.demo.test;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ppx.cloud.common.config.ObjectMapperCustomer;
 import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
 
@@ -31,6 +34,21 @@ public class TestController {
 	}
 
 	public ModelAndView test(ModelAndView mv) {
+		
+		Test test = new Test();
+		test.setTestDate(new Date());
+		test.setCreated(new Date());
+		ObjectMapper om = new ObjectMapperCustomer();
+		try {
+			
+			System.out.println("out:" + om.writeValueAsString(test));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+		
+		
 		mv.addObject("list", list(new Page(), new Test()));
 		
 		var m0 = Map.of("typeId", 0, "typeName", "type0");

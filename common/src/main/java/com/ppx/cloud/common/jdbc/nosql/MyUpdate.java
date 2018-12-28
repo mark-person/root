@@ -16,7 +16,7 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.SqlResult;
-import com.ppx.cloud.common.config.ObjectMappingCustomer;
+import com.ppx.cloud.common.config.ObjectMapperCustomer;
 
 
 /**
@@ -139,7 +139,7 @@ public class MyUpdate {
 	public MyUpdate setJson(String name, Object obj) {
 		String json = "";
 		try {
-			json = new ObjectMappingCustomer().writeValueAsString(obj);
+			json = new ObjectMapperCustomer().writeValueAsString(obj);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,11 +17,12 @@ import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.DecimalUtils;
 
 @SuppressWarnings("serial")
-public class ObjectMappingCustomer extends ObjectMapper {
+public class ObjectMapperCustomer extends ObjectMapper {
 
-	public ObjectMappingCustomer() {
-		//super.setDateFormat(new SimpleDateFormat(DateUtils.TIME_PATTERN));
-		super.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+	public ObjectMapperCustomer() {
+		SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TIME_PATTERN);
+		super.setDateFormat(sdf);
+	
 
 		super.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		SimpleModule module = new SimpleModule();
@@ -34,14 +36,14 @@ public class ObjectMappingCustomer extends ObjectMapper {
 			}
 		});
 		
-		module.addSerializer(Date.class, new JsonSerializer<Date>() {
-			@Override
-			public void serialize(Date value, JsonGenerator jsonGenerator, SerializerProvider provider)
-					throws IOException {
-				SimpleDateFormat df = new SimpleDateFormat(DateUtils.TIME_PATTERN);
-				jsonGenerator.writeString(df.format(value));
-			}
-		});
+//		module.addSerializer(Date.class, new JsonSerializer<Date>() {
+//			@Override
+//			public void serialize(Date value, JsonGenerator jsonGenerator, SerializerProvider provider)
+//					throws IOException {
+//				SimpleDateFormat df = new SimpleDateFormat(DateUtils.TIME_PATTERN);
+//				jsonGenerator.writeString(df.format(value));
+//			}
+//		});
 		
 		registerModule(module);
 

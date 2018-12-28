@@ -25,7 +25,7 @@ public class CommonMvcConfig extends WebMvcConfigurationSupport {
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 		super.configureMessageConverters(converters);	      
 		MappingJackson2HttpMessageConverter m = new MappingJackson2HttpMessageConverter();
-		m.setObjectMapper(new ObjectMappingCustomer());
+		m.setObjectMapper(new ObjectMapperCustomer());
         converters.add(m);
 	}
 	

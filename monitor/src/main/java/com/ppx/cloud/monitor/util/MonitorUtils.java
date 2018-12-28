@@ -24,7 +24,7 @@ import org.apache.tomcat.util.modeler.Registry;
 import org.apache.tomcat.util.threads.TaskThread;
 import org.springframework.util.StringUtils;
 
-import com.ppx.cloud.common.config.ObjectMappingCustomer;
+import com.ppx.cloud.common.config.ObjectMapperCustomer;
 import com.ppx.cloud.monitor.config.MonitorConfig;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 
@@ -253,7 +253,7 @@ public class MonitorUtils {
         
         String r = "";
         try {
-            String myThrowableJson = new ObjectMappingCustomer().writeValueAsString(myThrowable);
+            String myThrowableJson = new ObjectMapperCustomer().writeValueAsString(myThrowable);
             r = myThrowableJson;
         } catch (Exception e) {
             e.printStackTrace();

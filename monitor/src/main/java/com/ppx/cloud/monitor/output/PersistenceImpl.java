@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mysql.cj.xdevapi.Row;
 import com.mysql.cj.xdevapi.SqlResult;
-import com.ppx.cloud.common.config.ObjectMappingCustomer;
+import com.ppx.cloud.common.config.ObjectMapperCustomer;
 import com.ppx.cloud.common.exception.ErrorPojo;
 import com.ppx.cloud.common.exception.ErrorUtils;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
@@ -330,7 +330,7 @@ public class PersistenceImpl extends PersistenceSupport {
 	private String toJson(Object obj) {
 		String r = "";
 		try {
-			r = new ObjectMappingCustomer().writeValueAsString(obj);
+			r = new ObjectMapperCustomer().writeValueAsString(obj);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
