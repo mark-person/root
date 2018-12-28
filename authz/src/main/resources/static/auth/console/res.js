@@ -61,7 +61,7 @@ function initTree(tree) {
 			var nodeType = treeUtils.getNodeType(data.icon);
 			if (nodeType == -1) {
 				$("#addChildId").show();
-				$(".operatorNode").hide();				
+				$(".operatorNode").hide();
 			}
 			else if (nodeType == 2) {
 				$("#addChildId").hide();
@@ -438,7 +438,7 @@ move.refreshMoveButton = function() {
 function updateResPrio(ids) {
 	var param = {ids:ids + ""}
 	$.post(contextPath + "auto/res/updateResPrio", param, function(r){
-		alertSuccess("保存成功！");
+		alertSuccess();
 		hideLoading();
 	});
 }
