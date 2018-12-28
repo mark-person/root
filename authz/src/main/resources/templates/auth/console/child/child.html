@@ -18,13 +18,13 @@ function add() {
 		if (!$("#addForm").valid()) return;
 		showLoading();
 		$.post([[@{/auto/child/insertChild}]], $("#addForm").serialize(), function(r) {
-			if (r.value == 1) {
+			if (r.errcode == 0) {
 				$('#add').modal('hide');
-				queryPage(1);
+				$("#pageDiv").query();
 				alertSuccess();
 			}
-			else if (r.value == 0) {
-				alertWarning("子帐号已经存在！");
+			else {
+				alertWarning(e.errmsg);
 				hideLoading();
 			}
 		});
@@ -35,22 +35,21 @@ function editAccount(id) {
 	showLoading();
 	$.post([[@{/auto/child/getChild}]], {id:id}, function(r) {
 		hideLoading();
+		$("#editAccountForm").html(template("editAccountTemplate", r));
 		$('#editAccount').modal('show');
-		$("#editAccountTemplate").nextAll().remove();
-		$("#editAccountTemplate").parent().append(template("editAccountTemplate", r));
 	});
 	
 	action = function() {
 		if (!$("#editAccountForm").valid()) return;
 		showLoading();
-		$.post([[@{/child/updateAccount}]], $("#editAccountForm").serialize(), function(r) {
-			if (r.value == 1) {
+		$.post([[@{/auto/child/updateAccount}]], $("#editAccountForm").serialize(), function(r) {
+			if (r.errcode == 0) {
 				$('#editAccount').modal('hide');
-				queryPage(1);
+				$("#pageDiv").query();
 				alertSuccess();
 			}
-			else if (r.value == 0) {
-				alertWarning("子帐号已经存在！");
+			else {
+				alertWarning(r.errmsg);
 				hideLoading();
 			}
 		});
@@ -61,16 +60,15 @@ function editPassword(id) {
 	showLoading();
 	$.post([[@{/auto/child/getChild}]], {id:id}, function(r) {
 		hideLoading();
+		$("#editPasswordForm").html(template("editPasswordTemplate", r));
 		$('#editPassword').modal('show');
-		$("#editPasswordTemplate").nextAll().remove();
-		$("#editPasswordTemplate").parent().append(template("editPasswordTemplate", r));
 	});
 	
 	action = function() {
 		if (!$("#editPasswordForm").valid()) return;
 		showLoading();
 		$.post([[@{/auto/child/updatePassword}]], $("#editPasswordForm").serialize(), function(r) {
-			if (r.value == 1) {
+			if (r.errcode == 0) {
 				$('#editPassword').modal('hide');
 				$("#pageDiv").query();
 				alertSuccess();
@@ -91,7 +89,7 @@ function remove(id) {
 	var callback = function() {
 		showLoading();
 		$.post([[@{/auto/child/deleteChild}]], {auth}, function(r) {
-			if (r.result == 1) {
+			if (r.errcode == 0) {
 				$("#pageDiv").query();
 			}
 		});	
@@ -105,12 +103,11 @@ template.helper('getAccountStauts', function(v) {
 	else return '';
 })
 
-
 function disable(id) {
 	confirm("确定禁用'" + id + "'?", function() {
 		showLoading();
 		$.post([[@{/auto/child/disable}]], {id:id}, function(r) {
-			r.value === SUCCESS ? $("#pageDiv").query() : alertDanger("error return");
+			r.errcode === 0 ? $("#pageDiv").query() : alertDanger("error return");
 		});
 	});
 }
@@ -119,7 +116,7 @@ function enable(id) {
 	confirm("确定解禁'" + id + "''?", function() {
 		showLoading();
 		$.post([[@{/auto/child/enable}]], {id:id}, function(r) {
-			r.value === SUCCESS ? $("#pageDiv").query() : alertDanger("error return");
+			r.errcode === 0 ? $("#pageDiv").query() : alertDanger("error return");
 		});
 	});
 }
@@ -187,22 +184,22 @@ function enable(id) {
 <div th:fragment="editAccount" th:replace="common/fragment::modalTemplate('editAccount', '修改子账号', '')">
 	<div class="form-group form-inline">
 		<label class="col-sm-4 control-label">帐号ID：</label>
-		<div class="col-sm-6"><input type="text" name="accountId" value="{{authAccount.accountId}}" class="form-control" readonly></div>
+		<div class="col-sm-6"><input type="text" name="accountId" value="{{pojo.accountId}}" class="form-control" readonly></div>
 	</div>
 	<div class="form-group form-inline">
 		<label class="col-sm-4 control-label"><span class="required">*</span>子账号：</label>
-		<div class="col-sm-6"><input type="text" name="loginAccount" value="{{authAccount.loginAccount}}" class="form-control" required maxlength="32"></div>
+		<div class="col-sm-6"><input type="text" name="loginAccount" value="{{pojo.loginAccount}}" class="form-control" required maxlength="32"></div>
 	</div>
 </div>
 
 <div th:fragment="editPassword" th:replace="common/fragment::modalTemplate('editPassword', '修改子账号密码', '')">
 	<div class="form-group form-inline">
 		<label class="col-sm-4 control-label">帐号ID：</label>
-		<div class="col-sm-8"><input type="text" name="accountId" value="{{authAccount.accountId}}" class="form-control" readonly></div>
+		<div class="col-sm-8"><input type="text" name="accountId" value="{{pojo.accountId}}" class="form-control" readonly></div>
 	</div>
 	<div class="form-group form-inline">
 		<label class="col-sm-4 control-label">子账号：</label>
-		<div class="col-sm-8"><input type="text" value="{{authAccount.loginAccount}}" class="form-control" readonly></div>
+		<div class="col-sm-8"><input type="text" value="{{pojo.loginAccount}}" class="form-control" readonly></div>
 	</div>
 	<div class="form-group form-inline">
 		<label class="col-sm-4 control-label"><span class="required">*</span>密&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
@@ -213,7 +210,6 @@ function enable(id) {
 		<span class="col-sm-8 label label-default">密码最少八位且包含字母和数字</span>
 	</div>
 </div>
-
 
 </div>
 

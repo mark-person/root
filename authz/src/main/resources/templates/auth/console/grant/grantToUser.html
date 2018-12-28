@@ -22,7 +22,7 @@
 var controllerPath = contextPath + "auto/grant/";
 
 $(function() {
-	$("#pageDiv").page({url:contextPath + "auto/grant/listUser", data:[[${list}]]});
+	$("#pageDiv").page({url:controllerPath + "listUser", data:[[${list}]]});
 });
 
 
@@ -37,7 +37,7 @@ $(function() {
 		<label>用户ID:</label>	
 		<input type="text" class="form-control input-sm" name="userId" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
 		<label>用户名称:</label>		
-		<input type="text" class="form-control input-sm" name="userName" >			
+		<input type="text" class="form-control input-sm" name="loginAccount" >			
 		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>		
 	</div>
 	

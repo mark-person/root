@@ -30,28 +30,23 @@ public class ChildController {
         mv.addObject("list", list(new Page(), new AuthAccount()));
         return mv;
     }
-
   
     public Map<?, ?> list(Page page, AuthAccount child) {
         List<AuthAccount> list = impl.listChild(page, child);
         return ReturnMap.of(page, list);
     }
-
     
     public Map<?, ?> insertChild(AuthAccount bean) {
         return impl.insertChild(bean);
     }
-
     
     public Map<?, ?> getChild(@RequestParam Integer id) {
         return ReturnMap.of("pojo", impl.getChild(id));
     }
 
-   
     public Map<?, ?> updateAccount(AuthAccount bean) {
         return impl.updateAccount(bean);
     }
-
    
     public Map<?, ?> updatePassword(@RequestParam Integer accountId,
             @RequestParam String loginPassword) {
@@ -93,10 +88,7 @@ public class ChildController {
 
     public Map<?, ?> getAuthorize(@RequestParam Integer accountId) {
         Map<?, ?> resMap = resourceImpl.getResource();
-        if (resMap == null) {
-            return ReturnMap.of(4001, "资源为空");
-        }
-        return ReturnMap.of("resIds", grantImpl.getGrantResIds(accountId));
+        return ReturnMap.of("resIds", grantImpl.getGrantResIds(accountId), "tree", resMap);
     }
 
     public Map<?, ?> saveAuthorize(@RequestParam Integer accountId, @RequestParam String resIds) {
