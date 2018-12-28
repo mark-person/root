@@ -308,7 +308,11 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 			/** @author mark */
             if (MonitorConfig.IS_DEBUG) {
                 if (TaskThread.getAccessLog() != null) {
-                	TaskThread.getAccessLog().setOutJson(objectWriter.writeValueAsString(value));
+                	String outJson = objectWriter.writeValueAsString(value);
+                	if (outJson.length() > 256) {
+                		outJson = outJson.substring(0, 256) + "...";
+                	}
+                	TaskThread.getAccessLog().setOutJson(outJson);
                 }
             }
 		}

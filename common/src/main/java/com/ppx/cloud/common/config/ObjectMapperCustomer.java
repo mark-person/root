@@ -36,15 +36,6 @@ public class ObjectMapperCustomer extends ObjectMapper {
 			}
 		});
 		
-//		module.addSerializer(Date.class, new JsonSerializer<Date>() {
-//			@Override
-//			public void serialize(Date value, JsonGenerator jsonGenerator, SerializerProvider provider)
-//					throws IOException {
-//				SimpleDateFormat df = new SimpleDateFormat(DateUtils.TIME_PATTERN);
-//				jsonGenerator.writeString(df.format(value));
-//			}
-//		});
-		
 		registerModule(module);
 
 	}

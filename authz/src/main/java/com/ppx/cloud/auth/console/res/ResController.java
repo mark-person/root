@@ -74,7 +74,7 @@ public class ResController {
         }
         resList.addAll(controllerSet);
         
-        return ReturnMap.of("list", resList, "menuList", menuList);
+        return ReturnMap.of("resList", resList, "menuList", menuList);
     }
 	
 	private boolean filterUri(String uri) {

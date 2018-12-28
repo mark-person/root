@@ -10,7 +10,7 @@ $(function() {
 	
 	// 异步加载系统uri
 	$.post(contextPath + "auto/res/getResUri", null, function(r){
-		typeHeadSource = r.arrayList;
+		typeHeadSource = r.resList;
 		for (var i in typeHeadSource) {
 			typeHeadSourceMap[typeHeadSource[i]] = 1;
 		}
