@@ -41,8 +41,7 @@ public class ResController {
 		if (resMap == null) {
 			return ReturnMap.of(4001, "资源为空");
 		}
-		resMap.putAll(ReturnMap.of());
-		return resMap;
+		return ReturnMap.of("tree", resMap);
 	}
 	
 	public Map<?, ?> getResUri() {

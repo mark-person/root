@@ -64,7 +64,7 @@ treeUtils.decompressNode = function(node, resMap) {
 function initResource() {
 	$('#tree').html("");
 	$('#loading').modal('show');
-	$.post(controllerPath + "getAuthorize", "accountId=" + $("#grantAccountId").val(), function(r){
+	$.post(controllerPath + "getAuthorize", {accountId:$("#grantAccountId").val()}, function(r){
 		if (r.result == -1) {
 			// 刚开始没有数据时
 			initTree([{text:"资源", icon:"fa fa-home"}]);
@@ -190,7 +190,7 @@ function authorize() {
 	showLoading();
 	var para = "accountId=" + $("#grantAccountId").val() + "&resIds=" + checkedIds;
 	$.post(controllerPath + "saveAuthorize", para, function(r) {
-		if (r.result == 0 || r.result == 1) {
+		if (r.errcode == 0) {
 			hideLoading();
 			alertSuccess();
 			$('#grantModal').modal('hide');

@@ -64,6 +64,7 @@ create table error (
 	serviceId 	varchar(32) not null,
 	errorTime 	datetime not null,
 	errorCode 	int not null default -1,
+	errorLevel  int not null default -1,
 	errorMsg	varchar(1024),
 	primary key (accessId)
 );

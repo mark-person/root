@@ -230,7 +230,6 @@ function edit(id, getCallback, updateCallback) {
 	showLoading();
 	$.post(controllerPath + "get", {id:id}, function(r) {
 		hideLoading();
-		$('#edit').find("script").attr("id", "editTemplate");
 		$("#editForm").html(template("editTemplate", r));
 		$('#edit').modal('show');
 		getCallback ? getCallback(r) : null;

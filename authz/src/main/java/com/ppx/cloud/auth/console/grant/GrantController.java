@@ -44,7 +44,7 @@ public class GrantController {
         if (resMap == null) {
             return ReturnMap.of(4001, "资源为空");
         }
-        return ReturnMap.of("resIds", impl.getGrantResIds(accountId));
+        return ReturnMap.of("resIds", impl.getGrantResIds(accountId), "tree", resMap);
 	}
 	
 	public Map<?, ?> saveAuthorize(@RequestParam Integer accountId, @RequestParam String resIds) {

@@ -81,13 +81,13 @@ public class AuthUserServiceImpl extends MyDaoSupport {
 
 	public Map<String, Object> updateAuthUser(AuthUser pojo) {
 		int r = updateEntity(pojo, "user_name");
-		return ReturnMap.exists(r, "用户名称已经存在");
+		return ReturnMap.exists(r, "用户名称");
 	}
 	
 	public Map<String, Object> updateAuthAccount(AuthAccount pojo) {
 		pojo.setModified(new Date());
 		int r = updateEntity(pojo, "login_account");
-		return ReturnMap.exists(r, "登录帐号已经存在");
+		return ReturnMap.exists(r, "登录帐号");
 	}
 	
 	public Map<String, Object> updateAuthUserPassword(Integer userId, String userPassword) {

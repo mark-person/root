@@ -82,12 +82,7 @@ function initTree(tree) {
 			if (data.id) {
 				$("#uriList li:gt(0)").remove();
 				$("#uriList").append('<li class="list-group-item" style="background-color: white;"><i class="fa fa-refresh fa-spin"></i></li>');
-				
-				
-				$.post(contextPath + "auto/res/getUri", "resId=" + data.id, function(r){					
-					$("#uriList li:gt(0)").remove();
-					$("#uriList").append(template('uriListTemplate', r));
-				});
+				loadUriList(data.id);
 			}
 			$("#uri").show();			
 		},
@@ -106,6 +101,14 @@ function initTree(tree) {
 		}
 	});
 }
+
+function loadUriList(resId) {
+	$.post(contextPath + "auto/res/getUri", "resId=" + resId, function(r){					
+		$("#uriList li:gt(0)").remove();
+		$("#uriList").append(template('uriListTemplate', r));
+	});
+}
+
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>addChild
@@ -195,6 +198,7 @@ function editNode(obj) {
 			selectedNode.text =  $("#updateNodeName").val();
 			initTree([$('#tree').treeview('getNode', 0)]);
 			$("#editNode").modal("hide");
+			loadUriList(selectNode.id);
 		})
 	}
 }

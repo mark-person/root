@@ -2,7 +2,6 @@ package com.ppx.cloud.auth.console.res;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,6 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
 	@Override
 	public Map<String, Object> getResource() {
-		var returnMap = new HashMap<String, Object>();
 		LoginAccount account = AuthContext.getLoginAccount();
 		String resSql = "";
 		// 管理员查看所有资源，用户主账号只能查看已经分配的资源(子帐号的userId就是用户主账号)
@@ -77,8 +75,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		var rootMap = new HashMap<String, Object>(resMap);
 		
 		rootMap.put("nodes", folderList);
-		returnMap.put("tree", rootMap);
-		return returnMap;
+		return rootMap;
 	}
 	
 	private List<Map<String, Object>> getChildList(int parentId, List<Map<String, Object>> resList) {
@@ -121,6 +118,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		return getLastInsertId();	
 	}
 	
+	@Transactional
 	public Map<String, Object> updateRes(int id, String resName, String menuUri) {
 		if (Strings.isEmpty(menuUri)) {
 			String sql = "update auth_res set res_name = ? where res_id = ?";
