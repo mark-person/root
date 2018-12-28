@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,9 +121,21 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 		return getLastInsertId();	
 	}
 	
-	public Map<String, Object> updateRes(int id, String resName) {
-		String sql = "update auth_res set res_name = ? where res_id = ?";
-		getJdbcTemplate().update(sql, resName, id);
+	public Map<String, Object> updateRes(int id, String resName, String menuUri) {
+		if (Strings.isEmpty(menuUri)) {
+			String sql = "update auth_res set res_name = ? where res_id = ?";
+			getJdbcTemplate().update(sql, resName, id);
+		}
+		else {
+			String insertSeqSql = "insert ignore into auth_uri_seq(uri_text) values(?)";
+			getJdbcTemplate().update(insertSeqSql, menuUri);
+			
+			String seqSql = "select uri_seq from auth_uri_seq where uri_text = ?";
+			int uriSeq = getJdbcTemplate().queryForObject(seqSql, Integer.class, menuUri);
+			
+			String sql = "update auth_res set res_name = ?, uri_seq = ? where res_id = ?";
+			getJdbcTemplate().update(sql, resName, uriSeq, id);
+		}
 		return ReturnMap.of();
 	}
 	

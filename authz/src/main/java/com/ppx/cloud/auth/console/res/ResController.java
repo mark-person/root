@@ -108,8 +108,8 @@ public class ResController {
     	return ReturnMap.of("resId", impl.insertRes(parentId, resName, resType, menuUri));
     }
     
-    public Map<?, ?> updateRes(@RequestParam int id, @RequestParam String resName) {
-    	return impl.updateRes(id, resName);
+    public Map<?, ?> updateRes(@RequestParam int id, @RequestParam String resName, String menuUri) {
+    	return impl.updateRes(id, resName, menuUri);
     }
     
     public Map<?, ?> deleteRes(@RequestParam int id) {

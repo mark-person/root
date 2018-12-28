@@ -40,17 +40,6 @@ treeUtils.getFirstLevelChildrenIds = function(node) {
 	return this.childrenId;
 }
 
-treeUtils.compressNode = function(node) {
-	var newNode = {id:node.id,t:node.text,i:this.getNodeType(node.icon)};
-	if (node.nodes) {
-		newNode.n = [];
-		for (var i = 0; i < node.nodes.length; i++) {
-			newNode.n.push(this.compressNode(node.nodes[i]));
-		}
-	}
-	return newNode;
-}
-
 treeUtils.getNodeIcon = function(nodeType) {
 	// -1资源 0目录 1菜单 2操作
 	if (nodeType == 0) return "fa fa-folder";
@@ -119,8 +108,6 @@ function initTree(tree) {
 }
 
 
-
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>addChild
 function noteTypeChange(noteType) {
 	$("#nodeGlyphicon").attr("class", treeUtils.getNodeIcon(noteType));
@@ -151,8 +138,8 @@ function addChild() {
 	action = function() {
 		if (!$("#addChildForm").valid()) return;
 		
-		if ($("#addMenuUriDiv").css("display") != "none" && !validateUri($("#addMenuUri").val())) {
-			alertWarning("URI不存在");
+		if ($("#addMenuUriDiv").css("display") != "none" && !validateMenuUri($("#addMenuUri").val())) {
+			alertWarning("菜单URI不存在");
 			return;
 		}
 		
@@ -189,19 +176,19 @@ function editNode(obj) {
 	$("#editMenuUriDiv").hide();
 	if (treeUtils.getNodeType(selectNode.icon) == 1)  {
 		$("#editMenuUriDiv").show();
-		addTypeHead($("#editMenuUri"));
+		addMenuHead($("#editMenuUri"));
 	}
 	
 	$("#editNode").modal("show");
 	action = function() {
 		if (!$("#editNodeForm").valid()) return;
-		if ($("#editMenuUriDiv").css("display") != "none" && !validateUri($("#editMenuUri").val())) {
-			alertWarning("URI不存在");
+		if ($("#editMenuUriDiv").css("display") != "none" && !validateMenuUri($("#editMenuUri").val())) {
+			alertWarning("菜单URI不存在");
 			return;
 		}
 		
 		showLoading();
-		var param = {id:selectNode.id,resName:$("#updateNodeName").val()};
+		var param = {id:selectNode.id,resName:$("#updateNodeName").val(),menuUri:$("#editMenuUri").val()};
 		$.post(contextPath + "auto/res/updateRes", param, function(r){
 			hideLoading();
 			var selectedNode = $('#tree').treeview('getSelected')[0];
@@ -259,12 +246,12 @@ function addMenuHead(jObj) {
 
 function validateUri(uri) { 
 	var u = uri.split("?")[0];
-	if (typeHeadSourceMap[u] != 1) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	return typeHeadSourceMap[u] == 1;
+}
+
+function validateMenuUri(uri) { 
+	var u = uri.split("?")[0];
+	return typeHeadMenuMap[u] == 1;
 }
 
 function addUri() {
@@ -320,7 +307,6 @@ function getUriLi(icon, click) {
 
 function removeUri(obj) {
 	var callback = function() {
-		
 		var resId = $('#tree').treeview('getSelected')[0].id;
 		var uriSeq = ($(obj).attr("data-uri-index"));
 		showLoading();
