@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.ppx.cloud.common.context.CommonContext;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
@@ -325,6 +326,9 @@ public class AccessLog {
         accessLog.setUri(request.getRequestURI());
         accessLog.setQueryString(request.getQueryString());
         accessLog.setReferer(MonitorUtils.getReferer(request));
+        
+        Integer accountId = CommonContext.getAccountId();
+        accessLog.setAccountId(accountId);
         return accessLog;
     }
 }

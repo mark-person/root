@@ -1,7 +1,5 @@
 package com.ppx.cloud.monitor.exception;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,7 +7,6 @@ import org.apache.tomcat.util.threads.TaskThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,9 +17,9 @@ import com.ppx.cloud.monitor.pojo.AccessLog;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
 /**
- * 监控异常处理
+ * # 监控异常处理
  * @author mark
- * @date 2018年6月25日
+ * @date 2018年12月29日
  */
 @ControllerAdvice
 public class MonitorExceptionHandler extends CustomExceptionHandler {

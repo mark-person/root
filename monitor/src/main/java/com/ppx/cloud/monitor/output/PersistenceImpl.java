@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mysql.cj.xdevapi.Row;
 import com.mysql.cj.xdevapi.SqlResult;
 import com.ppx.cloud.common.config.ObjectMapperCustomer;
+import com.ppx.cloud.common.context.CommonContext;
 import com.ppx.cloud.common.exception.ErrorPojo;
 import com.ppx.cloud.common.exception.ErrorUtils;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
@@ -94,9 +95,10 @@ public class PersistenceImpl extends PersistenceSupport {
 		String[] timeStr = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()).split(" ");
 		long useMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
         
-		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "uid", -1);
+		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "aid", a.getAccountId());
 		String accessInfo = toJson(map);
-		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(), a.getUriSeq(), a.getSpendTime(), accessInfo);
+		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(),
+				a.getUriSeq(), a.getSpendTime(), accessInfo);
 		String sql = "insert into access(accessDate, accessTime, serviceId, uriSeq, spendTime, accessInfo) values(?, ?, ?, ?, ?, ?)";
 		t.sql(sql, bindValue);
 		

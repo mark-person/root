@@ -21,6 +21,7 @@ import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthUtils;
 import com.ppx.cloud.auth.common.LoginAccount;
 import com.ppx.cloud.auth.pojo.AuthAccount;
+import com.ppx.cloud.common.context.CommonContext;
 import com.ppx.cloud.common.exception.ErrorCode;
 import com.ppx.cloud.common.exception.security.PermissionUriException;
 import com.ppx.cloud.common.util.ApplicationUtils;
@@ -82,6 +83,9 @@ public class AuthFilterUtils {
         account.setUserName(userName);
         int authAll = jwt.getClaim("authAll").asInt();
         int authGrant = jwt.getClaim("authGrant").asInt();
+        
+        // 传值给 monitor
+        CommonContext.setAccountId(accountId);
 
         // 权限版本判断
         if (localAuthAllVersion != authAll) {
