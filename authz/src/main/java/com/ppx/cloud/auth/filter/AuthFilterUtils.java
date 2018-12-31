@@ -20,6 +20,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthUtils;
 import com.ppx.cloud.auth.common.LoginAccount;
+import com.ppx.cloud.auth.common.PropertiesAuth;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.common.context.CommonContext;
 import com.ppx.cloud.common.exception.ErrorCode;
@@ -104,7 +105,7 @@ public class AuthFilterUtils {
         }
 
         // 修改密码后原token无效,帐号置无效后token无效 >>>>>>>>>>>>>
-        int validateSecond = Integer.parseInt(ApplicationUtils.getEnv().getProperty("jwt.validateSecond"));
+        int validateSecond = PropertiesAuth.jwtValidateSecond;
 
         if (System.currentTimeMillis() - jwt.getIssuedAt().getTime() >= validateSecond * 1000) {
             // 重新检验,并重新生成token

@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
 import com.ppx.cloud.auth.common.AuthUtils;
+import com.ppx.cloud.auth.common.PropertiesAuth;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.util.ApplicationUtils;
@@ -22,7 +23,7 @@ public class LoginServiceImpl extends MyDaoSupport {
 	
 	public AuthAccount getLoginAccount(String a, String p) {
 		
-		String adminPassword = ApplicationUtils.getEnv().getProperty("admin.password");
+		String adminPassword = PropertiesAuth.adminPassword;
 		
 		// 超级管理员
 		if (AuthUtils.ADMIN_ACCOUNT.equals(a) && Objects.equals(adminPassword, p)) {

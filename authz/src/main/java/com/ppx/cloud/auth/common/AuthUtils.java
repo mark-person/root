@@ -19,7 +19,7 @@ public class AuthUtils {
 	public static final int ACCOUNT_STATUS_INEFFECTIVE = 2;
 	
 	public static String getJwtPassword() {
-		return ApplicationUtils.getEnv().getProperty("jwt.password") + "PASS";
+		return PropertiesAuth.jwtPassword + "PASS";
 	}
 	
 	public static String getMD5Password(String p) {
