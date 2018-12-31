@@ -3,7 +3,7 @@ package com.ppx.cloud.auth.config;
 import com.ppx.cloud.common.util.MD5Utils;
 
 /**
- * 权限工具类
+ * # 权限工具类
  * @author mark
  * @date 2018年7月2日
  */
