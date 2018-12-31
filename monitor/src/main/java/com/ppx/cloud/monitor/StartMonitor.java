@@ -28,7 +28,7 @@ import com.ppx.cloud.monitor.util.MonitorUtils;
 
 
 /**
- * 开机启动记录日志, 内存和硬盘大小单位默认M, 时间默认ms
+ * # 开机启动记录日志, 内存和硬盘大小单位默认M, 时间默认ms
  * @author mark
  * @date 2018年6月16日
  */
