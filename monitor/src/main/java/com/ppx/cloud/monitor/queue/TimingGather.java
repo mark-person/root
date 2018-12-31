@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.config.MonitorProperties;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 import com.zaxxer.hikari.HikariDataSource;
@@ -52,8 +53,8 @@ public class TimingGather {
         // 内存配置信息 isDebug isWarning gatherInterval dumpThreadMaxTime
         StringBuilder configStr = new StringBuilder("debug:").append(MonitorConfig.IS_DEBUG)
                 .append(",warning:").append(MonitorConfig.IS_WARNING)
-                .append(",interval:").append(MonitorConfig.GATHER_INTERVAL)
-                .append(",maxTime:").append(MonitorConfig.DUMP_MAX_TIME);
+                .append(",interval:").append(MonitorProperties.GATHER_INTERVAL)
+                .append(",maxTime:").append(MonitorProperties.DUMP_MAX_TIME);
         gatherMap.put("config", configStr.toString());
         
         // CPU
@@ -62,8 +63,8 @@ public class TimingGather {
         gatherMap.put("pCpuLoad", pCpuLoad);
         
         // 请求,包括超时时dump
-        boolean isOverCpu = pCpuLoad >= MonitorConfig.MAX_CPU_DUMP ? true : false;
-        boolean isOverMem = Double.valueOf(uMem) / mMem >= MonitorConfig.MAX_MEMORY_DUMP ? true : false;
+        boolean isOverCpu = pCpuLoad >= MonitorProperties.MAX_CPU_DUMP ? true : false;
+        boolean isOverMem = Double.valueOf(uMem) / mMem >= MonitorProperties.MAX_MEMORY_DUMP ? true : false;
         if (isOverCpu) {
             gatherMap.put("cpuOverDump", MonitorUtils.getCpuTopDetail()); 
         }

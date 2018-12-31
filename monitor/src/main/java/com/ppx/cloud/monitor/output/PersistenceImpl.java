@@ -16,7 +16,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mysql.cj.xdevapi.Row;
 import com.mysql.cj.xdevapi.SqlResult;
 import com.ppx.cloud.common.config.ObjectMapperCustomer;
-import com.ppx.cloud.common.context.CommonContext;
 import com.ppx.cloud.common.exception.ErrorPojo;
 import com.ppx.cloud.common.exception.ErrorUtils;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
@@ -26,6 +25,7 @@ import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
 import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.config.MonitorProperties;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 import com.ppx.cloud.monitor.util.AccessLogUtils;
 import com.ppx.cloud.monitor.util.MonitorUtils;
@@ -64,8 +64,8 @@ public class PersistenceImpl extends PersistenceSupport {
 		MyUpdate confUpdate = MyUpdate.getInstance(true, "conf", "serviceId", ApplicationUtils.getServiceId());
         confUpdate.set("isDebug", MonitorConfig.IS_DEV ? 1 : 0);
     	confUpdate.set("isWarning", MonitorConfig.IS_DEV ? 1 : 0);
-        confUpdate.set("gatherInterval", MonitorConfig.GATHER_INTERVAL);
-        confUpdate.set("dumpMaxTime", MonitorConfig.DUMP_MAX_TIME);
+        confUpdate.set("gatherInterval", MonitorProperties.GATHER_INTERVAL);
+        confUpdate.set("dumpMaxTime", MonitorProperties.DUMP_MAX_TIME);
         confUpdate.set("modified", new Date());
         confUpdate.execute(t);
 	}

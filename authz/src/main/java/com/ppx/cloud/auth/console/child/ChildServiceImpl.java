@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ppx.cloud.auth.common.AuthContext;
-import com.ppx.cloud.auth.common.AuthUtils;
+import com.ppx.cloud.auth.config.AuthUtils;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyCriteria;

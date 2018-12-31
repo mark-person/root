@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ppx.cloud.auth.common.AuthUtils;
+import com.ppx.cloud.auth.config.AuthUtils;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.auth.pojo.AuthUser;
 import com.ppx.cloud.common.contoller.ReturnMap;

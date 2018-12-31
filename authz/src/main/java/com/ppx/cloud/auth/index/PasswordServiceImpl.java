@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.auth.common.AuthContext;
-import com.ppx.cloud.auth.common.AuthUtils;
+import com.ppx.cloud.auth.config.AuthUtils;
 
 /**
  * 

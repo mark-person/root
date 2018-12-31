@@ -8,10 +8,8 @@ import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.Column;
 import com.mysql.cj.xdevapi.DbDoc;
-import com.mysql.cj.xdevapi.DbDocImpl;
 import com.mysql.cj.xdevapi.JsonNumber;
 import com.mysql.cj.xdevapi.JsonString;
 import com.mysql.cj.xdevapi.Row;

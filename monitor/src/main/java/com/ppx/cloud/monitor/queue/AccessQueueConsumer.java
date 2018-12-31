@@ -12,6 +12,7 @@ import com.mysql.cj.xdevapi.Row;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.config.MonitorProperties;
 import com.ppx.cloud.monitor.output.ConsoleImpl;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
 import com.ppx.cloud.monitor.pojo.AccessLog;
@@ -83,21 +84,21 @@ public class AccessQueueConsumer {
 	private void intervalRun() {
 		// 采集间隔
 		long currentNanoTime = System.nanoTime();
-		if (currentNanoTime - lastGatherNanoTime >= MonitorConfig.GATHER_INTERVAL * 1e6) {
+		if (currentNanoTime - lastGatherNanoTime >= MonitorProperties.GATHER_INTERVAL * 1e6) {
 			lastGatherNanoTime = currentNanoTime;
 			TimingGather.gather();
 		}
 
 		// 同步配置数据
-		if (currentNanoTime - lastGetConfNanoTime >= MonitorConfig.SYNC_CONF_INTERVAL * 1e6) {
+		if (currentNanoTime - lastGetConfNanoTime >= MonitorProperties.SYNC_CONF_INTERVAL * 1e6) {
 			lastGetConfNanoTime = currentNanoTime;
 			try (LogTemplate t = new LogTemplate()) {
 				Row row = PersistenceImpl.getInstance(t).getConfig(ApplicationUtils.getServiceId());
 				if (row != null) {
 					MonitorConfig.IS_DEBUG = (row.getInt("isDebug") == 1);
 					MonitorConfig.IS_WARNING = (row.getInt("isWarning") == 1);
-					MonitorConfig.GATHER_INTERVAL = row.getInt("gatherInterval");
-					MonitorConfig.DUMP_MAX_TIME = row.getInt("dumpMaxTime");
+					MonitorProperties.GATHER_INTERVAL = row.getInt("gatherInterval");
+					MonitorProperties.DUMP_MAX_TIME = row.getInt("dumpMaxTime");
 				}
 			}
 		}
