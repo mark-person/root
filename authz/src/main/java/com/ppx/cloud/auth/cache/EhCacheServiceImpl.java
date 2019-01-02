@@ -20,7 +20,7 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 
 /**
- * 分两部分刷新:一个是刷新所有(菜单修改后)，一个是刷新权限部分(修改权限后)
+ * # 分两部分刷新:一个是刷新所有(菜单修改后)，一个是刷新权限部分(修改权限后)
  * @author mark
  * @date 2018年6月22日
  */
