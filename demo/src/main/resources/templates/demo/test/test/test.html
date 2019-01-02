@@ -26,6 +26,8 @@ var getCallback = function(r) {
 
 <div id="pageDiv" th:include="common/fragment::page('基本信息')">
 	<div th:fragment="query">
+		<button type="button" class="btn btn-success btn-sm" th:attr="disabled=${_test_insert==null?true:false}" onclick="alert('test')">测试按键</button>
+	
 		<button type="button" class="btn btn-success btn-sm" onclick="add()">新增</button>
 		<label>名称：</label>
 		<input type="text" class="form-control" name="testName">

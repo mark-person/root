@@ -20,7 +20,7 @@ public interface EhCacheService {
     
     Map<String, Integer> loadUriIndex();
     
-    Map<String, List<Map>> loadMenuResourceUri();
+    Map<String, List<Map<String, Object>>> loadMenuResourceUri();
     
     Map<Integer, List<Integer>> loadResouceUri();
     

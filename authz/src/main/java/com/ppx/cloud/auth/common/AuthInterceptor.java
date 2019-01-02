@@ -7,6 +7,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.auth.filter.AuthFilterUtils;
+import com.ppx.cloud.common.context.CommonContext;
 
 
 
@@ -33,8 +34,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 			response.sendRedirect(contextPath + "/auto/login/login");
 			return false;
 		} else {
-		    // 为每个请求都加上accountId	
-		    // CommonContext.setAccountId(account.getAccountId());
 			AuthContext.setLoginAccount(account);
 		}
 

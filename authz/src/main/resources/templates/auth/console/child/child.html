@@ -88,7 +88,7 @@ function validatePassword(field, rules, i, options) {
 function remove(id) {
 	var callback = function() {
 		showLoading();
-		$.post([[@{/auto/child/deleteChild}]], {auth}, function(r) {
+		$.post([[@{/auto/child/deleteChild}]], {id:id}, function(r) {
 			if (r.errcode == 0) {
 				$("#pageDiv").query();
 			}

@@ -58,8 +58,8 @@ public class AuthFilterServiceImpl extends MyDaoSupport {
 	}
 	
 	@SuppressWarnings("rawtypes")
-    public List<Map> getOpUri(String menuUri) {
-		Map<String, List<Map>> map = ehCacheServ.loadMenuResourceUri();
+    public List<Map<String, Object>> getOpUri(String menuUri) {
+		Map<String, List<Map<String, Object>>> map = ehCacheServ.loadMenuResourceUri();
 		return map.get(menuUri);
 	}
 	

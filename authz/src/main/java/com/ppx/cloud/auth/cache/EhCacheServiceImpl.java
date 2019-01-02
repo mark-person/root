@@ -1,13 +1,12 @@
 package com.ppx.cloud.auth.cache;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
@@ -89,12 +88,45 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
     }
     
     
-    @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadMenuResourceUri'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
-    public Map<String, List<Map>> loadMenuResourceUri() {
-        Map<String, List<Map>> returnMap = new HashMap<String, List<Map>>();
+    // @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadMenuResourceUri'", cacheManager=EhCacheConfig.LOCAL_MANAGER)
+    public Map<String, List<Map<String, Object>>> loadMenuResourceUri() {
+    	
+    	Map<String, List<Map<String, Object>>> returnMap = new HashMap<String, List<Map<String, Object>>>();
+    	
+    	String sql = "select ru.uri_seq, us.uri_text, menu.uri_text menu_uri " + 
+    			"from auth_res_uri ru join auth_uri_seq us on ru.uri_seq = us.uri_seq " + 
+    			"join auth_res r on r.res_id = ru.res_id join auth_res p on r.parent_id = p.res_id join auth_uri_seq menu on menu.uri_seq = p.uri_seq " + 
+    			"where  p.res_type = 1";
+    	// 
+    	Set<String> menuUriSet = new HashSet<String>();
+    	
+    	
+    	List<Map<String, Object>> list = getJdbcTemplate().queryForList(sql);
+    	for (Map<String, Object> map : list) {
+			String menuUri = (String)map.get("menu_uri");
+			menuUriSet.add(menuUri);
+		}
+    	
+    	for (String menuUri : menuUriSet) {
+    		List<Map<String, Object>> resList = new ArrayList<Map<String, Object>>();
+    		for (Map<String, Object> map : list) {
+    			String tmpMenuUri = (String)map.get("menu_uri");
+    			if (tmpMenuUri.equals(menuUri)) {
+    				resList.add(map);
+    			}
+    		}
+    		returnMap.put(menuUri, resList);
+		}
+    	
+    	return returnMap;
+    	
+    
+    	
+    	
         
-        Map<Integer, Map> IdMap = new HashMap<Integer, Map>();
-        Map<Integer, List<Map>> pMenuIdMap = new HashMap<Integer, List<Map>>();
+        
+//        Map<Integer, Map> IdMap = new HashMap<Integer, Map>();
+//        Map<Integer, List<Map>> pMenuIdMap = new HashMap<Integer, List<Map>>();
         
 //        List<Map> list = mongoTemplate.findAll(Map.class, COL_RESOURCE_URI);
 //        if (list == null) {
@@ -117,7 +149,7 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
 //            List<String> uriList = (List<String>)map.get("uri");
 //            returnMap.put((String)uriList.get(0), value);
 //        });
-        return returnMap;
+        
     }
     
    // @Cacheable(value=EhCacheConfig.AUTH_FIX_CACHE, key="'loadResouceUri'", cacheManager=EhCacheConfig.LOCAL_MANAGER)

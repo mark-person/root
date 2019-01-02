@@ -156,8 +156,6 @@ public class AuthFilterUtils {
         testUriList.add("/auto/" + uri.split("/")[2] + "/*");
         testUriList.add("/auto/*");
         testUriList.add("/*");
-        System.out.println("xxxxxxxxxx:" + testUriList);
-
         boolean missUri = true;
         for (String testUri : testUriList) {
             // 取得URI对应的index
@@ -195,15 +193,15 @@ public class AuthFilterUtils {
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void setOperationPermission(HttpServletRequest request, List<Map> opList, BitSet grantBitset) {
+    private static void setOperationPermission(HttpServletRequest request, List<Map<String, Object>> opList, BitSet grantBitset) {
         if (opList == null) {
             return;
         }
         for (Map map : opList) {
-            List<Integer> indexList = (List<Integer>) map.get("uriIndex");
+            List<Integer> indexList = (List<Integer>) map.get("uri_seq");
             indexList.forEach(uriIndex -> {
                 if (grantBitset.get(uriIndex)) {
-                    setOperationRequest(request, (List<String>) map.get("uri"));
+                    setOperationRequest(request, (List<String>) map.get("menu_uri"));
                 }
             });
         }
@@ -211,6 +209,7 @@ public class AuthFilterUtils {
 
     // 操作权限设置(可扩展作数据权限用)
     private static void setOperationRequest(HttpServletRequest request, List<String> uriList) {
+    	
         for (String uri : uriList) {
             // /test/saveTest改名成_test_saveTest
             request.setAttribute(uri.replace("/", "_"), true);
