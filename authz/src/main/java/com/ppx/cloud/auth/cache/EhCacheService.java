@@ -15,7 +15,7 @@ public interface EhCacheService {
     
     void clearAllLocalCache();
     
-    void clearAuthLocalCache();
+    void clearGrantLocalCache();
     
     
     Map<String, Integer> loadUriIndex();

@@ -51,11 +51,15 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
     }
 	
 	public void increaseAllDbVersion() {
+		// 删除本机缓存
+		clearAllLocalCache();
         String sql = "update auth_cache set all_version = all_version + 1 where cache_type = ?";
         getJdbcTemplate().update(sql, AuthCache.AUTH_VERSION);
 	}
 	
 	public void increaseGrantDbVersion() {
+		// 删除本机缓存
+		clearGrantLocalCache();
 	    String sql = "update auth_cache set grant_version = grant_version + 1 where cache_type = ?";
         getJdbcTemplate().update(sql, AuthCache.AUTH_VERSION);
 	}
@@ -65,7 +69,7 @@ public class EhCacheServiceImpl extends MyDaoSupport implements EhCacheService {
         clearCache(EhCacheConfig.AUTH_FIX_CACHE);
     }
     
-	public void clearAuthLocalCache() {
+	public void clearGrantLocalCache() {
         clearCache(EhCacheConfig.ACCOUNT_BIT_SET_CACHE);
     }
 	

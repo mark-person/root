@@ -45,7 +45,7 @@ public class AuthFilterUtils {
     /**
      * # 跳到login的情况 1. 没有token 2. tockcen校验异常(token不同法或jwt密码被改) 3. 帐号状态异常 4.
      * modified不同（账号和密码被修改时） # 说明 1.token过期时，将重新验证，合法就产生新的token，不合法就跳到login页
-     * 获取token里的用户信息
+	  * 获取token里的用户信息
      * 
      * @param request
      * @return 返回null则跳到login页
@@ -96,7 +96,7 @@ public class AuthFilterUtils {
         } else if (localAuthGrantVersion != authGrant) {
             localAuthGrantVersion = authGrant;
             EhCacheService ehCacheServ = ApplicationUtils.context.getBean(EhCacheService.class);
-            ehCacheServ.clearAuthLocalCache();
+            ehCacheServ.clearGrantLocalCache();
         }
 
         // 超级管理员不拦截
