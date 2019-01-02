@@ -190,7 +190,7 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
 	public List<Map<String, Object>> getUri(int resId) {
 		String sql = "select s.uri_seq, s.uri_text, if((select uri_seq from auth_res where res_id = ?) = s.uri_seq, 1, 0) is_menu" + 
-				" from auth_uri_seq s join auth_res_uri u on s.uri_seq = u.uri_seq where u.res_id = ? order by uri_seq";
+				" from auth_uri_seq s join auth_res_uri u on s.uri_seq = u.uri_seq where u.res_id = ? order by is_menu desc, uri_seq";
 		return getJdbcTemplate().queryForList(sql, resId, resId);
 	}
 	
