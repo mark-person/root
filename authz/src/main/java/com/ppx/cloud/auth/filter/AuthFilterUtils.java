@@ -192,27 +192,22 @@ public class AuthFilterUtils {
         }
     }
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     private static void setOperationPermission(HttpServletRequest request, List<Map<String, Object>> opList, BitSet grantBitset) {
         if (opList == null) {
             return;
         }
         for (Map map : opList) {
-            List<Integer> indexList = (List<Integer>) map.get("uri_seq");
-            indexList.forEach(uriIndex -> {
-                if (grantBitset.get(uriIndex)) {
-                    setOperationRequest(request, (List<String>) map.get("menu_uri"));
-                }
-            });
+        	Integer uriSeq = (Integer) map.get("uri_seq");
+            if (grantBitset.get(uriSeq)) {
+                setOperationRequest(request, (String) map.get("uri_text"));
+            }
         }
     }
 
     // 操作权限设置(可扩展作数据权限用)
-    private static void setOperationRequest(HttpServletRequest request, List<String> uriList) {
-    	
-        for (String uri : uriList) {
-            // /test/saveTest改名成_test_saveTest
-            request.setAttribute(uri.replace("/", "_"), true);
-        }
+    private static void setOperationRequest(HttpServletRequest request, String uri) {
+    	uri = uri.replace("/auto", "");
+        // /test/saveTest改名成_test_saveTest
+        request.setAttribute(uri.replace("/", "_"), true);
     }
 }

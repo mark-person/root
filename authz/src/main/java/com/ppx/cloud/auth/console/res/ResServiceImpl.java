@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.AuthContext;
 import com.ppx.cloud.auth.common.LoginAccount;
+import com.ppx.cloud.auth.console.grant.GrantService;
 import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
@@ -22,11 +25,8 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
 @Service
 public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
-//	@Autowired
-//    private EhCacheService ehCacheServ;
-	
-//	@Autowired
-//    private GrantService grantService;
+	@Autowired
+    private EhCacheService ehCacheServ;
 	
 	@Override
 	public Map<String, Object> getResource() {
@@ -92,6 +92,8 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	// >>>>>>>>>>>>>>>>>>>>>>>>.new
 	@Transactional
 	public int insertRes(int parentId, String resName, int resType, String menuUri) {
+		ehCacheServ.increaseAllDbVersion();
+		
 		String countSql = "select count(*) from auth_res where parent_id = ?";
 		int c = getJdbcTemplate().queryForObject(countSql, Integer.class, parentId);
 		
@@ -120,6 +122,8 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
 	@Transactional
 	public Map<String, Object> updateRes(int id, String resName, String menuUri) {
+		ehCacheServ.increaseAllDbVersion();
+		
 		if (Strings.isEmpty(menuUri)) {
 			String sql = "update auth_res set res_name = ? where res_id = ?";
 			getJdbcTemplate().update(sql, resName, id);
@@ -145,6 +149,8 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
 	@Transactional
 	public Map<String, Object> deleteRes(int id) {
+		ehCacheServ.increaseAllDbVersion();
+		
 		String deleteUriSeq = "delete from auth_res_uri where res_id in (select res_id from auth_res where parent_id = ?) or res_id = ?";
 		getJdbcTemplate().update(deleteUriSeq, id, id);
 		
@@ -169,6 +175,8 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	
 	@Transactional
 	public Map<String, Object> insertUri(Integer resId, String uri, Integer menuId) {
+		ehCacheServ.increaseAllDbVersion();
+		
 		String insertSeqSql = "insert ignore into auth_uri_seq(uri_text) values(?)";
 		getJdbcTemplate().update(insertSeqSql, uri);
 		
@@ -187,6 +195,8 @@ public class ResServiceImpl extends MyDaoSupport implements ResService {
 	}
 	
 	public Map<String, Object> deleteUri(int resId, int uriSeq) {
+		ehCacheServ.increaseAllDbVersion();
+		
 		String sql = "delete from auth_res_uri where res_id = ? and uri_seq = ?";
 		getJdbcTemplate().update(sql, resId, uriSeq);
 		return ReturnMap.of();

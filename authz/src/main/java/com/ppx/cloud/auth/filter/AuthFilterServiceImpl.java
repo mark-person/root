@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
+import com.ppx.cloud.auth.cache.EhCacheConfig;
 import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.console.grant.GrantService;
 import com.ppx.cloud.auth.pojo.AuthAccount;
@@ -17,9 +19,9 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
 
 
 /**
- * 权限过滤实现类
+ * # 权限过滤实现类
  * @author mark
- * @date 2018年7月2日
+ * @date 2019年1月2日
  */
 @Service
 public class AuthFilterServiceImpl extends MyDaoSupport {
@@ -30,7 +32,7 @@ public class AuthFilterServiceImpl extends MyDaoSupport {
 	@Autowired
     private EhCacheService ehCacheServ;
 	
-	// @Cacheable(value=EhCacheConfig.ACCOUNT_BIT_SET_CACHE, cacheManager=EhCacheConfig.LOCAL_MANAGER)
+	@Cacheable(value=EhCacheConfig.ACCOUNT_BIT_SET_CACHE, cacheManager=EhCacheConfig.LOCAL_MANAGER)
     public BitSet getAccountResBitSet(Integer accountId) {
         BitSet grantBitset = new BitSet();      
         Set<Integer> resIds = grantService.getGrantResIds(accountId);
@@ -57,7 +59,6 @@ public class AuthFilterServiceImpl extends MyDaoSupport {
 		return returnList;
 	}
 	
-	@SuppressWarnings("rawtypes")
     public List<Map<String, Object>> getOpUri(String menuUri) {
 		Map<String, List<Map<String, Object>>> map = ehCacheServ.loadMenuResourceUri();
 		return map.get(menuUri);

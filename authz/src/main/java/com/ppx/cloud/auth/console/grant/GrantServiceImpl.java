@@ -58,7 +58,7 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 	
 	@Transactional
 	public Map<String, Object> saveGrantResIds(Integer accountId, String resIds) {
-	    // ehCacheServ.increaseGrantDbVersion();
+	    ehCacheServ.increaseGrantDbVersion();
 		String delSql = "delete from auth_grant where account_id = ?";
 		getJdbcTemplate().update(delSql, accountId);
 		
@@ -72,7 +72,6 @@ public class GrantServiceImpl extends MyDaoSupport implements GrantService {
 			}
 			getJdbcTemplate().batchUpdate(insertSql, paraList);
 		}
-		
 		return ReturnMap.of();
 	}
 	

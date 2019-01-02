@@ -1,8 +1,10 @@
 package com.ppx.cloud.auth.cache;
 
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.MemoryUnit;
@@ -10,12 +12,12 @@ import net.sf.ehcache.config.MemoryUnit;
 
 
 /**
- * ehCache
+ * ehcache
  * @author mark
- * @date 2018年7月2日
+ * @date 2019年1月2日
  */
-//@Configuration
-//@EnableCaching
+@Configuration
+@EnableCaching
 public class EhCacheConfig {
 	
 	public static final String LOCAL_MANAGER = "LOCAL_MANAGER";
@@ -23,7 +25,7 @@ public class EhCacheConfig {
 	// 账号对应的位图权限
 	public static final String ACCOUNT_BIT_SET_CACHE = "ACCOUNT_BIT_SET_CACHE";
 	
-	// mongodb对应的固定数据，如资源
+	// 对应的固定数据，如资源
     public static final String AUTH_FIX_CACHE = "AUTH_FIX_CACHE";
 	
 	
