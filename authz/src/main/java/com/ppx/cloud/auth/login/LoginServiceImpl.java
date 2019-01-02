@@ -26,7 +26,7 @@ public class LoginServiceImpl extends MyDaoSupport {
 		String adminPassword = AuthProperties.ADMIN_PASSWORD;
 		
 		// 超级管理员
-		if (AuthUtils.ADMIN_ACCOUNT.equals(a) && Objects.equals(adminPassword, p)) {
+		if (AuthUtils.ADMIN_ACCOUNT.equals(a) && Objects.equals(adminPassword, AuthUtils.getMD5Password(p))) {
 			AuthAccount account = new AuthAccount();
 		    account.setAccountId(-1);
 		    account.setLoginAccount(a);

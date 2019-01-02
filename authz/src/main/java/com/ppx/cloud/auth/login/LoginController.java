@@ -46,9 +46,11 @@ public class LoginController {
 	public ModelAndView login(ModelAndView mv, HttpServletResponse response) throws Exception {
 		createValidateToken(mv, response);
 		// 清缓存，保证validateToken最新
-		response.setHeader("Pragma","No-cache"); 
-		response.setHeader("Cache-Control","no-cache"); 
-		response.setDateHeader("Expires", 0); 
+		response.setHeader("Content-type", "text/html; charset=utf-8");
+		response.setHeader("Pragma","No-cache");
+		response.setHeader("Cache-Control","no-cache");
+		response.setDateHeader("Expires", 0);
+		
 		response.flushBuffer();
 		return mv;
 	}

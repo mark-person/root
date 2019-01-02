@@ -95,7 +95,7 @@ public class PersistenceImpl extends PersistenceSupport {
 		String[] timeStr = new SimpleDateFormat(DateUtils.TIME_PATTERN).format(a.getBeginTime()).split(" ");
 		long useMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
         
-		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "aid", a.getAccountId());
+		var map = Map.of("ip", a.getIp(), "q", a.getQueryString(), "mem", useMemory, "aid", a.getAccountId() == null ? -1 : a.getAccountId());
 		String accessInfo = toJson(map);
 		List<Object> bindValue = Arrays.asList(timeStr[0], timeStr[1], ApplicationUtils.getServiceId(),
 				a.getUriSeq(), a.getSpendTime(), accessInfo);
