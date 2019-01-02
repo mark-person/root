@@ -156,6 +156,8 @@ public class AuthFilterUtils {
         testUriList.add("/auto/" + uri.split("/")[2] + "/*");
         testUriList.add("/auto/*");
         testUriList.add("/*");
+        
+        
         boolean missUri = true;
         for (String testUri : testUriList) {
             // 取得URI对应的index
@@ -166,6 +168,7 @@ public class AuthFilterUtils {
 
             // 判断帐号是否有uri的权限
             BitSet grantBitset = filterService.getAccountResBitSet(account.getAccountId());
+            
 
             if (!account.isMainAccount()) {
                 // 当子帐号登录时，必须判用户权限，防止撤消用户权限时，子帐号还有权限()
