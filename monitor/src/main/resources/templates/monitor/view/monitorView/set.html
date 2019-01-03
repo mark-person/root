@@ -83,20 +83,20 @@ function clean() {
 			<th>采集间隔</th>
 			<th>dump最大时间<span class="glyphicon glyphicon-question-sign"  title="请求时间超过该值时，会采集dump线程"></span></th>   
 			<th>最后修改时间</th>    
-		</tr>	
+		</tr>
 		<script id="pageTemplate" type="text/html">
 		{{each}}
 		<tr>
-			<td>{{$value._id}}</td>
+			<td>{{$value.serviceId}}</td>
 			<td>
-				<div class="cell-right"><span name="switch" data-service-id="{{$value._id}}" data-model="warning" class="{{if $value.isWarning}}switch-on{{else}}switch-off{{/if}}" themeColor="gold"></span></div>
+				<div class="cell-right"><span name="switch" data-service-id="{{$value.serviceId}}" data-model="warning" class="{{if $value.isWarning}}switch-on{{else}}switch-off{{/if}}" themeColor="gold"></span></div>
 			</td>
 			<td>
-				<div class="cell-right"><span name="switch" data-service-id="{{$value._id}}" data-model="debug" class="{{if $value.isDebug}}switch-on{{else}}switch-off{{/if}}"></span></div>
+				<div class="cell-right"><span name="switch" data-service-id="{{$value.serviceId}}" data-model="debug" class="{{if $value.isDebug}}switch-on{{else}}switch-off{{/if}}"></span></div>
 			</td>				
-			<td><span name="interval{{$value._id}}">{{$value.gatherInterval/1000}}秒</span></td>
-			<td><span name="maxTime{{$value._id}}">{{$value.dumpThreadMaxTime/1000}}秒</span></td>
-			<td name="lasted{{$value._id}}">{{$value.lasted}}</td>
+			<td><span name="interval{{$value.serviceId}}">{{$value.gatherInterval/1000}}秒</span></td>
+			<td><span name="maxTime{{$value.serviceId}}">{{$value.dumpThreadMaxTime/1000}}秒</span></td>
+			<td name="lasted{{$value._id}}">{{$value.modified}}</td>
 		</tr>
 		{{/each}}
 		</script>  

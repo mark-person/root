@@ -1,11 +1,14 @@
 package com.ppx.cloud.monitor.view;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
 import com.ppx.cloud.monitor.output.PersistenceSupport;
 
 /**
@@ -17,8 +20,12 @@ import com.ppx.cloud.monitor.output.PersistenceSupport;
 public class MonitorConfServiceImpl extends PersistenceSupport {
 	
 	public List<Map<String, Object>> listConfig() {
-		
-		return null;
+		List<Map<String, Object>> returnList  = new ArrayList<Map<String, Object>>();
+		try (LogTemplate t = new LogTemplate()) {
+			String sql = "select * from conf";
+			returnList = queryTable(t, sql, Arrays.asList());
+		}
+		return returnList;
 	}
 
 	public Date setAccessDebug(String serviceId, boolean debug) {
