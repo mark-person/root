@@ -176,7 +176,6 @@ public class MonitorViewController {
 		return ReturnMap.of("now", sdf.format(now));
 	}
 
-	@PostMapping @ResponseBody
 	public Map<String, Object> setAccessWarning(@RequestParam String serviceId, @RequestParam boolean warning) {
 		Date now = confImpl.setAccessWarning(serviceId, warning);
 		// 本机立即生效
@@ -186,15 +185,12 @@ public class MonitorViewController {
 		SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TIME_PATTERN);
 		return ReturnMap.of("now", sdf.format(now));
 	}
-
-	
 	
 	public Map<String, Object> orderService(@RequestParam String serviceIds) {
 		confImpl.orderService(serviceIds);		
 		return ReturnMap.of();
 	}	
 	
-	@RequestMapping @ResponseBody
 	public Map<String, Object> display(@RequestParam String serviceId, @RequestParam int display) {
 		confImpl.display(serviceId, display);	
 		return ReturnMap.of("listService", impl.listAllService(new Page()));
