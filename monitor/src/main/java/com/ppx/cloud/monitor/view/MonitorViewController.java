@@ -1,16 +1,23 @@
 package com.ppx.cloud.monitor.view;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
+import com.ppx.cloud.monitor.config.MonitorConfig;
 
 
 @Controller
@@ -143,4 +150,49 @@ public class MonitorViewController {
 	public Map<?, ?> getDebug(String accessId) {
 		return ReturnMap.of("pojo", impl.getDebug(accessId));
 	}
+	
+	
+	
+	// >>>>>>>>>>>>>>>>>>>>>设置
+	@Autowired
+	private MonitorConfServiceImpl confImpl;
+	
+	private String DELETE_PASSWORD = "ppx";
+
+	public Map<String, Object> setAccessDebug(@RequestParam String serviceId, @RequestParam boolean debug) {
+		Date now = confImpl.setAccessDebug(serviceId, debug);
+		// 本机立即生效
+		if (ApplicationUtils.getServiceId().equals(serviceId)) {
+			MonitorConfig.IS_DEBUG = debug;
+		}	
+		SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TIME_PATTERN);
+		return ReturnMap.of("now", sdf.format(now));
+	}
+
+	@PostMapping @ResponseBody
+	public Map<String, Object> setAccessWarning(@RequestParam String serviceId, @RequestParam boolean warning) {
+		Date now = confImpl.setAccessWarning(serviceId, warning);
+		// 本机立即生效
+		if (ApplicationUtils.getServiceId().equals(serviceId)) {
+		    MonitorConfig.IS_WARNING = warning;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TIME_PATTERN);
+		return ReturnMap.of("now", sdf.format(now));
+	}
+
+	
+	
+	public Map<String, Object> orderService(@RequestParam String serviceIds) {
+		confImpl.orderService(serviceIds);		
+		return ReturnMap.of();
+	}	
+	
+	@RequestMapping @ResponseBody
+	public Map<String, Object> display(@RequestParam String serviceId, @RequestParam int display) {
+		confImpl.display(serviceId, display);	
+		return ReturnMap.of("listService", impl.listAllService(new Page()));
+	}
+	
+	
+	
 }
