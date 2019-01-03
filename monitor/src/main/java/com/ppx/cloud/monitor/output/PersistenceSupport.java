@@ -25,6 +25,22 @@ public class PersistenceSupport {
 		return t.sql("select LAST_INSERT_ID()").fetchOne().getInt(0);
     }
 	
+	protected List<Map<String, Object>> queryTable(LogTemplate t, String sql,
+			List<Object> paraList) {
+		SqlResult sr = t.sql(sql, paraList);
+		List<Row> list = sr.fetchAll();
+		
+		List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
+		List<Column> colList = sr.getColumns();
+		List<String> colNameList = sr.getColumnNames();
+	
+		
+		for (Row row : list) {
+			returnList.add(getRowMap(row, colList, colNameList));
+		}
+		return returnList;
+	}
+	
 	protected List<Map<String, Object>> queryTablePage(LogTemplate t, Page page, StringBuilder cSql, StringBuilder qSql,
 			List<Object> paraList) {
 		paraList = paraList == null ? new ArrayList<Object>() : paraList;

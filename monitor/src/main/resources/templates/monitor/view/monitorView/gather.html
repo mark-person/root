@@ -52,7 +52,7 @@ $(function() {
 			<td>{{v.concurrentN}}</td>
 			<td>{{v.gatherInfo.dsActive}}</td>
 			<td>{{v.gatherInfo.uMem}}M</td>
-			<td>{{(v.gatherInfo.uMem*100/v.info.mMem).toFixed(2)}}%</td>
+			<td>{{(v.gatherInfo.uMem*100/v.gatherInfo.mMem).toFixed(2)}}%</td>
 			<td>{{(v.gatherInfo.pCpuLoad*100).toFixed(2)}}%</td>
 			<td>{{v.isOver}}</td>
 			<td>

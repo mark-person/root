@@ -1,6 +1,7 @@
 package com.ppx.cloud.monitor.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,15 +22,10 @@ public class MonitorViewServiceImpl extends PersistenceSupport {
     
 	
 	public List<Map<String, Object>> listDisplayService() {
-		var returnList  = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> returnList  = new ArrayList<Map<String, Object>>();
 		try (LogTemplate t = new LogTemplate()) {
-			String sql = "select serviceId from service where serviceDisplay = 1";
-			List<Row> list = t.sql(sql).fetchAll();
-			for (Row row : list) {
-				var map = new HashMap<String, Object>();
-				map.put("serviceId", row.getString("serviceId"));
-				returnList.add(map);
-			}
+			String sql = "select * from service where serviceDisplay = 1";
+			returnList = queryTable(t, sql, Arrays.asList());
 		}
 		return returnList;
 	}
