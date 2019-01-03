@@ -443,19 +443,24 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 					
 					/** @author mark */
                     AccessLog accessLog = TaskThread.getAccessLog();
-                    accessLog.addSql(sql);
-                    long nanoTime = System.nanoTime();
-                    accessLog.addSqlBeginTime(new Date());
-                    
-                    rs = stmt.executeQuery(sql);
-                    
-                    // 移到最后一行
-                    rs.last();
-                    int count = rs.getRow();
-                    // 移到初始位置
-                    rs.beforeFirst();
-                    accessLog.addSqlSpendTime((System.nanoTime() - nanoTime) / 1000000);
-                    accessLog.addSqlCount(count);
+                    if (accessLog != null) {
+                    	accessLog.addSql(sql);
+                        long nanoTime = System.nanoTime();
+                        accessLog.addSqlBeginTime(new Date());
+                        
+                        rs = stmt.executeQuery(sql);
+                        
+                        // 移到最后一行
+                        rs.last();
+                        int count = rs.getRow();
+                        // 移到初始位置
+                        rs.beforeFirst();
+                        accessLog.addSqlSpendTime((System.nanoTime() - nanoTime) / 1000000);
+                        accessLog.addSqlCount(count);
+                    }
+                    else {
+                    	rs = stmt.executeQuery(sql);
+                    }
 					
 					return rse.extractData(rs);
 				}

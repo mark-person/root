@@ -1,4 +1,14 @@
 
+create table base_properties (
+	prop_name varchar(32) not null,
+	prop_value varchar(32) not null,
+	prop_value_type tinyint not null default 0 comment '0:String，1:Integer, 2:Double',
+	prop_desc varchar(256),
+	primary key (prop_name)
+) comment='配置信息';
+
+
+
 
 create table test (
   test_id 		int not null auto_increment,

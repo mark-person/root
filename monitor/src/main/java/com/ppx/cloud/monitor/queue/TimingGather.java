@@ -27,6 +27,7 @@ public class TimingGather {
 		
 	public static void gather() {
 		Date gatherTime = new Date();
+		System.out.println("999999999999999:" + gatherTime);
 		
 		// 数据库当前连接数
         int dsActive = 0;
