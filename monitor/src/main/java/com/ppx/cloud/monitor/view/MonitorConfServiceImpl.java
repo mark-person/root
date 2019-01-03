@@ -1,6 +1,8 @@
 package com.ppx.cloud.monitor.view;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,11 @@ import com.ppx.cloud.monitor.output.PersistenceSupport;
  */
 @Service
 public class MonitorConfServiceImpl extends PersistenceSupport {
+	
+	public List<Map<String, Object>> listConfig() {
+		
+		return null;
+	}
 
 	public Date setAccessDebug(String serviceId, boolean debug) {
 		Date now = new Date();

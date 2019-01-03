@@ -153,11 +153,18 @@ public class MonitorViewController {
 	
 	
 	
+	
 	// >>>>>>>>>>>>>>>>>>>>>设置
 	@Autowired
 	private MonitorConfServiceImpl confImpl;
 	
 	private String DELETE_PASSWORD = "ppx";
+	
+	public ModelAndView set(ModelAndView mv) {
+		mv.addObject("isAccessDebug", MonitorConfig.IS_DEBUG);
+		mv.addObject("listJson", confImpl.listConfig());		
+		return mv;
+	}
 
 	public Map<String, Object> setAccessDebug(@RequestParam String serviceId, @RequestParam boolean debug) {
 		Date now = confImpl.setAccessDebug(serviceId, debug);
