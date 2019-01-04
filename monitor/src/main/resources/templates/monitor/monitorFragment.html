@@ -8,17 +8,17 @@
 
 <div th:fragment="nav(id)">
 <ul class="nav nav-tabs">
-	<li class="nav-item"><a class="nav-link" id="index" th:href="@{/auto/monitorView/index}">首页</a></li>
+	<li class="nav-item"><a class="nav-link" id="index" th:href="@{/auto/monitor/index}">首页</a></li>
 	<!--  
-    <li class="nav-item"><a class="nav-link" id="service" th:href="@{/auto/monitorView/service}">服务</a></li>
-    <li class="nav-item"><a class="nav-link" id="startup"  th:href="@{/auto/monitorView/startup}">启动日志</a></li>
-    <li class="nav-item"><a class="nav-link" id="access"  th:href="@{/auto/monitorView/access}">访问日志</a></li>
-    <li class="nav-item"><a class="nav-link" id="error"  th:href="@{/auto/monitorView/error}">异常日志</a></li>
-    <li class="nav-item"><a class="nav-link" id="gather"  th:href="@{/auto/monitorView/gather}">收集日志</a></li>
-    <li class="nav-item"><a class="nav-link" id="statUri"  th:href="@{/auto/monitorView/statUri}">URI统计</a></li>
-    <li class="nav-item"><a class="nav-link" id="statResponse"  th:href="@{/auto/monitorView/statResponse}">SQL统计</a></li>
-    <li class="nav-item"><a class="nav-link" id="statWarning"  th:href="@{/auto/monitorView/statWarning}">warning</a></li>
-    <li class="nav-item"><a class="nav-link" id="debug"  th:href="@{/auto/monitorView/debug}">debug</a></li>
+    <li class="nav-item"><a class="nav-link" id="service" th:href="@{/auto/monitor/service}">服务</a></li>
+    <li class="nav-item"><a class="nav-link" id="startup"  th:href="@{/auto/monitor/startup}">启动日志</a></li>
+    <li class="nav-item"><a class="nav-link" id="access"  th:href="@{/auto/monitor/access}">访问日志</a></li>
+    <li class="nav-item"><a class="nav-link" id="error"  th:href="@{/auto/monitor/error}">异常日志</a></li>
+    <li class="nav-item"><a class="nav-link" id="gather"  th:href="@{/auto/monitor/gather}">收集日志</a></li>
+    <li class="nav-item"><a class="nav-link" id="statUri"  th:href="@{/auto/monitor/statUri}">URI统计</a></li>
+    <li class="nav-item"><a class="nav-link" id="statResponse"  th:href="@{/auto/monitor/statResponse}">SQL统计</a></li>
+    <li class="nav-item"><a class="nav-link" id="statWarning"  th:href="@{/auto/monitor/statWarning}">warning</a></li>
+    <li class="nav-item"><a class="nav-link" id="debug"  th:href="@{/auto/monitor/debug}">debug</a></li>
     -->
 </ul>
 <script type="text/javascript" th:inline="javascript">$("#" + [[${id}]]).addClass("active");</script>

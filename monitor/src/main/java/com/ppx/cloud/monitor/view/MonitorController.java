@@ -21,7 +21,7 @@ import com.ppx.cloud.monitor.config.MonitorConfig;
 
 
 @Controller
-public class MonitorViewController {
+public class MonitorController {
 	
 	@Autowired
 	private MonitorViewServiceImpl impl;

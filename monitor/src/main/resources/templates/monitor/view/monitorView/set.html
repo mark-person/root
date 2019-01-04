@@ -35,17 +35,17 @@ function freshPage(data) {
 function onSwitch(serviceId, model, isOpen) {
 	$('#loading').modal('show');
 	if (model == "debug") {
-		var para = "serviceId=" + serviceId + "&debug=" + isOpen;
-		$.post([[@{/monitorConf/setAccessDebug}]], para, function(r){
-			$("[name='" + serviceId + "']").text(r.string);
+		var para = {serviceId:serviceId,debug:isOpen};
+		$.post([[@{/auto/monitor/setAccessDebug}]], para, function(r){
+			$("[name='lasted" + serviceId + "']").text(r.now);
 			$('#loading').modal('hide');
 			alertSuccess();
 		});
 	}
 	else if (model == "warning") {
-		var para = "serviceId=" + serviceId + "&warning=" + isOpen;
-		$.post([[@{/monitorConf/setAccessWarning}]], para, function(r){
-			$("[name='" + serviceId + "']").text(r.string);
+		var para = {serviceId:serviceId,warning:isOpen};
+		$.post([[@{/auto/monitor/setAccessWarning}]], para, function(r){
+			$("[name='lasted" + serviceId + "']").text(r.now);
 			$('#loading').modal('hide');
 			alertSuccess();
 		});
@@ -76,11 +76,9 @@ function clean() {
 	
 	<table class="table table-bordered table-hover table-condensed">
 		<tr>
-			<th style="width:140px">服务</th>
+			<th style="width:160px">服务</th>
 			<th>warning模式</th>  
-			<th>debug模式</th>				
-			<th>采集间隔</th>
-			<th>dump最大时间<span class="glyphicon glyphicon-question-sign"  title="请求时间超过该值时，会采集dump线程"></span></th>   
+			<th>debug模式</th> 
 			<th>最后修改时间</th>    
 		</tr>
 		<script id="pageTemplate" type="text/html">
@@ -88,22 +86,19 @@ function clean() {
 		<tr>
 			<td>{{$value.serviceId}}</td>
 			<td>
-				<div class="cell-right"><span name="switch" data-service-id="{{$value.serviceId}}" data-model="warning" class="{{if $value.isWarning}}switch-on{{else}}switch-off{{/if}}" themeColor="gold"></span></div>
+				<div class="cell-right"><span name="switch" data-service-id="{{$value.serviceId}}" data-model="warning" class="{{if $value.isWarning}}switch-on{{else}}switch-off{{/if}}"></span></div>
 			</td>
 			<td>
 				<div class="cell-right"><span name="switch" data-service-id="{{$value.serviceId}}" data-model="debug" class="{{if $value.isDebug}}switch-on{{else}}switch-off{{/if}}"></span></div>
-			</td>				
-			<td><span name="interval{{$value.serviceId}}">{{$value.gatherInterval/1000}}秒</span></td>
-			<td><span name="maxTime{{$value.serviceId}}">{{$value.dumpThreadMaxTime/1000}}秒</span></td>
-			<td name="lasted{{$value._id}}">{{$value.modified}}</td>
+			</td>
+			<td name="lasted{{$value.serviceId}}">{{$value.modified}}</td>
 		</tr>
 		{{/each}}
 		</script>  
 	</table>
 	
 	<div class="RedSea-Title-1">
-		<button type="button" class="btn btn-primary" onclick="cleanDebug()">&times; 清除debug</button>	
-		|			
+		<button type="button" class="btn btn-primary" onclick="cleanDebug()">清除debug</button>			
 	</div>
 	
 </div>

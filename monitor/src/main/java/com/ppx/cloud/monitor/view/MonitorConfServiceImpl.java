@@ -30,11 +30,22 @@ public class MonitorConfServiceImpl extends PersistenceSupport {
 
 	public Date setAccessDebug(String serviceId, boolean debug) {
 		Date now = new Date();
+		
+		String sql = "update conf set isDebug = ?, modified = ? where serviceId = ?";
+		try (LogTemplate t = new LogTemplate()) {
+			t.sql(sql, debug ? 1 : 0, now, serviceId);
+		}
+		
 		return now;
 	}
 
 	public Date setAccessWarning(String serviceId, boolean warning) {
 		Date now = new Date();
+		
+		String sql = "update conf set isWarning = ?, modified = ? where serviceId = ?";
+		try (LogTemplate t = new LogTemplate()) {
+			t.sql(sql, warning ? 1 : 0, now, serviceId);
+		}
 		
 		return now;
 	}
