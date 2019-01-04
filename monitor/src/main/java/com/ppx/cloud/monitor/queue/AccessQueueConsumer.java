@@ -97,8 +97,6 @@ public class AccessQueueConsumer {
 				if (row != null) {
 					MonitorConfig.IS_DEBUG = (row.getInt("isDebug") == 1);
 					MonitorConfig.IS_WARNING = (row.getInt("isWarning") == 1);
-					MonitorProperties.GATHER_INTERVAL = row.getInt("gatherInterval");
-					MonitorProperties.DUMP_MAX_TIME = row.getInt("dumpMaxTime");
 				}
 			}
 		}

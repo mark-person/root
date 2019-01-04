@@ -64,8 +64,6 @@ public class PersistenceImpl extends PersistenceSupport {
 		MyUpdate confUpdate = MyUpdate.getInstance(true, "conf", "serviceId", ApplicationUtils.getServiceId());
         confUpdate.set("isDebug", MonitorConfig.IS_DEV ? 1 : 0);
     	confUpdate.set("isWarning", MonitorConfig.IS_DEV ? 1 : 0);
-        confUpdate.set("gatherInterval", MonitorProperties.GATHER_INTERVAL);
-        confUpdate.set("dumpMaxTime", MonitorProperties.DUMP_MAX_TIME);
         confUpdate.set("modified", new Date());
         confUpdate.execute(t);
 	}
