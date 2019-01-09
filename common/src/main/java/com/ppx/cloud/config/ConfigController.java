@@ -17,6 +17,11 @@ public class ConfigController {
 	@Autowired
 	private ConfigServiceImpl impl;
 	
+	public Map<?, ?> test() {
+		
+		return ReturnMap.of();
+	}
+	
 	// 接收来自操作服务的请求
 	public Map<?, ?> sync(@RequestParam String configParam, String configValue) {
 		ConfigExec configRun = ConfigUtils.getConfigExec(configParam);
