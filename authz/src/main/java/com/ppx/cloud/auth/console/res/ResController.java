@@ -77,9 +77,10 @@ public class ResController {
     }
 	
 	private boolean filterUri(String uri) {
-		 // 排除监控部分/monitorConf/ /monitorView/ /error
-		 // 监控部分
-        if (uri.startsWith("/auto/monito/")) return true;
+		// 排除监控部分/monitor /error
+		// 监控部分
+        if (uri.startsWith("/auto/monitor/")) return true;
+        if (uri.startsWith("/auto/config/")) return true;
             
         // 权限部分
         if (uri.startsWith("/auto/grant/")) return true;
