@@ -7,13 +7,19 @@ create table config_service (
 );
 
 create table config_value (
-	config_param	varchar(64) not null comment '变量或接口,接口以/开头',
-	service_id 		varchar(32) not null,
+	config_name 	varchar(64) not null comment '每个名称对应一个ConfigExec的实现类',
 	config_module	varchar(32) not null,
 	config_value	varchar(64),
-	config_desc 	varchar(64),
-	config_status 	tinyint not null default 1 comment '0:待同步,1:完成',
-	primary key (config_param, service_id)
+	config_desc		varchar(64),
+	primary key (config_name)
+);
+
+create table config_exec_result (
+	config_name		varchar(64) not null,
+	service_id 		varchar(32) not null,
+	exec_result 	tinyint not null default 1 comment '0:失败,1:成功',
+ 	exec_desc 	 	varchar(128),
+	primary key (config_name, service_id)
 );
 
 
