@@ -9,7 +9,7 @@ create table config_service (
 create table config_value (
 	config_name 	varchar(64) not null comment '每个名称对应一个ConfigExec的实现类',
 	config_module	varchar(32) not null,
-	config_value	varchar(64),
+	config_value	json comment '[{"key":"KEY", "value":"VALUE"}]',
 	config_desc		varchar(64),
 	primary key (config_name)
 );
