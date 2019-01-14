@@ -56,7 +56,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.config.MonitorSwitchConfig;
 
 /**
  * Abstract base class for Jackson based and content type independent
@@ -306,7 +306,7 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 			generator.flush();
 			
 			/** @author mark */
-            if (MonitorConfig.IS_DEBUG) {
+            if (MonitorSwitchConfig.IS_DEBUG) {
                 if (TaskThread.getAccessLog() != null) {
                 	String outJson = objectWriter.writeValueAsString(value);
                 	if (outJson.length() > 256) {

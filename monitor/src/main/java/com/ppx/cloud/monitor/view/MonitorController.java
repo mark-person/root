@@ -17,7 +17,7 @@ import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
-import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.config.MonitorSwitchConfig;
 
 
 @Controller
@@ -161,7 +161,7 @@ public class MonitorController {
 	private String DELETE_PASSWORD = "ppx";
 	
 	public ModelAndView set(ModelAndView mv) {
-		mv.addObject("isAccessDebug", MonitorConfig.IS_DEBUG);
+		mv.addObject("isAccessDebug", MonitorSwitchConfig.IS_DEBUG);
 		mv.addObject("listJson", confImpl.listConfig());		
 		return mv;
 	}
@@ -170,7 +170,7 @@ public class MonitorController {
 		Date now = confImpl.setAccessDebug(serviceId, debug);
 		// 本机立即生效
 		if (ApplicationUtils.getServiceId().equals(serviceId)) {
-			MonitorConfig.IS_DEBUG = debug;
+			MonitorSwitchConfig.IS_DEBUG = debug;
 		}	
 		SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TIME_PATTERN);
 		return ReturnMap.of("now", sdf.format(now));
@@ -180,7 +180,7 @@ public class MonitorController {
 		Date now = confImpl.setAccessWarning(serviceId, warning);
 		// 本机立即生效
 		if (ApplicationUtils.getServiceId().equals(serviceId)) {
-		    MonitorConfig.IS_WARNING = warning;
+		    MonitorSwitchConfig.IS_WARNING = warning;
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TIME_PATTERN);
 		return ReturnMap.of("now", sdf.format(now));

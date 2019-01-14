@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,8 +15,14 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.util.ApplicationUtils;
 
 @Service
-public class ConfigServiceImpl extends MyDaoSupport {
+public class ConfigServImpl extends MyDaoSupport implements ConfigServ {
 
+	public List<Config> listConfig() {
+		String sql = "select * from config_value";
+		List<Config> list = getJdbcTemplate().query(sql, BeanPropertyRowMapper.newInstance(Config.class));
+		return list;
+	}
+	
     // 请求
     public Map<String, Object> sync(String configParam, String configValue) {
     	

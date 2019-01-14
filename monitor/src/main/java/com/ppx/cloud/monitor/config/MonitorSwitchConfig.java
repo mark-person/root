@@ -15,7 +15,7 @@ import com.ppx.cloud.common.exception.custom.InitException;
  * @date 2018年7月2日
  */
 @Configuration
-public class MonitorConfig {
+public class MonitorSwitchConfig {
     
 
     public static boolean IS_DEBUG = false;
@@ -24,26 +24,22 @@ public class MonitorConfig {
     
     public static boolean IS_DEV = false;
     
-    
     @Autowired
     private Environment env;
     
     @Bean
     public Object initMonitorConfig() {
-        
         String active = env.getProperty("spring.profiles.active");
         if (StringUtils.isEmpty(active)) {
             throw new InitException("spring.profiles.active is empty");
         }
         IS_DEV = "dev".equals(active) ? true : false;
-        if (IS_DEV) {
-        	IS_DEBUG = true;
-        	IS_WARNING = true;
-        }
         return null;
     }
     
-  
-  
-
+    public static void setMonitorProperties(boolean IS_DEBUG, boolean IS_WARNING) {
+    	MonitorSwitchConfig.IS_DEBUG = IS_DEBUG;
+    	MonitorSwitchConfig.IS_WARNING = IS_WARNING;
+    }
+    
 }

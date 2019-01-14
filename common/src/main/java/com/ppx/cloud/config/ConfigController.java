@@ -15,7 +15,7 @@ import com.ppx.cloud.common.contoller.ReturnMap;
 public class ConfigController {
 
 	@Autowired
-	private ConfigServiceImpl impl;
+	private ConfigServImpl impl;
 	
 	public Map<?, ?> test() {
 		

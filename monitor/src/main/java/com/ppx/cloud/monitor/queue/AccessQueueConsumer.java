@@ -8,11 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.mysql.cj.xdevapi.Row;
 import com.ppx.cloud.common.jdbc.nosql.LogTemplate;
-import com.ppx.cloud.common.util.ApplicationUtils;
-import com.ppx.cloud.monitor.config.MonitorConfig;
-import com.ppx.cloud.monitor.config.MonitorProperties;
+import com.ppx.cloud.monitor.config.MonitorSwitchConfig;
+import com.ppx.cloud.monitor.config.MonitorThresholdProperties;
 import com.ppx.cloud.monitor.output.ConsoleImpl;
 import com.ppx.cloud.monitor.output.PersistenceImpl;
 import com.ppx.cloud.monitor.pojo.AccessLog;
@@ -56,7 +54,7 @@ public class AccessQueueConsumer {
 	private void consumeAccessLog() {
 		AccessLog a;
 		while ((a = AccessQueue.getQueue().poll()) != null) {
-			if (MonitorConfig.IS_DEV) {
+			if (MonitorSwitchConfig.IS_DEV) {
 				ConsoleImpl.print(a);
 			}
 			
@@ -71,7 +69,7 @@ public class AccessQueueConsumer {
 				e.printStackTrace();
 				// 输出异常，则打印到控制台
 				logger.error("Error(logToDb):{}", e.getMessage());
-				if (!MonitorConfig.IS_DEV) {
+				if (!MonitorSwitchConfig.IS_DEV) {
 					ConsoleImpl.print(a);
 				}
 			}
@@ -79,26 +77,13 @@ public class AccessQueueConsumer {
 	}
 
 	private long lastGatherNanoTime = System.nanoTime();
-	private long lastGetConfNanoTime = System.nanoTime();
 
 	private void intervalRun() {
 		// 采集间隔
 		long currentNanoTime = System.nanoTime();
-		if (currentNanoTime - lastGatherNanoTime >= MonitorProperties.GATHER_INTERVAL * 1e6) {
+		if (currentNanoTime - lastGatherNanoTime >= MonitorThresholdProperties.GATHER_INTERVAL * 1e6) {
 			lastGatherNanoTime = currentNanoTime;
 			TimingGather.gather();
-		}
-
-		// 同步配置数据
-		if (currentNanoTime - lastGetConfNanoTime >= MonitorProperties.SYNC_CONF_INTERVAL * 1e6) {
-			lastGetConfNanoTime = currentNanoTime;
-			try (LogTemplate t = new LogTemplate()) {
-				Row row = PersistenceImpl.getInstance(t).getConfig(ApplicationUtils.getServiceId());
-				if (row != null) {
-					MonitorConfig.IS_DEBUG = (row.getInt("isDebug") == 1);
-					MonitorConfig.IS_WARNING = (row.getInt("isWarning") == 1);
-				}
-			}
 		}
 	}
 
@@ -114,7 +99,7 @@ public class AccessQueueConsumer {
 			impl.insertStatUri(a);
 			impl.insertStatSql(a);
 
-			if (MonitorConfig.IS_DEBUG) {
+			if (MonitorSwitchConfig.IS_DEBUG) {
 				// debug日志
 				impl.insertDebug(accessId, a);
 			}
@@ -128,7 +113,7 @@ public class AccessQueueConsumer {
 			}
 
 			// warning访问日志 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-			if (MonitorConfig.IS_WARNING) {
+			if (MonitorSwitchConfig.IS_WARNING) {
 				// >>>>>>>>>>>>>> 警告信息 begin >>>>>>>>>>>>>>
 				BitSet bs = new BitSet();
 

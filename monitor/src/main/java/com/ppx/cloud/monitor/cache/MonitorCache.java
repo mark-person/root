@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.config.MonitorSwitchConfig;
 
 /**
  * 用作sql和uri的缓存, 在StartMonitor时加载
@@ -46,7 +46,7 @@ public class MonitorCache {
 		uriTextSeqMap.put(uri, uriSeq);
 		uriSeqMaxTimeMap.put(uriSeq, maxTime);
 		
-		if (MonitorConfig.IS_DEV) {
+		if (MonitorSwitchConfig.IS_DEV) {
 			addSeqUriDev(uriSeq, uri);
 		}
 	}

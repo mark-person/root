@@ -13,7 +13,7 @@ import com.ppx.cloud.common.context.CommonContext;
 import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
-import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.config.MonitorSwitchConfig;
 import com.ppx.cloud.monitor.util.MonitorUtils;
 
 
@@ -148,9 +148,9 @@ public class AccessLog {
     	// 存过在缓存时，存入sqlMd5，否则保存原SQL
     	if (MonitorCache.getSqlMaxTime(sqlMd5) != null) {
     		sqlList.add(sqlMd5);
-    		 if (MonitorConfig.IS_DEV) {
-    			 MonitorCache.addMd5SqlDev(sqlMd5, sql); 
-    		 }
+			if (MonitorSwitchConfig.IS_DEV) {
+    			MonitorCache.addMd5SqlDev(sqlMd5, sql); 
+    		}
     	}
     	else {
     		sqlList.add(sql);

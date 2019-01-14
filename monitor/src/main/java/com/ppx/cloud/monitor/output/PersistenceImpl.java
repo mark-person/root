@@ -24,8 +24,7 @@ import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.common.util.DateUtils;
 import com.ppx.cloud.common.util.MD5Utils;
 import com.ppx.cloud.monitor.cache.MonitorCache;
-import com.ppx.cloud.monitor.config.MonitorConfig;
-import com.ppx.cloud.monitor.config.MonitorProperties;
+import com.ppx.cloud.monitor.config.MonitorSwitchConfig;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 import com.ppx.cloud.monitor.util.AccessLogUtils;
 import com.ppx.cloud.monitor.util.MonitorUtils;
@@ -59,13 +58,6 @@ public class PersistenceImpl extends PersistenceSupport {
 		String startupSql = "insert into startup(startupTime, serviceId, startupInfo) values(?, ?, ?)";
 		List<Object> bindValue = Arrays.asList(startTime, ApplicationUtils.getServiceId(), startupInfo);
 		t.sql(startupSql, bindValue);
-		
-		// 配置
-		MyUpdate confUpdate = MyUpdate.getInstance(true, "conf", "serviceId", ApplicationUtils.getServiceId());
-        confUpdate.set("isDebug", MonitorConfig.IS_DEV ? 1 : 0);
-    	confUpdate.set("isWarning", MonitorConfig.IS_DEV ? 1 : 0);
-        confUpdate.set("modified", new Date());
-        confUpdate.execute(t);
 	}
 
 	public void insertGather(Date gatherTime, int isOver, long maxProcessingTime, int concurrentN, Map<String, Object> gatherMap, Map<String, Object> lastUpdate) {

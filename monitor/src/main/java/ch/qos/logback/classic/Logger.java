@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.spi.LocationAwareLogger;
 
-import com.ppx.cloud.monitor.config.MonitorConfig;
+import com.ppx.cloud.monitor.config.MonitorSwitchConfig;
 import com.ppx.cloud.monitor.pojo.AccessLog;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -448,7 +448,7 @@ public final class Logger implements org.slf4j.Logger, LocationAwareLogger, Appe
             else {
                 String classMsg = le.getCallerData()[0].toString();
                 classMsg = classMsg.substring(classMsg.indexOf("("));
-                if (MonitorConfig.IS_DEBUG || level.toInt() >= Level.INFO_INT) {
+                if (MonitorSwitchConfig.IS_DEBUG || level.toInt() >= Level.INFO_INT) {
                 	// 加上" "方便控制台直接点击找到对应的class
                     if (marker == null) {
                     	accessLog.addLog(getHHMmSsSss() + le.toString() + " " + classMsg);
