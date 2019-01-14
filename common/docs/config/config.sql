@@ -15,6 +15,8 @@ create table config_value (
 );
 
 INSERT INTO `config_value` (`config_name`,`config_module`,`config_value`,`config_desc`) 
+	VALUES ('AUTH','auth','{\"JWT_PASSWORD\": \"JWTPASSWORD\", \"ADMIN_PASSWORD\": \"ee70e58531bc525d5b818be90357faa4\", \"JWT_VALIDATE_SECOND\": 86400}','明文:admin');
+INSERT INTO `config_value` (`config_name`,`config_module`,`config_value`,`config_desc`) 
 	VALUES ('MONITOR_SWITCH','monitor','{\"IS_DEBUG\": false, \"IS_WARNING\": false}',NULL);
 INSERT INTO `config_value` (`config_name`,`config_module`,`config_value`,`config_desc`) 
 	VALUES ('MONITOR_THRESHOLD','monitor','{\"MAX_CPU_DUMP\": 0.9, \"DUMP_MAX_TIME\": 5000, \"GATHER_INTERVAL\": 300000, \"MAX_MEMORY_DUMP\": 0.9}',NULL);
