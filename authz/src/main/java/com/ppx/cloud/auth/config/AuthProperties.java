@@ -19,7 +19,6 @@ public class AuthProperties {
 	
 	
 	public static void setAuthPoperties(String ADMIN_PASSWORD, String JWT_PASSWORD, int JWT_VALIDATE_SECOND)  {
-		
 		AuthProperties.ADMIN_PASSWORD = ADMIN_PASSWORD;
 		AuthProperties.JWT_PASSWORD = JWT_PASSWORD;
 		AuthProperties.JWT_VALIDATE_SECOND = 86400;

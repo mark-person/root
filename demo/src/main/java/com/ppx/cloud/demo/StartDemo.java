@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import com.ppx.cloud.auth.config.AuthConfigExec;
 import com.ppx.cloud.common.exception.custom.ConfigException;
 import com.ppx.cloud.config.Config;
 import com.ppx.cloud.config.ConfigExec;
@@ -36,7 +37,7 @@ public class StartDemo implements ApplicationListener<ContextRefreshedEvent> {
     	
     	ConfigUtils.bindConfigExec("MONITOR_THRESHOLD", new MonitorThresholdConfigExec());
     	ConfigUtils.bindConfigExec("MONITOR_SWITCH", new MonitorSwitchConfigExec());
-    	
+    	ConfigUtils.bindConfigExec("AUTH", new AuthConfigExec());
     	
     	List<Config> configList = configServ.listConfig();
     	for (Config config : configList) {
