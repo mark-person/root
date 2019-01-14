@@ -14,6 +14,12 @@ create table config_value (
 	primary key (config_name)
 );
 
+INSERT INTO `config_value` (`config_name`,`config_module`,`config_value`,`config_desc`) 
+	VALUES ('MONITOR_SWITCH','monitor','{\"IS_DEBUG\": false, \"IS_WARNING\": false}',NULL);
+INSERT INTO `config_value` (`config_name`,`config_module`,`config_value`,`config_desc`) 
+	VALUES ('MONITOR_THRESHOLD','monitor','{\"MAX_CPU_DUMP\": 0.9, \"DUMP_MAX_TIME\": 5000, \"GATHER_INTERVAL\": 300000, \"MAX_MEMORY_DUMP\": 0.9}',NULL);
+
+
 create table config_exec_result (
 	config_name		varchar(64) not null,
 	service_id 		varchar(32) not null,
