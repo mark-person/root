@@ -56,8 +56,8 @@ var getCallback = function(r) {
 			<td>{{getType(v.testType)}}</td>
 			<td>{{v.created}}</td>
 			<td>
-				<a href="#" onclick="remove('{{v.testId}}')">[删除]</a>
-				<a href="#" onclick="edit('{{v.testId}}', getCallback)">[修改]</a>
+				<a href="#this" onclick="remove('{{v.testId}}')">[删除]</a>
+				<a href="#this" onclick="edit('{{v.testId}}', getCallback)">[修改]</a>
 			</td>
 		</tr>
 	</table>
