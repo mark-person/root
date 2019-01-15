@@ -5,8 +5,10 @@ package com.ppx.cloud.demo;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.ppx.cloud.auth.config.AuthConfigExec;
@@ -29,9 +31,13 @@ public class StartDemo implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     private ConfigServ configServ;
     
+    @Value("${info.app.artifactId}")
+    private String artifactId;
+    
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
     	
+    	System.out.println("999999999artifactId:" + artifactId);
     	
     	// 绑定config_name 	varchar(64) not null comment '每个名称对应一个ConfigExec的实现类',
     	
