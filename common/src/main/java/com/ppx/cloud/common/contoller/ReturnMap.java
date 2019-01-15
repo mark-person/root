@@ -69,6 +69,11 @@ public class ReturnMap {
 			throw new RuntimeException("value must be 0 or 1, current value:" + val);
 		}
 	}
+	
+	public static Map<String, Object> of(String errmsg) {
+		return Map.of(ERRCODE_TITLE, ERRCODE_SUCCESS, ERRMSG_TITLE, errmsg);
+	}
+	
 	// 自定义:4001~4009
 	public static Map<String, Object> of(int errcode, String errmsg) {
 		if (errcode >= 4001 && errcode <= 4009) {

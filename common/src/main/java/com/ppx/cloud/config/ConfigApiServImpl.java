@@ -24,14 +24,21 @@ public class ConfigApiServImpl extends MyDaoSupport implements ConfigApiServ {
 	}
 	
     // 请求
-    public Map<String, Object> sync(String configParam, String configValue) {
+    public Map<String, Object> callSync(String configName, String configValue) {
     	
     	// 请求其它服务
-    	String uri = "/auto/config/sync?configParam=" + configParam + "&configValue=" + configValue;
+    	String uri = "/auto/configApi/sync?configParam=" + configName + "&configValue=" + configValue;
     	
-    	String sql = "select service_id from config_value where config_param = ?" + 
-    			" and exists (select 1 from config_service where service_id = config_value.service_id and service_status = 1)";
-    	List<String> serviceIdList = getJdbcTemplate().queryForList(sql, String.class, configParam);
+    	String currentServiceId = ApplicationUtils.getServiceId();
+    	// 更新其它服务
+		String otherSql = "select service_id from config_service where service_status = 1 and service_id != ? and " + 
+				" artifact_id = (select artifact_id from config_value where config_name = ?)";
+		List<String> ohterServiceIdList = getJdbcTemplate().queryForList(otherSql, String.class,  currentServiceId ,configName);
+		for (String serviceId : ohterServiceIdList) {
+			
+		}
+    	String sql = "";
+    	List<String> serviceIdList = getJdbcTemplate().queryForList(sql, String.class, configName);
     	
     	RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> entity = new HttpEntity<String>("", new HttpHeaders());

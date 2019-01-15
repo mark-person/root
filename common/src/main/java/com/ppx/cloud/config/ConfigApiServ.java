@@ -11,4 +11,6 @@ import java.util.List;
  */
 public interface ConfigApiServ {
 	List<Config> listConfig(String artifactId);
+	
+	
 }

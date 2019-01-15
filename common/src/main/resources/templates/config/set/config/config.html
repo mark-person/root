@@ -47,16 +47,32 @@ function formatJson(txt,compress){
 }
 
 
-var controllerPath = contextPath + "auto/configSet/";
+var controllerPath = contextPath + "auto/config/";
 $(function() {
 	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
 });
 
 function edit(configName, configValue) {
-	$("#editConfigName").val(configName);
-	$("#editConfigValue").text(formatJson(configValue));
+	$("#editConfigValue").val(formatJson(configValue));
 	$('#edit').modal('show');
+	
+	action = function() {
+		showLoading();
+		$.post(controllerPath + "update", {configName:configName, configValue:$("#editConfigValue").val()}, function(r) {
+			if (r.errcode === 0) {
+				alertSuccess(r.errmsg);
+				$('#edit').modal('hide');
+				$("#pageDiv").query();
+			}
+			else {
+				hideLoading();
+				alertWarning(r.errmsg);
+			}
+		});
+	}
 }
+
+
 </script>
 </head>
 
@@ -92,14 +108,12 @@ function edit(configName, configValue) {
 </div>
 
 
-
 <div th:fragment="edit" th:replace="common/fragment::modal('edit', '修改', 'modal-lg')">
 	<input type="hidden" id="editConfigName">
 	<div class="form-group form-inline">
 		<textarea rows="10" cols="100" class="form-control" id="editConfigValue" value="aa"></textarea>
 	</div>
 </div>
-
 
 
 </div>

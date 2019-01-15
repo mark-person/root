@@ -1,6 +1,7 @@
 
 create table config_service (
 	service_id 		varchar(32) not null,
+	artifact_id		varchar(32) not null,
 	service_status	tinyint not null default 1 comment '1:使用 0:禁用',
 	service_desc	varchar(32),
 	primary key (service_id)

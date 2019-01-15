@@ -8,5 +8,5 @@ package com.ppx.cloud.config;
  * @date 2019年1月9日
  */
 public interface ConfigExec {
-	boolean run(String configValue);
+	String run(String configValue);
 }

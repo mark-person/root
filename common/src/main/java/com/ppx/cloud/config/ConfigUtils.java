@@ -13,11 +13,11 @@ import java.util.Map;
 public class ConfigUtils {
 	private static Map<String, ConfigExec> bindMap = new HashMap<String, ConfigExec>();
 	
-	public static ConfigExec getConfigExec(String configParam) {
-		return bindMap.get(configParam);
+	public static ConfigExec getConfigExec(String configName) {
+		return bindMap.get(configName);
 	}
 	
-	public static void bindConfigExec(String configParam, ConfigExec configExec) {
-		bindMap.put(configParam, configExec);
+	public static void bindConfigExec(String configName, ConfigExec configExec) {
+		bindMap.put(configName, configExec);
 	}
 }
