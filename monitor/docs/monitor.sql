@@ -1,7 +1,5 @@
 
 
-
-
 create table access (
 	accessId 	int not null auto_increment,
 	accessDate 	date not null,
@@ -38,14 +36,6 @@ create table service (
 	primary key (serviceId)
 );
 
-create table conf (
-	serviceId 			 varchar(32) not null,
-    isDebug 			 tinyint not null,
-    isWarning 			 tinyint not null,
-    created 			 timestamp not null default current_timestamp,
-    modified  			 timestamp not null default current_timestamp,
-    primary key (serviceId)
-);
 
 create table gather (
 	serviceId 			varchar(32) not null,
