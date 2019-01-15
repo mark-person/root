@@ -63,7 +63,7 @@ treeUtils.decompressNode = function(node, resMap) {
 
 function initResource() {
 	$('#tree').html("");
-	$('#loading').modal('show');
+	showLoading();
 	$.post(controllerPath + "getAuthorize", {accountId:$("#grantAccountId").val()}, function(r){
 		if (r.result == -1) {
 			// 刚开始没有数据时
@@ -79,7 +79,7 @@ function initResource() {
 			initTree([treeUtils.decompressNode(r.tree, resMap)]);			
 			refreshHint();		
 		}
-		$('#loading').modal('hide');
+		hideLoading();
 	});
 }
 
@@ -172,8 +172,9 @@ function grant(accountId, viewName) {
 	$("#grantAccountId").val(accountId);
 	$("#grantViewName").text(viewName);
 	$("#viewFolderN,#viewMenuN,#viewActionN").text(0);
-	initResource();
 	$('#grantModal').modal('show');
+	initResource();
+	
 }
 
 function authorize() {
