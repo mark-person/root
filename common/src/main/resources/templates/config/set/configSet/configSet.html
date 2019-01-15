@@ -18,20 +18,15 @@ $(function() {
 <div class="container-fluid">
 
 <div id="pageDiv" th:include="common/fragment::page('配置信息')">
-	<div th:fragment="query">s
-		<label>名称：</label>
-		<input type="text" class="form-control" name="testName">
-		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
+	<div th:fragment="query">
 	</div>
 	<table th:fragment="list">
 		<thead class="thead-light">
 		<tr>
 			<th class="w-id">config_name</th>
-			<th class="w-title">artifact_id</th>
-			<th class="w-date">测试日期</th>
-			<th class="w-id">测试值</th>
-			<th class="w-id">测试类型</th>
-			<th class="w-time">创建时间</th>
+			<th class="w-id">artifact_id</th>
+			<th class="w-id">config_value</th>
+			<th class="w-id">config_desc</th>
 			<th class="w-action">操作</th>
 		</tr>
 		</thead>
@@ -39,15 +34,13 @@ $(function() {
 	</table>
 	<table>
 		<tr th:fragment="template">
-			<td>{{v.testId}}</td>
-			<td>{{v.testName}}</td>
-			<td>{{v.testDate}}</td>
-			<td>{{v.testValue}}</td>
-			<td>{{getType(v.testType)}}</td>
-			<td>{{v.created}}</td>
+			<td>{{v.configName}}</td>
+			<td>{{v.artifactId}}</td>
+			<td>{{v.configValue}}</td>
+			<td>{{v.configDesc}}</td>
 			<td>
-				<a href="#" onclick="remove('{{v.testId}}')">[删除]</a>
-				<a href="#" onclick="edit('{{v.testId}}', getCallback)">[修改]</a>
+				<a href="#this" onclick="view('{{v.configName}}')">[查看]</a>
+				<a href="#this" onclick="edit('{{v.configName}}', getCallback)">[修改]</a>
 			</td>
 		</tr>
 	</table>
