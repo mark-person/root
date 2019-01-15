@@ -15,7 +15,7 @@ import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.util.ApplicationUtils;
 
 @Service
-public class ConfigServImpl extends MyDaoSupport implements ConfigServ {
+public class ConfigApiServImpl extends MyDaoSupport implements ConfigApiServ {
 
 	public List<Config> listConfig(String artifactId) {
 		String sql = "select * from config_value where artifact_id = ?";

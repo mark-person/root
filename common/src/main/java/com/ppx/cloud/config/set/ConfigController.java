@@ -11,13 +11,13 @@ import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.config.Config;
 
 @Controller
-public class ConfigSetController {
+public class ConfigController {
 
 	@Autowired
-	private ConfigSetServImpl impl;
+	private ConfigServImpl impl;
 	
 	
-	public ModelAndView configSet(ModelAndView mv) {
+	public ModelAndView config(ModelAndView mv) {
 		mv.addObject("list", list(new Page(), new Config()));
 		return mv;
 	}

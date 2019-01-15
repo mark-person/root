@@ -15,7 +15,7 @@ import com.ppx.cloud.auth.config.AuthConfigExec;
 import com.ppx.cloud.common.exception.custom.ConfigException;
 import com.ppx.cloud.config.Config;
 import com.ppx.cloud.config.ConfigExec;
-import com.ppx.cloud.config.ConfigServ;
+import com.ppx.cloud.config.ConfigApiServ;
 import com.ppx.cloud.config.ConfigUtils;
 import com.ppx.cloud.monitor.config.MonitorSwitchConfigExec;
 import com.ppx.cloud.monitor.config.MonitorThresholdConfigExec;
@@ -29,7 +29,7 @@ import com.ppx.cloud.monitor.config.MonitorThresholdConfigExec;
 public class StartDemo implements ApplicationListener<ContextRefreshedEvent> {
     
     @Autowired
-    private ConfigServ configServ;
+    private ConfigApiServ configServ;
     
     @Value("${info.app.artifactId}")
     private String artifactId;

@@ -36,8 +36,8 @@ $(function() {
 		<tr th:fragment="template">
 			<td>{{v.configName}}</td>
 			<td>{{v.artifactId}}</td>
-			<td>{{v.configValue}}</td>
-			<td>{{v.configDesc}}</td>
+			<td><div class="ellipsis" style="width:500px">{{v.configValue}}</div></td>
+			<td><div class="ellipsis" style="width:300px">{{v.configDesc}}</div></td>
 			<td>
 				<a href="#this" onclick="view('{{v.configName}}')">[查看]</a>
 				<a href="#this" onclick="edit('{{v.configName}}', getCallback)">[修改]</a>

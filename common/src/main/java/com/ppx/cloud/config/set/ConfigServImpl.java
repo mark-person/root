@@ -9,7 +9,7 @@ import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.config.Config;
 
 @Service
-public class ConfigSetServImpl extends MyDaoSupport {
+public class ConfigServImpl extends MyDaoSupport {
 	
 	public List<Config> list(Page page, Config config) {
 

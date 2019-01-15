@@ -9,6 +9,6 @@ import java.util.List;
  * @author mark
  * @date 2019年1月14日
  */
-public interface ConfigServ {
+public interface ConfigApiServ {
 	List<Config> listConfig(String artifactId);
 }

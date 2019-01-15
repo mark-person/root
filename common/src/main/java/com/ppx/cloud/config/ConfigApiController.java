@@ -12,10 +12,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ppx.cloud.common.contoller.ReturnMap;
 
 @Controller
-public class ConfigController {
+public class ConfigApiController {
 
 	@Autowired
-	private ConfigServImpl impl;
+	private ConfigApiServImpl impl;
 	
 	public Map<?, ?> test() {
 		
