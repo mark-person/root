@@ -13,7 +13,7 @@
     <div id="menuDiv" class="list-group"><ul id="accordion" class="accordion"></ul></div>
     
     <div id="topDiv" style="background-color:#EEEEEE;">
-    	<a id="toggleId" style="padding-right:20px" href="javascript:toggleMenu()">&lt;</a>
+    	<a id="toggleId" class="fa fa-chevron-left" style="padding-right:20px;text-decoration:none;" href="javascript:toggleMenu()"></a>
     	
     	<span th:if="${account.mainAccount}">用户帐号：</span>
     	<span th:if="${!account.mainAccount}">子帐号：</span>
@@ -31,7 +31,7 @@
     </div>
     
     <div id="iframeDiv">
-    	<div id="iframeLoading"><span class="glyphicon glyphicon-info-sign"></span>请稍候...</div>
+    	<div id="iframeLoading"><span class="glyphicon glyphicon-info-sign">请稍候...</div>
 		<iframe id="content" th:if="${account.admin}"  th:src="@{/auto/index/adminHome}" onload="iframeLoad()"></iframe>
 		<iframe id="content" th:if="${!account.admin}"  th:src="@{/auto/index/home}" onload="iframeLoad()"></iframe>
     </div>

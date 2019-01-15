@@ -29,15 +29,17 @@ function editPassword() {
 }
 
 function toggleMenu() {
-	if ($("#toggleId").text() == '<') {
+	if ($("#toggleId").hasClass("fa-chevron-left")) {
 		$("#menuDiv").hide();
 		$("#topDiv,#iframeDiv").css("margin-left", "0px");
-		$("#toggleId").text(">");
+		$("#toggleId").removeClass("fa-chevron-left");
+		$("#toggleId").addClass("fa-chevron-right");
 	}
 	else {
 		$("#menuDiv").show();
 		$("#topDiv,#iframeDiv").css("margin-left", "200px");
-		$("#toggleId").text("<");
+		$("#toggleId").removeClass("fa-chevron-right");
+		$("#toggleId").addClass("fa-chevron-left");
 	}
 }
 
