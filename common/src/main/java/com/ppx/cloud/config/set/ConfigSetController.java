@@ -18,7 +18,7 @@ public class ConfigSetController {
 	private ConfigSetServImpl impl;
 	
 	
-	public ModelAndView test(ModelAndView mv) {
+	public ModelAndView configSet(ModelAndView mv) {
 		mv.addObject("list", list(new Page(), new Config()));
 		return mv;
 	}

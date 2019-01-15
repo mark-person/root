@@ -9,42 +9,40 @@ package com.ppx.cloud.config;
  */
 public class Config {
 	private String configName;
-	private String configModule;
+	private String artifactId;
 	private String configValue;
 	private String configDesc;
-	private Integer configStatus;
-	
+
 	public String getConfigName() {
 		return configName;
 	}
+
 	public void setConfigName(String configName) {
 		this.configName = configName;
 	}
-	public String getConfigModule() {
-		return configModule;
+
+	public String getArtifactId() {
+		return artifactId;
 	}
-	public void setConfigModule(String configModule) {
-		this.configModule = configModule;
+
+	public void setArtifactId(String artifactId) {
+		this.artifactId = artifactId;
 	}
+
 	public String getConfigValue() {
 		return configValue;
 	}
+
 	public void setConfigValue(String configValue) {
 		this.configValue = configValue;
 	}
+
 	public String getConfigDesc() {
 		return configDesc;
 	}
+
 	public void setConfigDesc(String configDesc) {
 		this.configDesc = configDesc;
 	}
-	public Integer getConfigStatus() {
-		return configStatus;
-	}
-	public void setConfigStatus(Integer configStatus) {
-		this.configStatus = configStatus;
-	}
-
-	
 
 }
