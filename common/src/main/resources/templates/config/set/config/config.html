@@ -6,11 +6,57 @@
 
 
 <script type="text/javascript" th:inline="javascript">
+
+function formatJson(txt,compress){
+    var indentChar = '    ';   
+    if(/^\s*$/.test(txt)){   
+        alert('数据为空,无法格式化! ');   
+        return;   
+    }   
+    try{var data=eval('('+txt+')');}   
+    catch(e){   
+        alert('数据源语法错误,格式化失败! 错误信息: '+e.description,'err');   
+        return;   
+    };   
+    var draw=[],last=false,This=this,line=compress?'':'\n',nodeCount=0,maxDepth=0;   
+       
+    var notify=function(name,value,isLast,indent,formObj){   
+        nodeCount++; 
+        for (var i=0,tab='';i<indent;i++ )tab+=indentChar;  
+        tab=compress?'':tab;  
+        maxDepth=++indent;
+        if(value&&value.constructor==Array){  
+            draw.push(tab+(formObj?('"'+name+'":'):'')+'['+line); 
+            for (var i=0;i<value.length;i++)   
+                notify(i,value[i],i==value.length-1,indent,false);   
+            draw.push(tab+']'+(isLast?line:(','+line)));  
+        }else   if(value&&typeof value=='object'){ 
+                draw.push(tab+(formObj?('"'+name+'":'):'')+'{'+line);  
+                var len=0,i=0;   
+                for(var key in value)len++;   
+                for(var key in value)notify(key,value[key],++i==len,indent,true);   
+                draw.push(tab+'}'+(isLast?line:(','+line)));  
+            }else{   
+                    if(typeof value=='string')value='"'+value+'"';   
+                    draw.push(tab+(formObj?('"'+name+'":'):'')+value+(isLast?'':',')+line);   
+            };   
+    };   
+    var isLast=true,indent=0;   
+    notify('',data,isLast,indent,false);   
+    return draw.join('');   
+}
+
+
 var controllerPath = contextPath + "auto/configSet/";
 $(function() {
 	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
 });
 
+function edit(configName, configValue) {
+	$("#editConfigName").val(configName);
+	$("#editConfigValue").text(formatJson(configValue));
+	$('#edit').modal('show');
+}
 </script>
 </head>
 
@@ -25,8 +71,8 @@ $(function() {
 		<tr>
 			<th class="w-id">config_name</th>
 			<th class="w-id">artifact_id</th>
-			<th class="w-id">config_value</th>
-			<th class="w-id">config_desc</th>
+			<th style="width:500px">config_value</th>
+			<th style="width:300px">config_desc</th>
 			<th class="w-action">操作</th>
 		</tr>
 		</thead>
@@ -39,61 +85,22 @@ $(function() {
 			<td><div class="ellipsis" style="width:500px">{{v.configValue}}</div></td>
 			<td><div class="ellipsis" style="width:300px">{{v.configDesc}}</div></td>
 			<td>
-				<a href="#this" onclick="view('{{v.configName}}')">[查看]</a>
-				<a href="#this" onclick="edit('{{v.configName}}', getCallback)">[修改]</a>
+				<a href="#this" onclick="edit('{{v.configName}}', '{{v.configValue}}')">[修改]</a>
 			</td>
 		</tr>
 	</table>
 </div>
 
-<div th:fragment="add" th:replace="common/fragment::modal('add', '新增', '')">
+
+
+<div th:fragment="edit" th:replace="common/fragment::modal('edit', '修改', 'modal-lg')">
+	<input type="hidden" id="editConfigName">
 	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>测试名称：</label>
-		<div class="col-8"><input type="text" name="testName" class="form-control" required maxlength="16"></div>
-	</div>
-	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>测试值：</label>
-		<div class="col-8"><input type="text" name="testValue" class="form-control" required number=true maxlength="7"></div>
-	</div>
-	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>测试类型：</label>
-		<div class="col-8">
-			<select class="form-control input-sm" name="testType" required>
-			<option value="">请选择</option>
-			<option th:each="item:${listType}" th:value="${item.typeId}" th:text="${item.typeName}"></option>
-			</select>
-		</div>
-	</div>
-	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>测试日期：</label>
-		<div class="col-8"><input type="text" name="testDate" class="form-control" required onclick="WdatePicker()"></div>
+		<textarea rows="10" cols="100" class="form-control" id="editConfigValue" value="aa"></textarea>
 	</div>
 </div>
 
-<div th:fragment="edit" th:replace="common/fragment::modalTemplate('edit', '修改', '')">
-	<input type="hidden" name="testId" value="{{pojo.testId}}">
-	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>测试名称：</label>
-		<div class="col-8"><input type="text" name="testName" class="form-control" required maxlength="16" value="{{pojo.testName}}"></div>
-	</div>
-	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>测试值：</label>
-		<div class="col-8"><input type="text" name="testValue" class="form-control" required number=true maxlength="7" value="{{pojo.testValue}}"></div>
-	</div>
-	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>测试类型：</label>
-		<div class="col-8">
-			<select id="editTestType" class="form-control input-sm" name="testType" required>
-			<option value="">请选择</option>
-			<option th:each="item:${listType}" th:value="${item.typeId}" th:text="${item.typeName}"></option>
-			</select>
-		</div>
-	</div>
-	<div class="form-group form-inline">
-		<label class="col-4"><i class="required">*</i>测试日期：</label>
-		<div class="col-8"><input type="text" name="testDate" class="form-control" onclick="WdatePicker()" value="{{pojo.testDate}}"></div>
-	</div>
-</div>
+
 
 </div>
 </body>
