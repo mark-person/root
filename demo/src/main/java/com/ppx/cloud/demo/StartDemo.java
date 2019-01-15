@@ -37,15 +37,13 @@ public class StartDemo implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event)  {
     	
-    	System.out.println("999999999artifactId:" + artifactId);
-    	
     	// 绑定config_name 	varchar(64) not null comment '每个名称对应一个ConfigExec的实现类',
     	
     	ConfigUtils.bindConfigExec("MONITOR_THRESHOLD", new MonitorThresholdConfigExec());
     	ConfigUtils.bindConfigExec("MONITOR_SWITCH", new MonitorSwitchConfigExec());
     	ConfigUtils.bindConfigExec("AUTH", new AuthConfigExec());
     	
-    	List<Config> configList = configServ.listConfig();
+    	List<Config> configList = configServ.listConfig(artifactId);
     	for (Config config : configList) {
 			String configName = config.getConfigName();
 			String configValue = config.getConfigValue();

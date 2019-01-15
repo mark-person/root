@@ -17,9 +17,9 @@ import com.ppx.cloud.common.util.ApplicationUtils;
 @Service
 public class ConfigServImpl extends MyDaoSupport implements ConfigServ {
 
-	public List<Config> listConfig() {
-		String sql = "select * from config_value";
-		List<Config> list = getJdbcTemplate().query(sql, BeanPropertyRowMapper.newInstance(Config.class));
+	public List<Config> listConfig(String artifactId) {
+		String sql = "select * from config_value where artifact_id = ?";
+		List<Config> list = getJdbcTemplate().query(sql, BeanPropertyRowMapper.newInstance(Config.class), artifactId);
 		return list;
 	}
 	
