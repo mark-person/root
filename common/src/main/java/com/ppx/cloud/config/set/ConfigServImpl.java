@@ -49,7 +49,7 @@ public class ConfigServImpl extends MyDaoSupport {
 			return ReturnMap.of(4001, r);
 		}
 		
-		String updateSql = "update config_value set config_value = ? where config_name = ?";
+		String updateSql = "update config_value set config_value = ?, modified = now() where config_name = ?";
 		getJdbcTemplate().update(updateSql, configValue, configName);
 		
 		Map<String, Object> syncMap = configApiServ.callSync(configName, configValue);
