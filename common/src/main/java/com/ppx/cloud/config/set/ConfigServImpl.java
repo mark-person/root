@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +13,16 @@ import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.page.Page;
 import com.ppx.cloud.config.Config;
+import com.ppx.cloud.config.ConfigApiServ;
 import com.ppx.cloud.config.ConfigExec;
 import com.ppx.cloud.config.ConfigUtils;
 
 @Service
 public class ConfigServImpl extends MyDaoSupport {
+	
+	
+	@Autowired
+	private ConfigApiServ configApiServ;
 	
 	public List<Config> list(Page page, Config config) {
 
@@ -36,7 +42,6 @@ public class ConfigServImpl extends MyDaoSupport {
 			return  ReturnMap.of(4001, "configValue不是json格式:" + e.getMessage());
 		}
 		
-		
 		// 更新本地
 		ConfigExec configExec = ConfigUtils.getConfigExec(configName);
 		String r = configExec.run(configValue);
@@ -47,10 +52,15 @@ public class ConfigServImpl extends MyDaoSupport {
 		String updateSql = "update config_value set config_value = ? where config_name = ?";
 		getJdbcTemplate().update(updateSql, configValue, configName);
 		
-		
-		
-		
-		return ReturnMap.of("3个服务全部刷新成功");
+		Map<String, Object> syncMap = configApiServ.callSync(configName, configValue);
+		int totalNum = (Integer)syncMap.get("totalNum");
+		int successNum = (Integer)syncMap.get("successNum");
+		if (totalNum == 0) {
+			return ReturnMap.of("本服务刷新成功");
+		} else if (totalNum != successNum) {
+			return ReturnMap.of("共" + (totalNum + 1) + "个服务, " + (successNum + 1) + "刷新成功");
+		}
+		return ReturnMap.of((totalNum + 1) + "个服务全部刷新成功");
 	}
 	
    

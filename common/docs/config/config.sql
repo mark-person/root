@@ -12,6 +12,7 @@ create table config_value (
 	artifact_id			varchar(32) not null,
 	config_value		json comment '[{"key":"KEY", "value":"VALUE"}]',
 	config_desc			varchar(64),
+	modified			timestamp not null default current_timestamp,
 	primary key (config_name)
 );
 
@@ -27,7 +28,8 @@ create table config_exec_result (
 	config_name		varchar(64) not null,
 	service_id 		varchar(32) not null,
 	exec_result 	tinyint not null default 1 comment '0:失败,1:成功',
- 	exec_desc 	 	varchar(128),
+ 	exec_desc 	 	varchar(256),
+ 	created			timestamp not null default current_timestamp,
 	primary key (config_name, service_id)
 );
 

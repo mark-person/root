@@ -31,7 +31,6 @@ public class ConfigApiController {
 			if (Strings.isNotEmpty(r)) {
 				return ReturnMap.of(4002, "configParam:" + configName + "执行失败，原因:" + r);
 			}
-			impl.updateConfigValue(configName);
 		}
 		return ReturnMap.of();
 	}
