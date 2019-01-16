@@ -9,4 +9,8 @@ package com.ppx.cloud.config;
  */
 public interface ConfigExec {
 	String run(String configValue);
+	
+	
+	// 添加一个方法，取得参数内存的值
+	
 }
