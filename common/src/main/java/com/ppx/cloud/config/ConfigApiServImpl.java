@@ -57,7 +57,7 @@ public class ConfigApiServImpl extends MyDaoSupport implements ConfigApiServ {
 				if (errcode == 0) {
 					successNum++;
 					// 更新成功记录
-					 getJdbcTemplate().update(insertSql, configName, serviceId, 1, null);
+					getJdbcTemplate().update(insertSql, configName, serviceId, 1, null);
 				}
 				else {
 					errmsg += "serviceId:" + serviceId + "api异常:" +  resultMap.getBody().get("errmsg") + ";";

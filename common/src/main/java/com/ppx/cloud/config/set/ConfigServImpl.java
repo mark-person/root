@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.page.Page;
+import com.ppx.cloud.common.util.ApplicationUtils;
 import com.ppx.cloud.config.Config;
 import com.ppx.cloud.config.ConfigApiServ;
 import com.ppx.cloud.config.ConfigExec;
@@ -51,6 +52,11 @@ public class ConfigServImpl extends MyDaoSupport {
 		
 		String updateSql = "update config_value set config_value = ?, modified = now() where config_name = ?";
 		getJdbcTemplate().update(updateSql, configValue, configName);
+		
+		String insertSql = "insert into config_exec_result(config_name, servcie_id, exec_result, exec_desc) values(?, ?, ?)";
+		// 更新成功记录
+		getJdbcTemplate().update(insertSql, configName, ApplicationUtils.getServiceId(), 1);
+		
 		
 		Map<String, Object> syncMap = configApiServ.callSync(configName, configValue);
 		int totalNum = (Integer)syncMap.get("totalNum");
