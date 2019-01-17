@@ -8,10 +8,16 @@
 <script type="text/javascript" th:inline="javascript">
 
 
-var controllerPath = contextPath + "auto/configExecResult/";
+var controllerPath = contextPath + "auto/config/";
 $(function() {
-	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
+	$("#pageDiv").page({url:controllerPath + "listConfigExecResult", data:[[${list}]]});
 });
+
+template.helper('getExecResult', function(v) {
+	if (v == 0) return "失败";
+	else if (v == 1) return "成功";
+	return "";
+})
 
 
 </script>
@@ -22,10 +28,14 @@ $(function() {
 
 <div id="pageDiv" th:include="common/fragment::page('配置执行结果')">
 	<div th:fragment="query">
+		<label>configName：</label>
+		<input type="text" class="form-control" name="configName">
+		<button type="button" class="btn btn-default btn-sm"><i class="fa fa-search"></i>搜索</button>
 	</div>
 	<table th:fragment="list">
 		<thead class="thead-light">
 		<tr>
+			<th class="w-id">configName</th>
 			<th class="w-id">serviceId</th>
 			<th class="w-id">execResult</th>
 			<th class="w-id">execDesc</th>
@@ -37,8 +47,9 @@ $(function() {
 	</table>
 	<table>
 		<tr th:fragment="template">
+			<td>{{v.configName}}</td>
 			<td>{{v.serviceId}}</td>
-			<td>{{v.execResult}}</td>
+			<td>{{getExecResult(v.execResult)}}</td>
 			<td>{{v.execDesc}}</td>
 			<td>{{v.created}}</td>
 			<td></td>

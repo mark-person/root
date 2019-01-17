@@ -10,10 +10,19 @@ import java.util.Date;
  * @date 2019年1月17日
  */
 public class ConfigExecResult {
+	private String configName;
 	private String serviceId;
 	private Integer execResult;
 	private String execDesc;
 	private Date created;
+	
+	public String getConfigName() {
+		return configName;
+	}
+
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
 
 	public String getServiceId() {
 		return serviceId;

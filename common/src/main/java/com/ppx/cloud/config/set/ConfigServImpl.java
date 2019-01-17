@@ -74,12 +74,15 @@ public class ConfigServImpl extends MyDaoSupport {
 		return ReturnMap.of((totalNum + 1) + "个服务全部刷新成功");
 	}
 
-	public List<Config> listConfigExecResult(Page page, ConfigExecResult pojo) {
-
-		var cSql = new StringBuilder("select count(*) from config_value");
-		var qSql = new StringBuilder("select * from config_value order by modified desc");
+	public List<ConfigExecResult> listConfigExecResult(Page page, ConfigExecResult pojo) {
 		
-		List<Config> list = queryPage(Config.class, page, cSql, qSql);
+		var c = createCriteria("where").addAnd("config_name = ?", pojo.getConfigName());
+		
+
+		var cSql = new StringBuilder("select count(*) from config_exec_result").append(c);
+		var qSql = new StringBuilder("select * from config_exec_result").append(c).append(" order by created desc");
+		
+		List<ConfigExecResult> list = queryPage(ConfigExecResult.class, page, cSql, qSql, c.getParaList());
 		return list;
 	}
     
