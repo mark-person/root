@@ -9,7 +9,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ppx.cloud.common.contoller.ReturnMap;
 import com.ppx.cloud.common.page.Page;
-import com.ppx.cloud.config.Config;
+import com.ppx.cloud.config.pojo.Config;
+import com.ppx.cloud.config.pojo.ConfigExecResult;
 
 @Controller
 public class ConfigController {
@@ -29,4 +30,16 @@ public class ConfigController {
 	public Map<?, ?> update(@RequestParam String configName, @RequestParam String configValue) {
         return impl.update(configName, configValue);
     }
+	
+	
+	// configExecResult
+	public ModelAndView configExecResult(ModelAndView mv) {
+		mv.addObject("list", listConfigExecResult(new Page(), new ConfigExecResult()));
+		return mv;
+	}
+	
+	public Map<?, ?> listConfigExecResult(Page page, ConfigExecResult pojo) {
+		return ReturnMap.of(page, impl.listConfigExecResult(page, pojo));
+	}
+	
 }

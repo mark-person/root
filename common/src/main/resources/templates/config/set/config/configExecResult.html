@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link th:replace="common/fragment::common"/>
+
+
+<script type="text/javascript" th:inline="javascript">
+
+
+var controllerPath = contextPath + "auto/configExecResult/";
+$(function() {
+	$("#pageDiv").page({url:controllerPath + "list", data:[[${list}]]});
+});
+
+
+</script>
+</head>
+
+<body>
+<div class="container-fluid">
+
+<div id="pageDiv" th:include="common/fragment::page('配置执行结果')">
+	<div th:fragment="query">
+	</div>
+	<table th:fragment="list">
+		<thead class="thead-light">
+		<tr>
+			<th class="w-id">serviceId</th>
+			<th class="w-id">execResult</th>
+			<th class="w-id">execDesc</th>
+			<th class="w-time">created</th>
+			<th class="w-action">操作</th>
+		</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<table>
+		<tr th:fragment="template">
+			<td>{{v.serviceId}}</td>
+			<td>{{v.execResult}}</td>
+			<td>{{v.execDesc}}</td>
+			<td>{{v.created}}</td>
+			<td></td>
+		</tr>
+	</table>
+</div>
+
+
+<div th:fragment="edit" th:replace="common/fragment::modal('edit', '修改', 'modal-lg')">
+	<input type="hidden" id="editConfigName">
+	<div class="form-group form-inline">
+		<textarea rows="10" cols="100" class="form-control" id="editConfigValue" value=""></textarea>
+	</div>
+</div>
+
+
+
+
+</div>
+</body>
+</html>
+

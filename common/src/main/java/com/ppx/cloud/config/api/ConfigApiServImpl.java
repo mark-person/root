@@ -1,4 +1,4 @@
-package com.ppx.cloud.config;
+package com.ppx.cloud.config.api;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.ppx.cloud.common.jdbc.MyDaoSupport;
 import com.ppx.cloud.common.util.ApplicationUtils;
+import com.ppx.cloud.config.pojo.Config;
 
 @Service
 public class ConfigApiServImpl extends MyDaoSupport implements ConfigApiServ {
@@ -31,7 +32,10 @@ public class ConfigApiServImpl extends MyDaoSupport implements ConfigApiServ {
     	String errmsg = "";
     	
     	// 请求其它服务
-    	String uri = "/auto/configApi/sync?configParam=" + configName + "&configValue=" + configValue;
+    	String uri = "auto/configApi/sync";
+    	String para = "configParam=" + configName + "&configValue=" + configValue;
+    	RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = new HttpEntity<String>(para, new HttpHeaders());
     	
     	String currentServiceId = ApplicationUtils.getServiceId();
     	// 更新其它服务
@@ -39,16 +43,8 @@ public class ConfigApiServImpl extends MyDaoSupport implements ConfigApiServ {
 				" artifact_id = (select artifact_id from config_value where config_name = ?)";
 		List<String> ohterServiceIdList = getJdbcTemplate().queryForList(otherSql, String.class,  currentServiceId ,configName);
 		
-		RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> entity = new HttpEntity<String>("", new HttpHeaders());
-        
         int successNum = 0;
-        
-        // 清除执行结果
-        String deleteSql = "delete from config_exec_result where config_name = ?";
-        getJdbcTemplate().update(deleteSql, configName);
-        
-        String insertSql = "insert into config_exec_result(config_name, servcie_id, exec_result, exec_desc) values(?, ?, ?, ?)";
+        String insertSql = "insert into config_exec_result(config_name, service_id, exec_result, exec_desc) values(?, ?, ?, ?)";
 		for (String serviceId : ohterServiceIdList) {
 			try {
 				String url = "http://" + serviceId + "/" + uri;
@@ -60,11 +56,12 @@ public class ConfigApiServImpl extends MyDaoSupport implements ConfigApiServ {
 					getJdbcTemplate().update(insertSql, configName, serviceId, 1, null);
 				}
 				else {
-					errmsg += "serviceId:" + serviceId + "api异常:" +  resultMap.getBody().get("errmsg") + ";";
+					errmsg += "接口:" + serviceId + "异常:" +  resultMap.getBody().get("errmsg") + ";";
 					getJdbcTemplate().update(insertSql, configName, serviceId, 0, resultMap.getBody().get("errmsg"));
 				}
 			} catch (Exception e) {
-				errmsg += "serviceId:" + serviceId + "异常:" +  e.getMessage() + ";";
+				e.printStackTrace();
+				errmsg += "连接" + serviceId + "异常:" +  e.getMessage() + ";";
 				getJdbcTemplate().update(insertSql, configName, serviceId, 0, e.getMessage());
 			}
 		}

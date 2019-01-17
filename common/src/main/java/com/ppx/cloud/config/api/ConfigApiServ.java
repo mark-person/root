@@ -1,10 +1,12 @@
 /**
  * 
  */
-package com.ppx.cloud.config;
+package com.ppx.cloud.config.api;
 
 import java.util.List;
 import java.util.Map;
+
+import com.ppx.cloud.config.pojo.Config;
 
 /**
  * @author mark

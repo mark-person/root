@@ -44,6 +44,7 @@ function alertShow(msg, cls, time) {
 		$("#myAlert span").html('<a href="javascript:$(\'#myAlert\').hide();">关闭</a>')
 	}
 	else {
+		$("#myAlert span a").remove();
 		setTimeout('$("#myAlert").hide();', time);
 	}
 }

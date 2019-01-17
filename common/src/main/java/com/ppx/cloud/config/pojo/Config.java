@@ -1,7 +1,9 @@
 /**
  * 
  */
-package com.ppx.cloud.config;
+package com.ppx.cloud.config.pojo;
+
+import java.util.Date;
 
 /**
  * @author mark
@@ -12,6 +14,7 @@ public class Config {
 	private String artifactId;
 	private String configValue;
 	private String configDesc;
+	private Date modified;
 
 	public String getConfigName() {
 		return configName;
@@ -45,4 +48,11 @@ public class Config {
 		this.configDesc = configDesc;
 	}
 
+	public Date getModified() {
+		return modified;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
 }

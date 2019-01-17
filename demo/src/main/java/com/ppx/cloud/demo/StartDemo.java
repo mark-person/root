@@ -8,15 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.ppx.cloud.auth.config.AuthConfigExec;
 import com.ppx.cloud.common.exception.custom.ConfigException;
-import com.ppx.cloud.config.Config;
 import com.ppx.cloud.config.ConfigExec;
-import com.ppx.cloud.config.ConfigApiServ;
 import com.ppx.cloud.config.ConfigUtils;
+import com.ppx.cloud.config.api.ConfigApiServ;
+import com.ppx.cloud.config.pojo.Config;
 import com.ppx.cloud.monitor.config.MonitorSwitchConfigExec;
 import com.ppx.cloud.monitor.config.MonitorThresholdConfigExec;
 

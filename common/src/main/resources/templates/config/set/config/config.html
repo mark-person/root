@@ -7,7 +7,7 @@
 
 <script type="text/javascript" th:inline="javascript">
 
-function formatJson(txt,compress){
+function formatJson(txt,compress) {
     var indentChar = '    ';
     if(/^\s*$/.test(txt)){   
         alert('数据为空,无法格式化! ');   
@@ -66,7 +66,7 @@ function edit(configName, configValue) {
 			}
 			else {
 				hideLoading();
-				alertWarning(r.errmsg);
+				alertDanger(r.errmsg);
 			}
 		});
 	}
@@ -89,6 +89,7 @@ function edit(configName, configValue) {
 			<th class="w-id">artifact_id</th>
 			<th style="width:500px">config_value</th>
 			<th style="width:300px">config_desc</th>
+			<th class="w-time">修改时间</th>
 			<th class="w-action">操作</th>
 		</tr>
 		</thead>
@@ -100,6 +101,7 @@ function edit(configName, configValue) {
 			<td>{{v.artifactId}}</td>
 			<td><div class="ellipsis" style="width:500px">{{v.configValue}}</div></td>
 			<td><div class="ellipsis" style="width:300px">{{v.configDesc}}</div></td>
+			<td>{{v.modified}}</td>
 			<td>
 				<a href="#this" onclick="edit('{{v.configName}}', '{{v.configValue}}')">[修改]</a>
 			</td>
@@ -111,9 +113,11 @@ function edit(configName, configValue) {
 <div th:fragment="edit" th:replace="common/fragment::modal('edit', '修改', 'modal-lg')">
 	<input type="hidden" id="editConfigName">
 	<div class="form-group form-inline">
-		<textarea rows="10" cols="100" class="form-control" id="editConfigValue" value="aa"></textarea>
+		<textarea rows="10" cols="100" class="form-control" id="editConfigValue" value=""></textarea>
 	</div>
 </div>
+
+
 
 
 </div>
