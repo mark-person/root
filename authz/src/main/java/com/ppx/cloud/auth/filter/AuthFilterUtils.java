@@ -17,10 +17,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.ppx.cloud.auth.cache.EhCacheService;
 import com.ppx.cloud.auth.common.LoginAccount;
-import com.ppx.cloud.auth.config.AuthUtils;
 import com.ppx.cloud.auth.config.AuthProperties;
+import com.ppx.cloud.auth.config.AuthUtils;
 import com.ppx.cloud.auth.pojo.AuthAccount;
 import com.ppx.cloud.common.context.CommonContext;
 import com.ppx.cloud.common.exception.ErrorCode;
@@ -35,11 +34,7 @@ import com.ppx.cloud.common.util.CookieUtils;
  * @date 2018年7月2日
  */
 public class AuthFilterUtils {
-
-    // 权限版本
-    public static int localAuthAllVersion = 0;
-    public static int localAuthGrantVersion = 0;
-
+	
     private static final Logger logger = LoggerFactory.getLogger(AuthFilterUtils.class);
 
     /**
@@ -82,23 +77,10 @@ public class AuthFilterUtils {
         account.setLoginAccount(loginAccount);
         account.setUserId(userId);
         account.setUserName(userName);
-        int authAll = jwt.getClaim("authAll").asInt();
-        int authGrant = jwt.getClaim("authGrant").asInt();
         
         // 传值给 monitor
         CommonContext.setAccountId(accountId);
-
-        // 权限版本判断
-        if (localAuthAllVersion != authAll) {
-            localAuthAllVersion = authAll;
-            EhCacheService ehCacheServ = ApplicationUtils.context.getBean(EhCacheService.class);
-            ehCacheServ.clearAllLocalCache();
-        } else if (localAuthGrantVersion != authGrant) {
-            localAuthGrantVersion = authGrant;
-            EhCacheService ehCacheServ = ApplicationUtils.context.getBean(EhCacheService.class);
-            ehCacheServ.clearGrantLocalCache();
-        }
-
+        
         // 超级管理员不拦截
         if ("admin".equals(loginAccount)) {
             return account;
@@ -124,8 +106,7 @@ public class AuthFilterUtils {
             // 重新在cookie上生成一个token
             token = JWT.create().withIssuedAt(new Date()).withClaim("accountId", accountId)
                     .withClaim("loginAccount", loginAccount).withClaim("userId", userId).withClaim("userName", userName)
-                    .withClaim("modified", accountDb.getModified()).withClaim("authAll", authAll)
-                    .withClaim("authGrant", authGrant).sign(algorithm);
+                    .withClaim("modified", accountDb.getModified()).sign(algorithm);
             CookieUtils.setCookie(response, AuthUtils.PPXTOKEN, token);
         }
 
@@ -199,7 +180,7 @@ public class AuthFilterUtils {
         if (opList == null) {
             return;
         }
-        for (Map map : opList) {
+        for (Map<String, Object> map : opList) {
         	Integer uriSeq = (Integer) map.get("uri_seq");
             if (grantBitset.get(uriSeq)) {
                 setOperationRequest(request, (String) map.get("uri_text"));
