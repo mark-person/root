@@ -4,6 +4,7 @@ package com.ppx.cloud.demo;
 
 import java.util.List;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -57,7 +58,9 @@ public class StartDemo implements ApplicationListener<ContextRefreshedEvent> {
 				throw new ConfigException(configName + " not binding");
 			}
 			else {
-				configExec.run(configValue);
+				if (Strings.isNotEmpty(configValue)) {
+					configExec.run(configValue);
+				}
 			}
 		}
     	
